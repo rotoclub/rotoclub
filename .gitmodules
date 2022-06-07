@@ -1,0 +1,4 @@
+[submodule "OCA/l10n-spain"]
+	path = OCA/l10n-spain
+	url = https://github.com/OCA/l10n-spain
+	branch = 15.0
