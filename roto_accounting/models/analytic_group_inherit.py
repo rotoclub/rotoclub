@@ -14,7 +14,6 @@ class AccountAnalyticGroup(models.Model):
     address = fields.Char(
         string='Address'
     )
-
     street = fields.Char(
         string='Street'
     )
