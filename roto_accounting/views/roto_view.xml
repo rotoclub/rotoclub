@@ -8,7 +8,9 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='partner_ref']" position="after">
                     <field name="analytic_group_id" options="{'no_create': True, 'no_open': True}"/>
-                    <field name="delivery_address" attrs="{'invisible': [('analytic_group_id','=',False)]}"/>
+                    <field name="delivery_address"
+                           attrs="{'invisible': [('analytic_group_id','=',False)]}"
+                           force_save="1"/>
                 </xpath>
             </field>
         </record>

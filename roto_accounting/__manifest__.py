@@ -15,7 +15,8 @@
         'purchase',
         'sale_management',
         'account_accountant',
-        'analytic'
+        'analytic',
+        'contacts'
     ],
     'data': [
         'security/ir.model.access.csv',

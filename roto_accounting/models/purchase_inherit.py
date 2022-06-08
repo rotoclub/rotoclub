@@ -19,8 +19,10 @@ class PurchaseOrder(models.Model):
     @api.model
     def create(self, vals):
         res = super().create(vals)
-        if res.analytic_group_id and not res.analytic_group_id.partner_id:
-            partner = res.analytic_group_id.create_partner().id
+        if res.analytic_group_id:
+            partner = res.analytic_group_id.partner_id
+            if not res.analytic_group_id.partner_id:
+                partner = res.analytic_group_id.create_partner().id
             res.analytic_group_id.partner_id = partner
             res.dest_address_id = partner
         return res
@@ -28,8 +30,10 @@ class PurchaseOrder(models.Model):
     def write(self, vals):
         res = super().write(vals)
         for rec in self:
-            if vals.get('analytic_group_id') and not rec.analytic_group_id.partner_id:
-                partner = rec.analytic_group_id.create_partner().id
+            if vals.get('analytic_group_id'):
+                partner = rec.analytic_group_id.partner_id
+                if not rec.analytic_group_id.partner_id:
+                    partner = rec.analytic_group_id.create_partner().id
                 rec.analytic_group_id.partner_id = partner
                 rec.dest_address_id = partner
         return res
