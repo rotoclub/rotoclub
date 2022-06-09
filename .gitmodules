@@ -6,3 +6,11 @@
 	path = OCA/account-financial-reporting
 	url = https://github.com/OCA/account-financial-reporting
 	branch = 15.0
+[submodule "OCA/reporting-engine"]
+	path = OCA/reporting-engine
+	url = https://github.com/OCA/reporting-engine
+	branch = 15.0
+[submodule "OCA/server-ux"]
+	path = OCA/server-ux
+	url = https://github.com/OCA/server-ux
+	branch = 15.0
