@@ -25,7 +25,10 @@ class PurchaseOrder(models.Model):
 
     @api.onchange('analytic_group_id')
     def default_analytic_account(self):
-        self.picking_type_id = self.analytic_group_id.picking_type_id.id
+        picking = self._get_picking_type(self.env.context.get('company_id') or self.env.company.id)
+        if self.analytic_group_id.picking_type_id:
+            picking = self.analytic_group_id.picking_type_id.id
+        self.picking_type_id = picking
 
 
 class PurchaseOrderLine(models.Model):
