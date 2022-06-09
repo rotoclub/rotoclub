@@ -2,3 +2,7 @@
 	path = OCA/l10n-spain
 	url = https://github.com/OCA/l10n-spain
 	branch = 15.0
+[submodule "OCA/account-financial-reporting"]
+	path = OCA/account-financial-reporting
+	url = https://github.com/OCA/account-financial-reporting
+	branch = 15.0
