@@ -8,7 +8,7 @@
     'website': "https://www.rapsodoo.com/es/",
     'category': 'Accounting/Accounting',
 
-    'version': '15.0.1.0.0',
+    'version': '15.0.1.0.1',
 
     'depends': [
         'base',
@@ -16,7 +16,7 @@
         'sale_management',
         'account_accountant',
         'analytic',
-        'contacts'
+        'stock'
     ],
     'data': [
         'security/ir.model.access.csv',
