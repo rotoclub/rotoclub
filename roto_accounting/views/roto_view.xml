@@ -34,5 +34,29 @@
             </field>
         </record>
 
+        <!-- Analytic Account Group FORM inherit-->
+        <record id="view_in_invoice_bill_tree_roto_inherit" model="ir.ui.view">
+            <field name="name">account.out.invoice.bill.tree.roto</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_in_invoice_bill_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='ref']" position="after">
+                    <field name="analytic_group_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Account.move search view inherit-->
+        <record id="view_account_invoice_filter_roto_inherit" model="ir.ui.view">
+            <field name="name">account.invoice.roto_inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search/group/filter[@name='status']" position="after">
+                    <filter string="Business Center" name="analytic_group_group_by" context="{'group_by': 'analytic_group_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </odoo>
