@@ -22,6 +22,56 @@
             </field>
         </record>
 
+        <!-- Purchase Order Tree Kpis view inherit-->
+        <record id="view_purchase_order_kpis_tree_roto_inherit" model="ir.ui.view">
+            <field name="name">purchase.order.kpis.tree.roto.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='company_id']" position="after">
+                    <field name="analytic_group_id"/>
+                </xpath>
+            </field>
+        </record>
+
+                <!-- Purchase Order Tree Standard view inherit-->
+        <record id="view_purchase_order_tree_roto_inherit" model="ir.ui.view">
+            <field name="name">purchase.order.tree.roto.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='company_id']" position="after">
+                    <field name="analytic_group_id"/>
+                </xpath>
+            </field>
+        </record>
+
+                <!-- Purchase Order Search view inherit-->
+        <record id="view_purchase_order_filter_kpis_roto_inherit" model="ir.ui.view">
+            <field name="name">purchase.order.filter.kpis.roto.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.view_purchase_order_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search/group/filter[@name='order_date']" position="after">
+                    <filter string="Business Center" name="analytic_group_group_by"
+                            context="{'group_by': 'analytic_group_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
+            <!-- Purchase Order Search view inherit-->
+        <record id="view_purchase_order_filter_standard_roto_inherit" model="ir.ui.view">
+            <field name="name">purchase.order.filter.roto.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search/group/filter[@name='order_date']" position="after">
+                    <filter string="Business Center" name="analytic_group_group_by"
+                            context="{'group_by': 'analytic_group_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
         <!-- Analytic Account Group FORM inherit-->
         <record id="account_analytic_group_roto_inherit" model="ir.ui.view">
             <field name="name">account.analytic.group.roto.inherit</field>
@@ -34,7 +84,7 @@
             </field>
         </record>
 
-        <!-- Analytic Account Group FORM inherit-->
+        <!-- Account Move Tree inherit-->
         <record id="view_in_invoice_bill_tree_roto_inherit" model="ir.ui.view">
             <field name="name">account.out.invoice.bill.tree.roto</field>
             <field name="model">account.move</field>
@@ -53,7 +103,8 @@
             <field name="inherit_id" ref="account.view_account_invoice_filter"/>
             <field name="arch" type="xml">
                 <xpath expr="//search/group/filter[@name='status']" position="after">
-                    <filter string="Business Center" name="analytic_group_group_by" context="{'group_by': 'analytic_group_id'}"/>
+                    <filter string="Business Center" name="analytic_group_group_by"
+                            context="{'group_by': 'analytic_group_id'}"/>
                 </xpath>
             </field>
         </record>
