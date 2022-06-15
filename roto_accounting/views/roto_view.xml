@@ -96,6 +96,18 @@
             </field>
         </record>
 
+                <!-- Account Move Form inherit-->
+        <record id="view_in_invoice_bill_form_roto_inherit" model="ir.ui.view">
+            <field name="name">account.out.invoice.bill.form.roto</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='ref']" position="after">
+                    <field name="analytic_group_id"/>
+                </xpath>
+            </field>
+        </record>
+
         <!-- Account.move search view inherit-->
         <record id="view_account_invoice_filter_roto_inherit" model="ir.ui.view">
             <field name="name">account.invoice.roto_inherit</field>
