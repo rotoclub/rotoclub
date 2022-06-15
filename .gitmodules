@@ -14,7 +14,3 @@
 	path = OCA/server-ux
 	url = https://github.com/OCA/server-ux
 	branch = 15.0
-[submodule "OCA/web"]
-	path = OCA/web
-	url = https://github.com/OCA/web
-	branch = 15.0
