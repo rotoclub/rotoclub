@@ -14,3 +14,7 @@
 	path = OCA/server-ux
 	url = https://github.com/OCA/server-ux
 	branch = 15.0
+[submodule "thir_party"]
+	path = thir_party
+	url = https://github.com/rotoclub/third_party
+	branch = 15.0
