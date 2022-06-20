@@ -1,0 +1,20 @@
+[submodule "OCA/l10n-spain"]
+	path = OCA/l10n-spain
+	url = https://github.com/OCA/l10n-spain
+	branch = 15.0
+[submodule "OCA/account-financial-reporting"]
+	path = OCA/account-financial-reporting
+	url = https://github.com/OCA/account-financial-reporting
+	branch = 15.0
+[submodule "OCA/reporting-engine"]
+	path = OCA/reporting-engine
+	url = https://github.com/OCA/reporting-engine
+	branch = 15.0
+[submodule "OCA/server-ux"]
+	path = OCA/server-ux
+	url = https://github.com/OCA/server-ux
+	branch = 15.0
+[submodule "thir_party"]
+	path = thir_party
+	url = https://github.com/rotoclub/third_party
+	branch = 15.0

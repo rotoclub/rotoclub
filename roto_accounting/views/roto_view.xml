@@ -1,0 +1,125 @@
+<odoo>
+    <data>
+        <!-- Purchase Order FORM inherit-->
+        <record id="puchase_order_roto_inherit" model="ir.ui.view">
+            <field name="name">purchase.order.roto.inherit</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="model">purchase.order</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_ref']" position="after">
+                    <field name="analytic_group_id" options="{'no_create': True, 'no_open': True}"/>
+                    <field name="default_analytic" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='account_analytic_id']" position="after">
+                    <field name="order_group_id" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']" position="attributes">
+                    <attribute name="context">{'default_account_analytic_id': default_analytic}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='account_analytic_id']" position="attributes">
+                    <attribute name="domain">[('group_id', '=', order_group_id)]</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Purchase Order Tree Kpis view inherit-->
+        <record id="view_purchase_order_kpis_tree_roto_inherit" model="ir.ui.view">
+            <field name="name">purchase.order.kpis.tree.roto.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='company_id']" position="after">
+                    <field name="analytic_group_id"/>
+                </xpath>
+            </field>
+        </record>
+
+                <!-- Purchase Order Tree Standard view inherit-->
+        <record id="view_purchase_order_tree_roto_inherit" model="ir.ui.view">
+            <field name="name">purchase.order.tree.roto.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='company_id']" position="after">
+                    <field name="analytic_group_id"/>
+                </xpath>
+            </field>
+        </record>
+
+                <!-- Purchase Order Search view inherit-->
+        <record id="view_purchase_order_filter_kpis_roto_inherit" model="ir.ui.view">
+            <field name="name">purchase.order.filter.kpis.roto.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.view_purchase_order_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search/group/filter[@name='order_date']" position="after">
+                    <filter string="Business Center" name="analytic_group_group_by"
+                            context="{'group_by': 'analytic_group_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
+            <!-- Purchase Order Search view inherit-->
+        <record id="view_purchase_order_filter_standard_roto_inherit" model="ir.ui.view">
+            <field name="name">purchase.order.filter.roto.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search/group/filter[@name='order_date']" position="after">
+                    <filter string="Business Center" name="analytic_group_group_by"
+                            context="{'group_by': 'analytic_group_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Analytic Account Group FORM inherit-->
+        <record id="account_analytic_group_roto_inherit" model="ir.ui.view">
+            <field name="name">account.analytic.group.roto.inherit</field>
+            <field name="model">account.analytic.group</field>
+            <field name="inherit_id" ref="analytic.account_analytic_group_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='parent_id']" position="after">
+                    <field name="picking_type_id" force_save="1" options="{'no_create': True}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Account Move Tree inherit-->
+        <record id="view_in_invoice_bill_tree_roto_inherit" model="ir.ui.view">
+            <field name="name">account.out.invoice.bill.tree.roto</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_in_invoice_bill_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='ref']" position="after">
+                    <field name="analytic_group_id"/>
+                </xpath>
+            </field>
+        </record>
+
+                <!-- Account Move Form inherit-->
+        <record id="view_in_invoice_bill_form_roto_inherit" model="ir.ui.view">
+            <field name="name">account.out.invoice.bill.form.roto</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='ref']" position="after">
+                    <field name="analytic_group_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Account.move search view inherit-->
+        <record id="view_account_invoice_filter_roto_inherit" model="ir.ui.view">
+            <field name="name">account.invoice.roto_inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search/group/filter[@name='status']" position="after">
+                    <filter string="Business Center" name="analytic_group_group_by"
+                            context="{'group_by': 'analytic_group_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
