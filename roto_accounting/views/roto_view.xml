@@ -7,7 +7,7 @@
             <field name="model">purchase.order</field>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='partner_ref']" position="after">
-                    <field name="analytic_group_id" options="{'no_create': True, 'no_open': True}"/>
+                    <field name="analytic_group_id" options="{'no_create': True, 'no_open': True}" required="1"/>
                     <field name="default_analytic" invisible="1"/>
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree/field[@name='account_analytic_id']" position="after">
@@ -18,6 +18,7 @@
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree/field[@name='account_analytic_id']" position="attributes">
                     <attribute name="domain">[('group_id', '=', order_group_id)]</attribute>
+                    <attribute name="required">1</attribute>
                 </xpath>
             </field>
         </record>
@@ -104,6 +105,10 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='ref']" position="after">
                     <field name="analytic_group_id"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='analytic_account_id']"
+                       position="attributes">
+                    <attribute name="required">1</attribute>
                 </xpath>
             </field>
         </record>
