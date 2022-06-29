@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="seq_agora_server" model="ir.sequence">
+        <field name="name">Agora Server</field>
+        <field name="code">agora.server</field>
+        <field name="prefix">SERV-AG/%(y)s/%(month)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_agora_api" model="ir.sequence">
+        <field name="name">Server API</field>
+        <field name="code">agora.api</field>
+        <field name="prefix">SERV-API/%(y)s/%(month)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_sale_api" model="ir.sequence">
+        <field name="name">Sale API</field>
+        <field name="code">sale.api</field>
+        <field name="prefix">SA/%(y)s/%(month)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+<!--    <record id="ir_cron_eggin_api" model="ir.cron">-->
+<!--        <field name="name">Eggin: Read data</field>-->
+<!--        <field name="model_id" ref="model_eggin_setting"/>-->
+<!--        <field name="state">code</field>-->
+<!--        <field name="code">model._connector_eggin_api()</field>-->
+<!--        <field name="interval_number">23</field>-->
+<!--        <field name="interval_type">hours</field>-->
+<!--        <field name="numbercall">-1</field>-->
+<!--        <field name="doall" eval="False"/>-->
+<!--    </record>-->
+
+<!--    <record id="eggin_api_period" model="ir.config_parameter">-->
+<!--        <field name="key">eggin.api.period</field>-->
+<!--        <field name="value">2</field>-->
+<!--    </record>-->
+</odoo>
