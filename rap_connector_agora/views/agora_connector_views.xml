@@ -88,7 +88,7 @@
                     <group>
                         <group name="first_group">
                             <field name="title" placeholder="Ex. TPV No.1"/>
-                            <field name="analytic_account_id" context="{'default_name':title}" force_save="1" options="{'no_create': True}" required="True"/>
+                            <field name="analytic_account_id" context="{'default_name':title}" force_save="1" options="{'no_create': True}"/>
                             <field name="sale_flow" required="1"/>
                             <field name="agora_id" required="1" options="{'no_create': True, 'no_open': True}"/>
                         </group>

@@ -131,42 +131,32 @@ class SaleApi(models.Model):
             vals['name'] = self.env['ir.sequence'].next_by_code('sale.api', sequence_date=seq_date) or _('New')
         return super(SaleApi, self).create(vals)
 
-    # """
-    # @api.onchange('partner_shipping_id', 'partner_id', 'company_id')
-#     def onchange_partner_shipping_id(self):
-#         self.fiscal_position_id = self.env['account.fiscal.position'].with_company(self.company_id).get_fiscal_position(
-#             self.partner_id.id, self.partner_shipping_id.id)
-#         return {}"""
-#
-#     @api.onchange('partner_id')
-#     def onchange_partner_id(self):
-#         if not self.partner_id:
-#             self.update({
-#                 'partner_invoice_id': False,
-#                 'partner_shipping_id': False,
-#                 'fiscal_position_id': False,
-#             })
-#             return
-#         # self = self.with_company(self.company_id)
-#         addr = self.partner_id.address_get(['delivery', 'invoice'])
-#         partner_user = self.partner_id.user_id or self.partner_id.commercial_partner_id.user_id
-#         values = {
-#             'pricelist_id': self.partner_id.property_product_pricelist and self.partner_id.property_product_pricelist.id or False,
-#             'payment_term_id': self.partner_id.property_payment_term_id and self.partner_id.property_payment_term_id.id or False,
-#             'partner_invoice_id': addr['invoice'],
-#             'partner_shipping_id': addr['delivery'],
-#         }
-#         user_id = partner_user.id
-#         if not self.env.context.get('not_self_saleperson'):
-#             user_id = user_id or self.env.uid
-#         if user_id and self.user_id.id != user_id:
-#             values['user_id'] = user_id
-#
-#         if self.env['ir.config_parameter'].sudo().get_param(
-#                 'account.use_invoice_terms') and self.env.company.invoice_terms:
-#             values['note'] = self.with_context(lang=self.partner_id.lang).env.company.invoice_terms
-#         self.update(values)
-#
+    @api.onchange('partner_id')
+    def onchange_partner_id(self):
+        if not self.partner_id:
+            self.update({
+                'partner_invoice_id': False,
+                'partner_shipping_id': False,
+                'fiscal_position_id': False,
+            })
+            return
+        addr = self.partner_id.address_get(['delivery', 'invoice'])
+        partner_user = self.partner_id.user_id or self.partner_id.commercial_partner_id.user_id
+        values = {
+            'pricelist_id': self.partner_id.property_product_pricelist and self.partner_id.property_product_pricelist.id or False,
+            'payment_term_id': self.partner_id.property_payment_term_id and self.partner_id.property_payment_term_id.id or False,
+            'partner_invoice_id': addr['invoice'],
+            'partner_shipping_id': addr['delivery'],
+        }
+        user_id = partner_user.id
+        if not self.env.context.get('not_self_saleperson'):
+            user_id = user_id or self.env.uid
+        if user_id and self.user_id.id != user_id:
+            values['user_id'] = user_id
+        if self.env['ir.config_parameter'].sudo().get_param('account.use_invoice_terms') and self.env.company.invoice_terms:
+            values['note'] = self.with_context(lang=self.partner_id.lang).env.company.invoice_terms
+        self.update(values)
+
     @api.depends('sale_api_line_ids.price_subtotal')
     def _amount_all(self):
         for sale in self:
@@ -212,15 +202,15 @@ class SaleApi(models.Model):
                 elif self.server_id.sale_flow == 'picking' and self.type_ticket != 'command':
                     _logger.info('picking:' + self.name)
                     self.action_picking()
-#             elif self.api_server_id.sale_flow == 'draft_invoice' and self.api_server_id.state == 'open':
-#                 _logger.info('draft_invoice:' + self.name)
-#                 self.action_invoice()
-#             elif self.api_server_id.sale_flow == 'invoice' and self.api_server_id.state == 'open':
-#                 _logger.info('invoice:' + self.name)
-#                 self.action_invoice_published()
-#             elif self.api_server_id.sale_flow == 'payment' and self.api_server_id.state == 'open':
-#                 _logger.info('payment:' + self.name)
-#                 self.action_payment()
+                elif self.server_id.sale_flow == 'draft_invoice' and self.type_ticket != 'command':
+                    _logger.info('draft_invoice:' + self.name)
+                    self.action_invoice()
+                elif self.server_id.sale_flow == 'invoice' and self.type_ticket != 'command':
+                    _logger.info('invoice:' + self.name)
+                    self.action_invoice_published()
+                # elif self.server_id.sale_flow == 'payment' and self.type_ticket != 'command':
+                #     _logger.info('payment:' + self.name)
+                #     self.action_payment()
             self.state = 'done'
         except Exception as exp:
             self.state = 'error'
@@ -250,6 +240,7 @@ class SaleApi(models.Model):
                         'currency_id': self.currency_id.id,
                     }
                     order_lines.append((0, 0, line_vals))
+            analytic_id = self.analytic_account_id
             order_vals = {
                 'partner_id': record.partner_id.id,
                 'sale_api_origin': record.id,
@@ -259,6 +250,7 @@ class SaleApi(models.Model):
                 'pricelist_id': record.partner_id.property_product_pricelist.id,
                 'currency_id': self.currency_id.id,
                 'user_id': self.user_id.id,
+                'analytic_account_id': analytic_id.id if analytic_id else False,
                 'note': self.sale_notes
             }
             record.sale_order = order_obj.create(order_vals)
@@ -281,143 +273,75 @@ class SaleApi(models.Model):
             picking.button_validate()
         self.picking_id = self.sale_order.picking_ids.id
         self.picking_id.write({'user_id': self.user_id.id, 'note': self.picking_notes})
-#
-#     def action_invoice_sale(self):
-#         invoice_obj = self.env['account.move']
-#         self.action_picking()
-#         vals = self._prepare_invoice_sale()
-#         self.invoice_id = invoice_obj.create(vals)
-#         if self.api_server_id.send_invoice:
-#             self.action_send_mail(self.invoice_id, 'invoice')
-#
-#     def _prepare_invoice_sale(self):
-#         self.ensure_one()
-#         journal_id = self.env['account.journal'].search([('type', '=', 'sale')], limit=1)
-#         vals = {
-#             'move_type': 'out_invoice',
-#             'invoice_origin': self.sale_order.name,
-#             'partner_id': self.sale_order.partner_id.id,
-#             'partner_shipping_id': self.sale_order.partner_shipping_id.id,
-#             'fiscal_position_id': self.sale_order.partner_id.property_account_position_id and self.sale_order.partner_id.property_account_position_id.id or False,
-#             'company_id': self.company_id.id,
-#             'invoice_user_id': self.user_id.id,
-#             'journal_id': journal_id.id,
-#             'currency_id': self.currency_id.id,
-#             'team_id': self.sale_order.team_id.id,
-#             'invoice_line_ids': [],
-#             'narration': self.invoice_notes
-#         }
-#         for line in self.sale_order.order_line:
-#             fpos = vals['fiscal_position_id']
-#             type = 'out_invoice'
-#             account = False
-#             accounts = line.product_id.product_tmpl_id.get_product_accounts(fpos)
-#             account = accounts['income']
-#
-#             vals['invoice_line_ids'].append(
-#                 (0, 0,
-#                     {'product_id': line.product_id.id,
-#                      'quantity': line.product_uom_qty,
-#                      #'analytic_account_id': line.contract_line_id.analytic_id.id,
-#                      'price_unit': line.price_unit,
-#                      'account_id': account.id,
-#                      'company_id': self.company_id.id,
-#                      'name': line.product_id.partner_ref,
-#                      'product_uom_id': line.product_uom and line.product_uom.id or line.product_id.uom_id.id,
-#                      'sale_line_ids': [(6, 0, [line.id])],
-#                      'tax_ids': line.tax_id,
-#                      #'analytic_tag_ids': line.analytic_tag_ids
-#                      }))
-#         return vals
-#
-#     def action_invoice_published(self):
-#         self.action_invoice_sale()
-#         self.invoice_id.action_post()
-#
-#     def action_payment(self):
-#         self.action_invoice_published()
-#         now = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
-#         payment_method = self.journal_id.inbound_payment_method_ids
-#         vals = {
-#             'partner_id': self.invoice_id.partner_id.id,
-#             'name': 'CUST' + self.invoice_id.name,
-#             'payment_type': 'inbound',
-#             'amount': self.invoice_id.amount_total,
-#             'date': now,
-#             'partner_type': 'customer',
-#             'ref': self.invoice_id.name,
-#             'journal_id': self.journal_id.id,
-#             'payment_method_id': payment_method.id,
-#             'ref': self.payment_notes
-#         }
-#         self.payment_id = payment = self.env['account.payment'].create(vals)
-#         payment.action_post()
-#         for line in payment.line_ids:
-#             if line.credit > 0:
-#                 line_id = line.id
-#         try:
-#             self.invoice_id.js_assign_outstanding_line(line_id)
-#         except:
-#             pass
 
-#     def action_execute_cron(self):
-#         _logger.info(':::::::: Rectificar Done sin Sale Order :::::::::::::::::')
-#         periodo = 7
-#         fecha_finish = date.today() - timedelta(days=periodo)
-#         fecha_finish = str(fecha_finish)
-#         sale_erros_ids = self.env['sale.api'].search([('state', '=', 'done'), ('sale_order', '=', False), ('date_order', '>=', fecha_finish)])
-#         if sale_erros_ids:
-#             for sale_error in sale_erros_ids:
-#                 sale_error.state = 'draft'
-#         else:
-#             _logger.info(':::::::: Sin Errores :::::::::::::::::')
-#         _logger.info(':::::::: End Rectificar Done sin Sale Order :::::::::::::::::')
-#         _logger.info(':::::::: Begin Action Execute Cron SALE API :::::::::::::::::')
-#         sale_apis = self.env['sale.api'].search([('state', '=', 'ready'), ('date_order', '>=', fecha_finish)])
-#         for sale_api in sale_apis:
-#                 sale_api.execute_sale_api()
-#         _logger.info(':::::::: End Action Execute Cron SALE API :::::::::::::::::')
-#
-#     def action_fix(self):
-#         for record in self:
-#             for line in record.sale_api_line_ids:
-#                 if line.product_id.product_tmpl_id.default_code == '00000':
-#                     if record.api_server_id.search_product_by == 'id':
-#                         product = self.env['product.product'].search([('product_api_id.api_server_id', '=', record.api_server_id.id),
-#                                                                       ('product_api_id.product_api_id','=', line.code)])
-#                         qty = line.product_uom_qty
-#                         if product:
-#                             line.write({'product_id': product.id,
-#                                         'product_uom_qty': qty,
-#                                         'name': product.name,
-#                                         'state': 'ready',
-#                                         'tax_id': [(6, 0, product.product_tmpl_id.taxes_id.ids)]})
-#                         else:
-#                             line.write({'state': 'error'})
-#
-#                     else:
-#                         if line.code:
-#                             product = self.env['product.product'].search(
-#                                 [('default_code', '=', line.code)])
-#                             qty = line.product_uom_qty
-#                             if product:
-#                                 line.write({'product_id': product.id,
-#                                             'product_uom_qty': qty,
-#                                             'name': product.name,
-#                                             'state': 'ready',
-#                                             'tax_id': [(6, 0, product.product_tmpl_id.taxes_id.ids)]})
-#                             else:
-#                                 line.write({'state': 'error'})
-#                         else:
-#                             line.write({'state': 'error'})
-#
-#             error_found = False
-#             for line in record.sale_api_line_ids:
-#                 if line.state == 'error':
-#                     error_found = True
-#                     break
-#
-#             if not error_found:
-#                 record.state = 'ready'
-#                 record.execute_sale_api()
-#
+    def action_invoice(self):
+        invoice_obj = self.env['account.move']
+        self.action_picking()
+        vals = self._prepare_invoice_sale()
+        self.invoice_id = invoice_obj.create(vals)
+
+    def _prepare_invoice_sale(self):
+        self.ensure_one()
+        journal_id = self.env['account.journal'].search([('type', '=', 'sale')], limit=1)
+        vals = {
+            'move_type': 'out_invoice',
+            'invoice_origin': self.sale_order.name,
+            'partner_id': self.sale_order.partner_id.id,
+            'partner_shipping_id': self.sale_order.partner_shipping_id.id,
+            'fiscal_position_id': self.sale_order.partner_id.property_account_position_id and self.sale_order.partner_id.property_account_position_id.id or False,
+            'company_id': self.company_id.id,
+            'invoice_user_id': self.user_id.id,
+            'journal_id': journal_id.id,
+            'currency_id': self.currency_id.id,
+            'team_id': self.sale_order.team_id.id,
+            'invoice_line_ids': [],
+            'narration': self.invoice_notes
+        }
+        for line in self.sale_order.order_line:
+            fpos = vals['fiscal_position_id']
+            account = False
+            accounts = line.product_id.product_tmpl_id.get_product_accounts(fpos)
+            account = accounts['income']
+            vals['invoice_line_ids'].append((0, 0,
+                                             {'product_id': line.product_id.id,
+                                              'quantity': line.product_uom_qty,
+                                              'analytic_account_id': self.analytic_account_id.id if self.analytic_account_id else False,
+                                              'price_unit': line.price_unit,
+                                              'account_id': account.id,
+                                              'company_id': self.company_id.id,
+                                              'name': line.product_id.partner_ref,
+                                              'product_uom_id': line.product_uom and line.product_uom.id or line.product_id.uom_id.id,
+                                              'sale_line_ids': [(6, 0, [line.id])],
+                                              'tax_ids': line.tax_id,
+                                              }))
+        return vals
+
+    def action_invoice_published(self):
+        self.action_invoice()
+        self.invoice_id.action_post()
+
+    # def action_payment(self):
+    #     self.action_invoice_published()
+    #     now = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
+    #     payment_method = self.journal_id.inbound_payment_method_ids
+    #     vals = {
+    #         'partner_id': self.invoice_id.partner_id.id,
+    #         'name': 'CUST' + self.invoice_id.name,
+    #         'payment_type': 'inbound',
+    #         'amount': self.invoice_id.amount_total,
+    #         'date': now,
+    #         'partner_type': 'customer',
+    #         'ref': self.invoice_id.name,
+    #         'journal_id': self.journal_id.id,
+    #         'payment_method_id': payment_method.id,
+    #         'ref': self.payment_notes
+    #     }
+    #     self.payment_id = payment = self.env['account.payment'].create(vals)
+    #     payment.action_post()
+    #     for line in payment.line_ids:
+    #         if line.credit > 0:
+    #             line_id = line.id
+    #     try:
+    #         self.invoice_id.js_assign_outstanding_line(line_id)
+    #     except:
+    #         pass
