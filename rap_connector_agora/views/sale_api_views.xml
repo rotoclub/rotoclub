@@ -12,7 +12,7 @@
                     <field name="user_id"/>
                     <field name="company_id"/>
                     <field name="origin"/>
-                    <field name="agora_api_id"/>
+                    <field name="server_id"/>
                     <field name="amount_untaxed" sum="Total Tax Excluded" widget="monetary" />
                     <field name="amount_tax" sum="Tax Total" widget="monetary" />
                     <field name="amount_total" sum="Total Tax Included" widget="monetary"/>
@@ -33,7 +33,7 @@
                     <field name="user_id"/>
                     <field name="company_id"/>
                     <field name="origin"/>
-                    <field name="agora_api_id"/>
+                    <field name="server_id"/>
                 </search>
             </field>
         </record>
@@ -62,6 +62,7 @@
                             <field name="partner_invoice_id" context="{'default_type':'invoice'}" domain="[('type','=','invoice')]" options="{'no_open':True,'no_create': True}"/>
                             <field name="partner_shipping_id"  context="{'default_type':'delivery'}" domain="[('type','=','delivery')]" options="{'no_open':True,'no_create': True}"/>
                             <field name="origin" attrs="{'readonly': [('state', 'not in' , ['draft','ready'])]}"/>
+                            <field name="type_ticket" attrs="{'readonly': [('state', 'not in' , ['draft','ready'])]}"/>
                             <field name="internal_note"/>
                         </group>
                         <group name="order_details" >
@@ -73,7 +74,7 @@
                             </div>
                             <field name="currency_id" invisible="1"/>
                             <field name="payment_term_id" options="{'no_open':True,'no_create': True}" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                            <field name="agora_api_id" attrs="{'readonly': [('state', '!=', 'draft')]}" options="{'no_open':True,'no_create': True}"/>
+                            <field name="server_id" attrs="{'readonly': [('state', '!=', 'draft')]}" options="{'no_open':True,'no_create': True}"/>
                             <field name="journal_id" attrs="{'readonly': [('state', '!=', 'draft')]}" domain="[('type','in',('bank','cash')),('company_id','=',company_id)]" options="{'no_open': True,'no_create': True, 'no_create_edit':True}"/>
                         </group>
                     </group>

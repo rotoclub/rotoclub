@@ -75,8 +75,7 @@ class SaleApi(models.Model):
     _order = 'id desc'
 
     def _default_journal_id(self):
-        if self.env['account.journal'].search([('type', 'in', ['bank', 'cash'])]):
-            return self.env['account.journal'].search([('type', 'in', ['bank', 'cash'])])[0]
+        return self.env['account.journal'].search([('type', 'in', ['bank', 'cash'])], limit=1)
 
     @api.model
     def _get_default_team(self):
@@ -91,16 +90,20 @@ class SaleApi(models.Model):
         ('cancelled', 'Cancelled'),
         ('error', 'Error'),
     ], string='Status', readonly=True, copy=False, index=True, default='draft', tracking=1)
+    type_ticket = fields.Selection([
+        ('command', 'Command'),
+        ('ticket', 'Ticket'),
+    ], string='Type ticket', copy=False, index=True, default='ticket', tracking=1)
     date_order = fields.Datetime('Order Date', required=True, readonly=True, index=True, states={'draft': [('readonly', False)], 'ready': [('readonly', False)]}, copy=False, default=fields.Datetime.now, help="Creation date of draft/sent orders,\nConfirmation date of confirmed orders.", tracking=1)
     create_date = fields.Datetime('Creation Date', readonly=True, index=True)
     currency_id = fields.Many2one("res.currency", readonly=True, required=True, default=lambda self: self.env.company.currency_id.id)
-    user_id = fields.Many2one('res.users', related='agora_api_id.user_id', string='Salesperson')
+    user_id = fields.Many2one('res.users', related='server_id.user_id', string='Salesperson')
     partner_id = fields.Many2one('res.partner', 'Customer', readonly=True, states={'draft': [('readonly', False)], 'ready': [('readonly', False)]}, required=True, change_default=True, index=True, tracking=1)
     partner_invoice_id = fields.Many2one('res.partner', 'Invoice Address', readonly=True, required=True, states={'draft': [('readonly', False)], 'ready': [('readonly', False)], 'done': [('readonly', False)]})
     partner_shipping_id = fields.Many2one('res.partner', 'Delivery Address', readonly=True, required=True, states={'draft': [('readonly', False)], 'ready': [('readonly', False)], 'done': [('readonly', False)]})
     pricelist_id = fields.Many2one('product.pricelist', 'Pricelist', check_company=True, required=True, readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]}, domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]")
     payment_term_id = fields.Many2one('account.payment.term', 'Payment Terms', check_company=True, domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]")
-    agora_api_id = fields.Many2one('agora.api', 'Server API', required=True, tracking=1)
+    server_id = fields.Many2one('server.config', 'Server API', required=True, tracking=1)
     company_id = fields.Many2one('res.company', 'Company', required=True, index=True, default=lambda self: self.env.company)
     amount_untaxed = fields.Monetary(string='Untaxed Amount', store=True, readonly=True, compute='_amount_all', tracking=1)
     amount_tax = fields.Monetary(string='Taxes', store=True, readonly=True, compute='_amount_all', tracking=1)
@@ -114,7 +117,7 @@ class SaleApi(models.Model):
     journal_id = fields.Many2one('account.journal', string='Journal', default=_default_journal_id)
     internal_note = fields.Char("Int. Note")
     team_id = fields.Many2one('crm.team', 'Sales Team', ondelete="set null", tracking=True, change_default=True, default=_get_default_team, check_company=True, domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]")
-    analytic_account_id = fields.Many2one('account.analytic.account', related='agora_api_id.analytic_account_id', string='Analytic Account', copy=False, check_company=True, help="The analytic account related to a sales order.")
+    analytic_account_id = fields.Many2one('account.analytic.account', related='server_id.analytic_account_id', string='Analytic Account', copy=False, check_company=True, help="The analytic account related to a sales order.")
     general_notes = fields.Text(string='General Notes')
     sale_notes = fields.Text(string='Sale Notes')
     picking_notes = fields.Text(string='Picking Notes')
@@ -164,18 +167,18 @@ class SaleApi(models.Model):
 #             values['note'] = self.with_context(lang=self.partner_id.lang).env.company.invoice_terms
 #         self.update(values)
 #
-#     @api.depends('sale_api_line_ids.price_subtotal')
-#     def _amount_all(self):
-#         for sale in self:
-#             amount_untaxed = amount_tax = 0.0
-#             for line in sale.sale_api_line_ids:
-#                 amount_untaxed += line.price_subtotal
-#                 amount_tax += line.price_tax
-#             sale.update({
-#                 'amount_untaxed': amount_untaxed,
-#                 'amount_tax': amount_tax,
-#                 'amount_total': amount_untaxed + amount_tax,
-#             })
+    @api.depends('sale_api_line_ids.price_subtotal')
+    def _amount_all(self):
+        for sale in self:
+            amount_untaxed = amount_tax = 0.0
+            for line in sale.sale_api_line_ids:
+                amount_untaxed += line.price_subtotal
+                amount_tax += line.price_tax
+            sale.update({
+                'amount_untaxed': amount_untaxed,
+                'amount_tax': amount_tax,
+                'amount_total': amount_untaxed + amount_tax,
+            })
 
     def action_ready(self):
         for rec in self:
@@ -199,16 +202,16 @@ class SaleApi(models.Model):
     def execute_sale_api(self):
         _logger.info('Begin: execute_sale_api')
         try:
-            if self.agora_api_id.state == 'open':
-                if self.agora_api_id.sale_flow == 'quotation':
+            if self.server_id.state == 'open':
+                if self.server_id.sale_flow == 'quotation':
                     _logger.info('quotation:' + self.name)
                     self.action_quotation_sale()
-                elif self.agora_api_id.sale_flow == 'confirmed':
+                elif self.server_id.sale_flow == 'confirmed' and self.type_ticket != 'command':
                     _logger.info('confirmed:' + self.name)
                     self.action_confirmed_sale()
-#             elif self.api_server_id.sale_flow == 'picking':
-#                 _logger.info('picking:' + self.name)
-#                 self.action_picking()
+                elif self.server_id.sale_flow == 'picking' and self.type_ticket != 'command':
+                    _logger.info('picking:' + self.name)
+                    self.action_picking()
 #             elif self.api_server_id.sale_flow == 'draft_invoice' and self.api_server_id.state == 'open':
 #                 _logger.info('draft_invoice:' + self.name)
 #                 self.action_invoice()
@@ -267,18 +270,17 @@ class SaleApi(models.Model):
         self.action_quotation_sale()
         self.sale_order.action_confirm()
 
-#     def action_picking(self):
-#         self.action_confirmed_sale()
-#         for picking in self.sale_order.picking_ids:
-#             picking.action_confirm()
-#             picking.action_assign()
-#             picking._action_done()
-#             for line in picking.move_ids_without_package:
-#                 line.quantity_done = line.product_uom_qty
-#             picking.button_validate()
-#         self.picking_id = self.sale_order.picking_ids.id
-#         self.picking_id.write({'user_id': self.user_id.id,
-#                                'note': self.picking_notes})
+    def action_picking(self):
+        self.action_confirmed_sale()
+        for picking in self.sale_order.picking_ids:
+            picking.action_confirm()
+            picking.action_assign()
+            picking._action_done()
+            for line in picking.move_ids_without_package:
+                line.quantity_done = line.product_uom_qty
+            picking.button_validate()
+        self.picking_id = self.sale_order.picking_ids.id
+        self.picking_id.write({'user_id': self.user_id.id, 'note': self.picking_notes})
 #
 #     def action_invoice_sale(self):
 #         invoice_obj = self.env['account.move']

@@ -1,85 +1,11 @@
 <?xml version="1.0"?>
 <odoo>
-    <!-- Wizard View Form date.eggin.wizard -->
-<!--    <record model="ir.ui.view" id="date_eggin_wizard_form">-->
-<!--        <field name="name">Date Eggin Wizard</field>-->
-<!--        <field name="model">date.eggin.wizard</field>-->
-<!--        <field name="arch" type="xml">-->
-<!--            <form>-->
-<!--                <h4>The Eggin API allows queries daily and for small date ranges (4 days between one date and another) at most.</h4>-->
-<!--                <group>-->
-<!--                    <group>-->
-<!--                        <field name="type_date"/>-->
-<!--                    </group>-->
-<!--                    <group>-->
-<!--                    </group>-->
-<!--                    <group>-->
-<!--                        <field name="start_date" attrs="{'invisible': [('type_date', '!=', 'dates')], 'required': [('type_date', '=', 'dates')]}"/>-->
-<!--                    </group>-->
-<!--                    <group>-->
-<!--                        <field name="end_date" attrs="{'invisible': [('type_date', '!=', 'dates')], 'required': [('type_date', '=', 'dates')]}"/>-->
-<!--                    </group>-->
-<!--                </group>-->
-<!--                <footer>-->
-<!--                    <button type="object" name="action_create_records" string="Create" class="oe_highlight"/>-->
-<!--                    <button special="cancel" string="Cancel"/>-->
-<!--                </footer>-->
-<!--            </form>-->
-<!--        </field>-->
-<!--    </record>-->
-
-    <!-- View Form cross.employee -->
-<!--    <record model="ir.ui.view" id="cross_employee_form">-->
-<!--        <field name="name">cross.employee.form</field>-->
-<!--        <field name="model">cross.employee</field>-->
-<!--        <field name="arch" type="xml">-->
-<!--            <form string="Cross Employee">-->
-<!--                <sheet>-->
-<!--                    <group>-->
-<!--                        <group name="firs_group">-->
-<!--                            <field name="name"/>-->
-<!--                            <field name="employee_id"/>-->
-<!--                        </group>-->
-<!--                        <group name="second_group">-->
-<!--&lt;!&ndash;                            <field name="society"/>&ndash;&gt;-->
-<!--                            <field name="company_id"/>-->
-<!--                        </group>-->
-<!--                    </group>-->
-<!--                </sheet>-->
-<!--            </form>-->
-<!--        </field>-->
-<!--    </record>-->
-
-    <!-- View Form eggin.log -->
-<!--    <record model="ir.ui.view" id="eggin_log_form">-->
-<!--        <field name="name">eggin.log.form</field>-->
-<!--        <field name="model">eggin.log</field>-->
-<!--        <field name="arch" type="xml">-->
-<!--            <form string="Eggin log">-->
-<!--                <sheet>-->
-<!--                    <group>-->
-<!--                        <group name="firs_group">-->
-<!--                            <field name="name" readonly="True"/>-->
-<!--                            <field name="create_date" readonly="True"/>-->
-<!--                            <field name="count_record" readonly="True"/>-->
-<!--                        </group>-->
-<!--                        <group name="second_group">-->
-<!--                            <field name="eggin_id" readonly="True"/>-->
-<!--                            <field name="company_id"/>-->
-<!--                        </group>-->
-<!--                    </group>-->
-<!--                    <field name="content_dict" readonly="True"/>-->
-<!--                </sheet>-->
-<!--            </form>-->
-<!--        </field>-->
-<!--    </record>-->
-
-    <!-- View Form agora.server -->
-    <record model="ir.ui.view" id="agora_server_form">
-        <field name="name">agora.server.form</field>
-        <field name="model">agora.server</field>
+    <!-- View Form api.connection -->
+    <record model="ir.ui.view" id="api_connection_form">
+        <field name="name">api.connection.form</field>
+        <field name="model">api.connection</field>
         <field name="arch" type="xml">
-            <form string="Agora server">
+            <form string="API Connection">
                 <header>
                     <button name="test_connection" string="Connect server" type="object" icon="fa-television" class="btn-primary" attrs="{'invisible':[('state','=','connect')]}"/>
                     <button name="test_disconnection" string="disconnected" type="object" attrs="{'invisible':[('state','!=','connect')]}"/>
@@ -104,64 +30,58 @@
                             <field name="limit_origin"/>
                             <field name="default_product_id"/>
                             <field name="company_id" required="True" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="last_connection" readonly="True"/>
                         </group>
                         <group name="second_group" string="API Data">
-<!--                            <field name="f_checking"/>-->
-<!--                            <field name="checking"/>-->
-<!--                            <field name="checkout"/>-->
+                            <field name="url_server"/>
+                            <field name="server_api_key"/>
                         </group>
                     </group>
-<!--                    <notebook>-->
-<!--                        <page name="account" string="Employees">-->
-<!--                            <field name="employee_ids" context="{'default_eggin_id': id}">-->
-<!--                                <tree editable="bottom">-->
-<!--                                    <field name="name"/>-->
-<!--                                    <field name="employee_id" options="{'no_create': True, 'no_open': True}"/>-->
-<!--&lt;!&ndash;                                    <field name="society"/>&ndash;&gt;-->
-<!--                                    <field name="company_id" options="{'no_create': True, 'no_open': True}"/>-->
-<!--                                    <button name="action_read_cross" type="object" string="View" class="float-right btn-secondary"/>-->
-<!--                                </tree>-->
-<!--                            </field>-->
-<!--                        </page>-->
-<!--                    </notebook>-->
                 </sheet>
             </form>
         </field>
     </record>
 
-    <!-- View Tree agora.server -->
-    <record model="ir.ui.view" id="agora_server_tree">
-        <field name="name">agora.server.tree</field>
-        <field name="model">agora.server</field>
+    <!-- View Tree api.connection -->
+    <record model="ir.ui.view" id="api_connection_tree">
+        <field name="name">api.connection.tree</field>
+        <field name="model">api.connection</field>
         <field name="arch" type="xml">
-            <tree string="Agora server" decoration-info="state == 'connect'" decoration-muted = "state in ['no_connect']" sample="1">
+            <tree string="API Connection" decoration-info="state == 'connect'" decoration-muted = "state in ['no_connect']" sample="1">
                 <field name="name"/>
+                <field name="url_server"/>
                 <field name="company_id"/>
+                <field name="last_connection" readonly="True"/>
                 <field name="state" decoration-info="state == 'connect'" decoration-muted="state == 'no_connect'" widget="badge"/>
             </tree>
         </field>
     </record>
 
-    <record id="action_agora_setting" model="ir.actions.act_window">
-        <field name="name">Agora Server</field>
-        <field name="res_model">agora.server</field>
+    <record id="action_api_connection" model="ir.actions.act_window">
+        <field name="name">API Connection</field>
+        <field name="res_model">api.connection</field>
         <field name="view_mode">tree,form</field>
         <field name="view_ids"
                eval="[(5, 0, 0),
-                      (0, 0, {'view_mode': 'tree', 'view_id': ref('agora_server_tree')}),
-                      (0, 0, {'view_mode': 'form', 'view_id': ref('agora_server_form')})]"/>
+                      (0, 0, {'view_mode': 'tree', 'view_id': ref('api_connection_tree')}),
+                      (0, 0, {'view_mode': 'form', 'view_id': ref('api_connection_form')})]"/>
     </record>
 
-    <!-- View Form agora.api -->
-    <record id="agora_api_form" model="ir.ui.view">
-        <field name="name">agora.api.form</field>
-        <field name="model">agora.api</field>
+    <!-- View Form server.config -->
+    <record id="server_config_form" model="ir.ui.view">
+        <field name="name">server.config.form</field>
+        <field name="model">server.config</field>
         <field name="arch" type="xml">
             <form>
                 <header>
                     <field name="state" widget="statusbar" statusbar_visible="open,closed" required="True"/>
                 </header>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object" class="oe_stat_button" icon="fa-cog" name="action_view_api">
+                            <field name="sale_api_count" widget="statinfo" string="Sale Api"/>
+                        </button>
+                    </div>
                     <div class="oe_title">
                         <h1 class="o_row"><field name="name" class="field_name" readonly="True"/></h1>
                     </div>
@@ -171,7 +91,6 @@
                             <field name="analytic_account_id" context="{'default_name':title}" force_save="1" options="{'no_create': True}" required="True"/>
                             <field name="sale_flow" required="1"/>
                             <field name="agora_id" required="1" options="{'no_create': True, 'no_open': True}"/>
-
                         </group>
                         <group name="second_group">
                             <field name="user_id" required="1" options="{'no_create': True, 'no_open': True}"/>
@@ -184,10 +103,10 @@
         </field>
     </record>
 
-    <!-- View tree agora.api -->
-    <record id="agora_api_tree" model="ir.ui.view">
-        <field name="name">agora.api.tree</field>
-        <field name="model">agora.api</field>
+    <!-- View tree server.config -->
+    <record id="server_config_tree" model="ir.ui.view">
+        <field name="name">server.config.tree</field>
+        <field name="model">server.config</field>
         <field name="arch" type="xml">
             <tree sample="1">
                 <field name="name"/>
@@ -201,19 +120,16 @@
         </field>
     </record>
 
-    <record id="action_agora_api" model="ir.actions.act_window">
-        <field name="name">Server API</field>
-        <field name="res_model">agora.api</field>
+    <record id="action_server_config" model="ir.actions.act_window">
+        <field name="name">Server Config</field>
+        <field name="res_model">server.config</field>
         <field name="view_mode">tree,form</field>
     </record>
 
     <menuitem id='rap_connector_menu_principal' name='Agora' sequence="10" web_icon="rap_connector_agora,static/description/icon.png">
-        <menuitem name="Server API" id="agora_connector_menu_item_first" sequence="2" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group">
-            <menuitem name="Server API" id="agora_connector_menu_item0" action="action_agora_api" sequence="1" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group"/>
-        </menuitem>
-        <menuitem name="Servers" id="agora_connector_menu_item_last" sequence="999" groups="rap_connector_agora.agora_manager_group">
-<!--            <menuitem name="Server API" id="agora_connector_menu_item1" action="action_agora_api" sequence="990" groups="rap_connector_agora.agora_manager_group"/>-->
-            <menuitem name="Agora Server" id="agora_connector_menu_item2" action="action_agora_setting" sequence="999" groups="rap_connector_agora.agora_manager_group"/>
+        <menuitem name="Settings" id="agora_connector_menu_item_last" sequence="999" groups="rap_connector_agora.agora_manager_group">
+            <menuitem name="Server Config" id="agora_connector_menu_item0" action="action_server_config" sequence="1" groups="rap_connector_agora.agora_manager_group"/>
+            <menuitem name="API Connection" id="agora_connector_menu_item2" action="action_api_connection" sequence="999" groups="rap_connector_agora.agora_manager_group"/>
         </menuitem>
     </menuitem>
 </odoo>
