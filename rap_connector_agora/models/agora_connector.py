@@ -38,7 +38,7 @@ class ServerConfig(models.Model):
     )
     company_id = fields.Many2one(
         comodel_name='res.company',
-        atring='Company',
+        string='Company',
         index=True,
         default=lambda self: self.env.company
     )
