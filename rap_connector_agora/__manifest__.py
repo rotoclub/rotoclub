@@ -12,11 +12,10 @@
     'website': "https://www.rapsodoo.com/es/",
     'depends': [
         'base',
-        'sale_management',
-        'sales_team',
         'mail',
-        'sales_team',
         'sale',
+        'sales_team',
+        'sale_management',
         'stock',
         'account',
         'account_accountant',
