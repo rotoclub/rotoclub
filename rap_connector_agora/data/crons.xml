@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ir_cron_first_sinc_charge_masters_in_odoo" model="ir.cron">
+        <field name="name">Charge Master from Agora</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model_id" ref="model_api_connection"/>
+        <field name="code">model._agora_sync()</field>
+        <field name="state">code</field>
+    </record>
+</odoo>
