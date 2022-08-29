@@ -1,0 +1,87 @@
+<odoo>
+    <data>
+        <!-- Product template form view Inherit -->
+        <record id="product_template_bimani_form_view" model="ir.ui.view">
+            <field name="name">product.template.product.bimani.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='detailed_type']" position="before">
+                    <field name="parent_id"/>
+                </xpath>
+                <xpath expr="//page[@name='invoicing']" position="after">
+                    <page name="agora_info" string="Agora Info">
+                        <group col="2">
+                            <group string="Product Info">
+                                <field name="agora_id" attrs="{'invisible':[('sale_format', '!=', 0)]}" readonly="1"/>
+                                <field name="sale_format" readonly="1" attrs="{'invisible':[('agora_id', '!=', 0)]}"/>
+                                <field name="taxes_id" widget="many2many_tags"/>
+                                <field name="preparation_id"/>
+                                <field name="preparation_order_id"/>
+                                <field name="categ_id" readonly="1"/>
+
+                            </group>
+                            <group string="Style">
+                                <field name="button_text"/>
+                                <field name="color" widget="color"/>
+                            </group>
+                        </group>
+                        <group col="2">
+                            <group>
+                                <field name="is_saleable_as_main"/>
+                                <field name="is_saleable_as_adding"/>
+                                <field name="is_sold_by_weight"/>
+                                <field name="ask_preparation_notes"/>
+                                <field name="ask_for_addings"/>
+                                <field name="print_zero"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <!--New Product template tree view to be used in Agora-->
+        <record id="product_template_rap_tree_view" model="ir.ui.view">
+            <field name="name">Product Template</field>
+            <field name="model">product.template</field>
+            <field name="arch" type="xml">
+                <tree decoration-success="sync_status=='new'"
+                      decoration-warning="sync_status == 'modifiyed'">
+                    <field name="name"/>
+                    <field name="default_code"/>
+                    <field name="categ_id"/>
+                    <field name="list_price"/>
+                    <field name="standard_price"/>
+                    <field name="qty_available"/>
+                    <field name="virtual_available"/>
+                    <field name="uom_id"/>
+                    <field name="sync_status"/>
+                </tree>
+            </field>
+        </record>
+
+        <!--New Product template Action to be used in Agora-->
+        <record id="action_product_to_agora" model="ir.actions.act_window">
+            <field name="name">Products</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.template</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids"
+               eval="[(5, 0, 0),
+                      (0, 0, {'view_mode': 'tree', 'view_id': ref('product_template_rap_tree_view')}),
+                      (0, 0, {'view_mode': 'form', 'view_id': ref('product.product_template_only_form_view')})]"/>
+            <field name="domain">[('sync_status', 'in', ['new', 'modifiyed'])]</field>
+        </record>
+
+        <record id="action_product_temp_sent_agora" model="ir.actions.server">
+            <field name="name">Sent to Agora</field>
+            <field name="groups_id" eval="[(4, ref('rap_connector_agora.agora_manager_group'))]"/>
+            <field name="model_id" ref="product.model_product_template"/>
+            <field name="binding_model_id" ref="product.model_product_template"/>
+            <field name="state">code</field>
+            <field name="code">action = records.action_sent_agora()</field>
+        </record>
+
+    </data>
+</odoo>

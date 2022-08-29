@@ -6,3 +6,9 @@ from . import sale_api
 from . import sale_order
 from . import models_inherits
 from . import sale_center
+from . import preparation_type
+from . import agora_tax
+from . import preparation_order
+from . import product_template_inherit
+
+

@@ -1,30 +1,40 @@
 <odoo>
     <data>
-
-        <!-- Account Move Tree inherit-->
-        <record id="view_product_template_roto_inherit" model="ir.ui.view">
-            <field name="name">product.template.roto_inherit</field>
-            <field name="model">product.template</field>
-            <field name="inherit_id" ref="product.product_template_only_form_view"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='company_id']" position="after">
-                    <field name="agora_id" readonly="1"/>
-                    <field name="color" widget="color"/>
-                </xpath>
-            </field>
-        </record>
-                <!-- Product Pricelist Form inherit-->
+        <!-- Product Pricelist Form inherit-->
         <record id="view_product_pricelist_inherit" model="ir.ui.view">
             <field name="name">product.pricelist.inherit</field>
             <field name="model">product.pricelist</field>
             <field name="inherit_id" ref="product.product_pricelist_view"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='company_id']" position="after">
-                    <field name="sale_center_id"/>
+                    <field name="agora_id" readonly="1"/>
                 </xpath>
             </field>
         </record>
 
+        <!-- Product Pricelist Tree inherit-->
+        <record id="view_product_pricelist_tree_inherit" model="ir.ui.view">
+            <field name="name">product.pricelist.tree.inherit</field>
+            <field name="model">product.pricelist</field>
+            <field name="inherit_id" ref="product.product_pricelist_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="delete">0</attribute>
+<!--                    <attribute name="decoration-success">sync_status=='new'</attribute>-->
+<!--                    <attribute name="decoration-warning">sync_status == 'modifiyed'</attribute>-->
+                </xpath>
+            </field>
+        </record>
+
+<!--        &lt;!&ndash;Action for Pricelist Model&ndash;&gt;-->
+<!--        <record id="product_pricelist_rap_inherit_action" model="ir.actions.act_window">-->
+<!--            <field name="name">Product Pricelist</field>-->
+<!--            <field name="res_model">product.pricelist</field>-->
+<!--            <field name="view_mode">tree,form</field>-->
+<!--            <field name="view_ids" eval="[(5, 0, 0),-->
+<!--                (0, 0, {'view_mode': 'tree', 'view_id': ref('sale_center_tree_view')}),-->
+<!--                (0, 0, {'view_mode': 'form', 'view_id': ref('sale_center_form_view')})]"/>-->
+<!--        </record>-->
 
     </data>
 </odoo>

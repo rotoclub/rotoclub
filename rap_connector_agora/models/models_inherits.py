@@ -4,18 +4,6 @@
 from odoo import models, fields, _
 
 
-class ProductTemplate(models.Model):
-    _inherit = 'product.template'
-
-    agora_id = fields.Integer(
-        string='Agora ID',
-        copy=False
-    )
-    color = fields.Char(
-        string='Color'
-    )
-
-
 class ProductCategory(models.Model):
     _inherit = 'product.category'
 
@@ -35,7 +23,21 @@ class ProductCategory(models.Model):
 class ProductPricelist(models.Model):
     _inherit = 'product.pricelist'
 
-    sale_center_id = fields.Many2one(
-        string='Sale Center',
-        comodel_name='sale.center'
+    agora_id = fields.Integer(
+        string='Agora ID',
+        copy=False
     )
+    sync_status = fields.Selection(
+        selection=[('done', 'Completed'),
+                   ('new', 'New'),
+                   ('modifiyed', 'Modifiyed'),
+                   ('error', 'Error')],
+        default='new'
+    )
+
+    def write(self, vals):
+        res = super(ProductPricelist, self).write(vals)
+        for rec in self:
+            if rec.sync_status != 'new' and (vals.get('discount_policy') or vals.get('name') or 'active' in vals):
+                rec.sync_status = 'modifiyed'
+        return res

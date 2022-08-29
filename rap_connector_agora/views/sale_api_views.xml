@@ -26,7 +26,7 @@
             <field name="name">sale.api.view.filter</field>
             <field name="model">sale.api</field>
             <field name="arch" type="xml">
-                <search string="Sale API">
+                <search string="Sale API" >
                     <field name="name"/>
                     <field name="date_order"/>
                     <field name="partner_id"/>
@@ -42,7 +42,7 @@
             <field name="name">sale.api.view.form</field>
             <field name="model">sale.api</field>
             <field name="arch" type="xml">
-              <form string="Sale API" class="o_sale_order" delete="0">
+              <form string="Products" class="o_sale_order" delete="0">
                 <header>
                     <button name="action_ready" type="object" string="Action Ready" class="oe_highlight" states="draft,error"/>
                     <button name="action_cancel" type="object" string="Action Cancel" class="btn-secondary" states="ready,done"/>
@@ -117,12 +117,22 @@
                                 </group>
                                 <group name="invoice" string="Invoices">
                                     <field name="fiscal_position_id" options="{'no_create': True}"/>
-                                    <field name="analytic_account_id" context="{'default_partner_id':partner_invoice_id, 'default_name':name}" attrs="{'readonly': [('state','=','done')]}" groups="analytic.group_analytic_accounting" force_save="1" options="{'no_create': True}"/>
+                                    <field name="analytic_account_id"
+                                           context="{'default_partner_id':partner_invoice_id, 'default_name':name}"
+                                           attrs="{'readonly': [('state','=','done')]}"
+                                           groups="analytic.group_analytic_accounting"
+                                           force_save="1" options="{'no_create': True}"/>
                                 </group>
                                 <group name="result" string="Results" attrs="{'invisible': [('state', '!=', 'done')]}">
-                                    <field name="picking_id" options="{'no_create': True}" attrs="{'readonly': [('state', '!=', 'draft')], 'invisible': [('picking_id', '=', False)]}"/>
-                                    <field name="invoice_id" options="{'no_create': True}" attrs="{'readonly': [('state', '!=', 'draft')], 'invisible': [('invoice_id', '=', False)]}"/>
-                                    <field name="payment_id" options="{'no_create': True}" attrs="{'readonly': [('state', '!=', 'draft')], 'invisible': [('payment_id', '=', False)]}"/>
+                                    <field name="picking_id"
+                                           options="{'no_create': True}"
+                                           attrs="{'readonly': [('state', '!=', 'draft')], 'invisible': [('picking_id', '=', False)]}"/>
+                                    <field name="invoice_id"
+                                           options="{'no_create': True}"
+                                           attrs="{'readonly': [('state', '!=', 'draft')], 'invisible': [('invoice_id', '=', False)]}"/>
+                                    <field name="payment_id"
+                                           options="{'no_create': True}"
+                                           attrs="{'readonly': [('state', '!=', 'draft')], 'invisible': [('payment_id', '=', False)]}"/>
                                 </group>
                             </group>
                         </page>
@@ -147,7 +157,7 @@
         </record>
 
         <record id="action_sale_api" model="ir.actions.act_window">
-            <field name="name">Sale API</field>
+            <field name="name">Products</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.api</field>
             <field name="view_mode">tree,form</field>
@@ -160,8 +170,18 @@
             </field>
         </record>
 
-        <menuitem name="Sale APIs" id="agora_connector_menu_sale_first" parent="rap_connector_agora.rap_connector_menu_principal" sequence="1" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group">
-            <menuitem name="Sale API" id="agora_connector_menu_sale_item0" action="action_sale_api" sequence="1" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group"/>
+        <menuitem name="Agora"
+                  id="agora_connector_menu_sale_first"
+                  parent="rap_connector_agora.rap_connector_menu_principal"
+                  sequence="1" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group">
+            <menuitem name="Products"
+                      id="agora_connector_menu_sale_item0"
+                      action="action_product_to_agora"
+                      sequence="15" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group"/>
+            <menuitem name="Sales"
+                      id="agora_connector_menu_sale_item1"
+                      action="action_sale_api"
+                      sequence="16" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group"/>
         </menuitem>
     </data>
 </odoo>

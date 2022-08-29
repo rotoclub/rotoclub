@@ -13,8 +13,7 @@ class SaleCenter(models.Model):
     )
     company_id = fields.Many2one(
         string='Company',
-        comodel_name='res.company',
-        check_company=True
+        comodel_name='res.company'
     )
     analytic_id = fields.Many2one(
         string='Analytic Account',
@@ -30,20 +29,62 @@ class SaleCenter(models.Model):
     color = fields.Char(
         string='Color'
     )
-    agora_id = fields.Char(
-        string='Agora ID'
+    agora_id = fields.Integer(
+        string='Agora ID',
+        copy=False
+    )
+    tax_included = fields.Boolean(
+        string='Tax Included'
+    )
+    location_ids = fields.One2many(
+        string='Sale Locations',
+        comodel_name='sale.location',
+        inverse_name='center_id',
+        ondelete='cascade'
+    )
+    sync_status = fields.Selection(
+        selection=[('done', 'Completed'),
+                   ('new', 'New'),
+                   ('modifiyed', 'Modifiyed'),
+                   ('error', 'Error')],
+        default='new'
+    )
+    pricelist_id = fields.Many2one(
+        string='Pricelist',
+        comodel_name='product.pricelist',
+        ondelete='cascade'
     )
 
-    @api.model
-    def create(self, vals):
-        res = super().create(vals)
-        pricelist_env = self.env['product.pricelist']
-        existing_list = pricelist_env.search([('sale_center_id', '=', res.id)])
-        if not existing_list:
-            # TODO: Generate the pricelist from the agora connector just to prevent pricelist deleted
-            pricelist_env.create({
-                'name': res.name,
-                'company_id': res.company_id.id,
-                'sale_center_id': res.id
-            })
-        return res
+    # @api.model
+    # def create(self, vals):
+    #     res = super().create(vals)
+    #     pricelist_env = self.env['product.pricelist']
+    #     existing_list = pricelist_env.search([('sale_center_id', '=', res.id)])
+    #     if not existing_list:
+    #         # TODO: Generate the pricelist from the agora connector just to prevent pricelist deleted
+    #         pricelist_env.create({
+    #             'name': res.name,
+    #             'company_id': res.company_id.id,
+    #             'sale_center_id': res.id
+    #         })
+    #     return res
+
+    def action_sent_agora(self):
+        self.env['api.connection'].verify_active_companies()
+
+        centers = self.search([('id', 'in', self.env.context.get('active_ids'))])
+        self.env['api.connection'].post_sale_center(centers)
+
+
+class SaleLocation(models.Model):
+    _name = 'sale.location'
+    _description = 'Locations for a Sale Center'
+
+    name = fields.Char(
+        string='Name'
+    )
+    center_id = fields.Many2one(
+        string='Sale Center',
+        comodel_name='sale.center'
+    )
+
