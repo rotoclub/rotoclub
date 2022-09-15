@@ -170,18 +170,5 @@
             </field>
         </record>
 
-        <menuitem name="Agora"
-                  id="agora_connector_menu_sale_first"
-                  parent="rap_connector_agora.rap_connector_menu_principal"
-                  sequence="1" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group">
-            <menuitem name="Products"
-                      id="agora_connector_menu_sale_item0"
-                      action="action_product_to_agora"
-                      sequence="15" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group"/>
-            <menuitem name="Sales"
-                      id="agora_connector_menu_sale_item1"
-                      action="action_sale_api"
-                      sequence="16" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group"/>
-        </menuitem>
     </data>
 </odoo>

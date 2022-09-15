@@ -11,8 +11,8 @@
                         <group>
                             <group>
                                 <field name="name"/>
-                                <field name="agora_id" readonly="1"/>
-                                <field name="account_tax_id"/>
+                                <field name="agora_id"/>
+                                <field name="account_tax_id" domain="[('company_id','=',company_id)]"/>
                                 <field name="charge_rate"/>
                                 <field name="company_id"/>
                             </group>
@@ -44,10 +44,5 @@
             <field name="view_mode">tree,form</field>
         </record>
 
-        <!--Menu Item Agora Tax in Agora-->
-        <menuitem id="agora_tax_menu"
-                  parent="agora_connector_menu_sale_first"
-                  action="agora_tax_action"
-                  sequence="20"/>
     </data>
 </odoo>

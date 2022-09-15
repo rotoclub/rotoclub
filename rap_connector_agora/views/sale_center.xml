@@ -33,14 +33,12 @@
             <field name="name">sale.center.tree.view</field>
             <field name="model">sale.center</field>
             <field name="arch" type="xml">
-                <tree string="Sale Center" decoration-success="sync_status=='new'"
-                      decoration-warning="sync_status == 'modifiyed'">
+                <tree string="Sale Center" create="0" delete="0" duplicate="0">
                     <field name="name"/>
                     <field name="analytic_id"/>
                     <field name="company_id"/>
                     <field name="agora_id"/>
                     <field name="tax_included" optional="hide"/>
-                    <field name="sync_status"/>
                 </tree>
             </field>
         </record>
@@ -55,32 +53,5 @@
                 (0, 0, {'view_mode': 'form', 'view_id': ref('sale_center_form_view')})]"/>
         </record>
 
-        <!--Action server to connect with Agora-->
-        <record id="action_sale_center_sent_agora" model="ir.actions.server">
-            <field name="name">Sent to Agora</field>
-            <field name="groups_id" eval="[(4, ref('rap_connector_agora.agora_manager_group'))]"/>
-            <field name="model_id" ref="model_sale_center"/>
-            <field name="binding_model_id" ref="model_sale_center"/>
-            <field name="state">code</field>
-            <field name="code">action = records.action_sent_agora()</field>
-        </record>
-
-        <!--Menu Item Sale Center in Accounting/Configuration/Analytic Accounting-->
-        <menuitem id="sale_center_menu"
-                  parent="account.menu_analytic_accounting"
-                  action="account_sale_center_action"
-                  sequence="20"/>
-
-        <!--Menu Item Sale Center in Agora-->
-        <menuitem id="sale_center_agora_menu"
-                  parent="agora_connector_menu_sale_first"
-                  action="account_sale_center_action"
-                  sequence="20"/>
-
-        <!--Menu Item Pricelist in Agora-->
-        <menuitem id="pricelist_agora_menu"
-                  parent="agora_connector_menu_sale_first"
-                  action="product.product_pricelist_action2"
-                  sequence="21"/>
     </data>
 </odoo>

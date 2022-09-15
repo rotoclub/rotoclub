@@ -30,14 +30,19 @@ class ProductPricelist(models.Model):
     sync_status = fields.Selection(
         selection=[('done', 'Completed'),
                    ('new', 'New'),
-                   ('modifiyed', 'Modifiyed'),
+                   ('modified', 'Modified'),
                    ('error', 'Error')],
         default='new'
+    )
+    sale_center_ids = fields.One2many(
+        string='Sale Center',
+        comodel_name='sale.center',
+        inverse_name='pricelist_id',
     )
 
     def write(self, vals):
         res = super(ProductPricelist, self).write(vals)
         for rec in self:
             if rec.sync_status != 'new' and (vals.get('discount_policy') or vals.get('name') or 'active' in vals):
-                rec.sync_status = 'modifiyed'
+                rec.sync_status = 'modified'
         return res

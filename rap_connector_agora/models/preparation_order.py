@@ -7,6 +7,7 @@ from odoo import models, fields, api, _
 class PreparationOrder(models.Model):
     _name = 'preparation.order'
     _description = 'Preparation Order'
+    _check_company_auto = True
 
     name = fields.Char(
         string='Name'

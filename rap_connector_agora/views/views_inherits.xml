@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='company_id']" position="after">
                     <field name="agora_id" readonly="1"/>
+                    <field name="sale_center_ids" widget="one2many"/>
                 </xpath>
             </field>
         </record>
@@ -20,8 +21,6 @@
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="attributes">
                     <attribute name="delete">0</attribute>
-<!--                    <attribute name="decoration-success">sync_status=='new'</attribute>-->
-<!--                    <attribute name="decoration-warning">sync_status == 'modifiyed'</attribute>-->
                 </xpath>
             </field>
         </record>

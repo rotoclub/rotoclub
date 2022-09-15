@@ -12,7 +12,7 @@
                             <group>
                                 <field name="name"/>
                                 <field name="company_id"/>
-                                <field name="agora_id" readonly="1"/>
+                                <field name="agora_id"/>
                             </group>
                         </group>
                     </sheet>
@@ -40,10 +40,5 @@
             <field name="view_mode">tree,form</field>
         </record>
 
-        <!--Menu Item Preparation type in Agora-->
-        <menuitem id="preparation_type_menu"
-                  parent="agora_connector_menu_sale_first"
-                  action="preparation_type_action"
-                  sequence="19"/>
     </data>
 </odoo>

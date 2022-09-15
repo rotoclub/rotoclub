@@ -11,7 +11,7 @@
                         <group>
                             <group>
                                 <field name="name"/>
-                                <field name="agora_id" readonly="1"/>
+                                <field name="agora_id"/>
                                 <field name="priority"/>
                                 <field name="company_id"/>
                             </group>
@@ -42,10 +42,5 @@
             <field name="view_mode">tree,form</field>
         </record>
 
-        <!--Menu Item Preparation Order in Agora-->
-        <menuitem id="preparation_order_menu"
-                  parent="agora_connector_menu_sale_first"
-                  action="preparation_order_action"
-                  sequence="18"/>
     </data>
 </odoo>

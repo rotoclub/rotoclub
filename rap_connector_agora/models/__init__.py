@@ -10,5 +10,8 @@ from . import preparation_type
 from . import agora_tax
 from . import preparation_order
 from . import product_template_inherit
+from . import product_pricelist_inherit
+from . import server_config
+
 
 

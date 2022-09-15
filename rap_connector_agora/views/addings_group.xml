@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <!-- Product Addings Form View-->
+        <record id="product_addings_form_view" model="ir.ui.view">
+            <field name="name">product.addings.form.view</field>
+            <field name="model">product.addings</field>
+            <field name="arch" type="xml">
+                <form string="Products Addings Groups">
+                    <sheet string="Product Addings">
+                        <group >
+                            <field name="name"/>
+                            <field name="company_id"/>
+                            <field name="product_addings_ids"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Product Addings Tree View-->
+        <record id="product_addings_tree_view" model="ir.ui.view">
+            <field name="name">product.addings.tree.view</field>
+            <field name="model">product.addings</field>
+            <field name="arch" type="xml">
+                <tree string="Product Addings Groups">
+                    <field name="name"/>
+                    <field name="company_id"/>
+                    <field name="product_addings_ids" />
+                </tree>
+            </field>
+        </record>
+
+        <!--Action for Addings Group Model-->
+        <record id="addings_group_action" model="ir.actions.act_window">
+            <field name="name">Product Addings Groups</field>
+            <field name="res_model">product.addings</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('product_addings_tree_view')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('product_addings_form_view')})]"/>
+        </record>
+
+    </data>
+</odoo>

@@ -134,10 +134,4 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id='rap_connector_menu_principal' name='Agora' sequence="10" web_icon="rap_connector_agora,static/description/icon.png">
-        <menuitem name="Settings" id="agora_connector_menu_item_last" sequence="999" groups="rap_connector_agora.agora_manager_group">
-            <menuitem name="Server Config" id="agora_connector_menu_item0" action="action_server_config" sequence="1" groups="rap_connector_agora.agora_manager_group"/>
-            <menuitem name="API Connection" id="agora_connector_menu_item2" action="action_api_connection" sequence="999" groups="rap_connector_agora.agora_manager_group"/>
-        </menuitem>
-    </menuitem>
 </odoo>
