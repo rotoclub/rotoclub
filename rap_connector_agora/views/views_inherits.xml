@@ -25,15 +25,5 @@
             </field>
         </record>
 
-<!--        &lt;!&ndash;Action for Pricelist Model&ndash;&gt;-->
-<!--        <record id="product_pricelist_rap_inherit_action" model="ir.actions.act_window">-->
-<!--            <field name="name">Product Pricelist</field>-->
-<!--            <field name="res_model">product.pricelist</field>-->
-<!--            <field name="view_mode">tree,form</field>-->
-<!--            <field name="view_ids" eval="[(5, 0, 0),-->
-<!--                (0, 0, {'view_mode': 'tree', 'view_id': ref('sale_center_tree_view')}),-->
-<!--                (0, 0, {'view_mode': 'form', 'view_id': ref('sale_center_form_view')})]"/>-->
-<!--        </record>-->
-
     </data>
 </odoo>

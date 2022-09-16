@@ -192,12 +192,12 @@ class ProductTemplate(models.Model):
     def fields_validation(self):
         is_first_charge = self.env.context.get('first_charge')
         for rec in self:
-            if rec.parent_id:
-                repeated = rec.product_formats_ids.filtered(lambda l: l.name == rec.name)
-                if len(repeated) > 1:
-                    raise ValidationError(_("Sorry!! Already exist a format with the same name."
-                                            " Duplicity are not allowed"))
             if not is_first_charge:
+                if rec.parent_id:
+                    repeated = rec.product_formats_ids.filtered(lambda l: l.name == rec.name)
+                    if len(repeated) > 1:
+                        raise ValidationError(_("Sorry!! Already exist a format with the same name."
+                                                " Duplicity are not allowed"))
                 if not rec.categ_id.agora_id:
                     raise ValidationError(_("Please verify the Family"))
                 if rec.parent_id and rec.ratio <= 0:
@@ -241,7 +241,7 @@ class ProductTemplate(models.Model):
             important changes in a product.
             Return: List of strings(field's name)
         """
-        return ['color', 'button_text', 'preparation_id', 'preparation_order_id', 'agora_tax_id', 'is_saleable_as_main',
+        return ['color', 'button_text', 'preparation_id', 'preparation_order_id', 'is_saleable_as_main',
                 'is_saleable_as_adding', 'is_sold_by_weight', 'ask_preparation_notes', 'ask_for_addings', 'print_zero',
                 'standard_price', 'active', 'categ_id', 'pricelist_item_count']
 

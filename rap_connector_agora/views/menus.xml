@@ -67,12 +67,6 @@
                   action="preparation_type_action"
                   sequence="19"/>
 
-<!--        &lt;!&ndash;Menu Item Preparation type in Agora&ndash;&gt;-->
-<!--        <menuitem id="adding_groups_menu"-->
-<!--                  parent="agora_connector_menu_sale_first"-->
-<!--                  action="addings_group_action"-->
-<!--                  sequence="18"/>-->
-
         <!--Menu Item Sale/Product Formats-->
         <menuitem id="agora_product_variants_menu"
                   parent="sale.product_menu_catalog"
