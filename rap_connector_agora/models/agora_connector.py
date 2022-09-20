@@ -6,6 +6,9 @@ from odoo.exceptions import UserError
 import requests
 import logging
 from odoo.exceptions import ValidationError
+from dateutil.relativedelta import relativedelta
+from dateutil import parser
+
 
 _logger = logging.getLogger(__name__)
 
@@ -280,8 +283,6 @@ class APIConnection(models.Model):
                                                             ('company_id', '=', self.company_id.id)], limit=1)
         prep_order_id = self.env['preparation.order'].search([('agora_id', '=', record.get('PreparationOrderId')),
                                                               ('company_id', '=', self.company_id.id)], limit=1)
-        if record.get('Name') == 'Harina':
-            print('Harina')
         values_dict.update({
             'name': record.get('Name'),
             'agora_id':  record.get('Id') if not ('sale_format' in values_dict) else '',
@@ -310,7 +311,7 @@ class APIConnection(models.Model):
         if category_id:
             values_dict.update({'categ_id': category_id})
         product = products_env.create(values_dict)
-        print('Product created ===> ' + product.name)
+        _logger.info("Product created ==> {}".format(product.name))
         prices = record.get('Prices')
         addings = {'is_format': is_format, 'prod': product.base_format_id, 'addins': record.get('Addins')}
         if product.parent_id:
@@ -351,7 +352,7 @@ class APIConnection(models.Model):
                 'company_id': self.company_id.id
             })
             addings.append(product_create.get('addings'))
-            print('Product ==> ' + sub_product.name + ' hijo de ==> ' + product.name)
+            _logger.info("Format ==> {} ---- Parent : {}".format(sub_product.name, product.name))
         return addings
 
     def generate_product_prices(self, product, prices):
@@ -477,7 +478,7 @@ class APIConnection(models.Model):
         if prices and prices.json().get('PriceLists'):
             json_centers = prices.json().get('PriceLists')
             for record in json_centers:
-                existing_cent = pricelist_env.search([('agora_id', '=', record.get('Id')),
+                existing_cent = pricelist_env.search([('agora_id', '=', int(record.get('Id'))),
                                                       ('company_id', '=', self.company_id.id)])
                 if not existing_cent:
                     values_dict = {}
@@ -671,8 +672,6 @@ class APIConnection(models.Model):
             data['Products'][0].update({'MinAddins': product.min_addings,
                                         'MaxAddins': product.max_addings,
                                         'Addins': addins})
-        import json
-        json = json.dumps(data, indent=4)
         return data
 
     def post_products(self, products):
@@ -710,13 +709,82 @@ class APIConnection(models.Model):
 # -----------------------------------------------------------------------------------------------------
 # -------------------- GET REQUEST TO GENERATE SALE DATA IN ODOO --------------------------------------
 # -----------------------------------------------------------------------------------------------------
+    def get_invoices(self, date):
+        """"
+        Function to get Products from Agora
+        Generate Product.template record for each Agora Product that not exist in Odoo
+        """
+        # / export /?business - day = 2022 - 06 - 05 & filter = Invoices
+        date = date - relativedelta(months=3)
+        endpoint = '/export/?business-day={}'.format(date)
+        params = {
+            'filter': 'Invoices',
+        }
+        invoices = self.get_request(self.url_server, endpoint, self.server_api_key, params)
+        if invoices and invoices.json().get('Invoices'):
+            json_invoices = invoices.json().get('Invoices')
+            for record in json_invoices:
+                self._create_sale_order(record)
 
+    def _create_sale_order(self, record):
+        prod_prod_env = self.env['product.product']
+        tax_env = self.env['agora.tax']
+        partner = self.get_partner(record)
+        for item in record.get('InvoiceItems'):
+            so_data = {
+                'partner_id': partner.id,
+                'company_id': self.company_id.id,
+                'state': 'sale',
+                'agora_global_id': item.get('GlobalId'),
+                'date_order': parser.parse(record.get('Date'))
+            }
+            so = self.env['sale.order'].create(so_data)
+            for line in item.get('Lines'):
+                format_id = line.get('SaleFormatId')
+                product = prod_prod_env.search(['|',
+                                              ('product_tmpl_id.base_format_id', '=', format_id),
+                                              ('product_tmpl_id.sale_format', '=', format_id),
+                                              ('product_tmpl_id.company_id', '=', self.company_id.id)], limit=1)
+                tax = tax_env.search([('agora_id', '=', line.get('VatId')), ('company_id', '=', self.company_id.id)])
+                if product:
+                    line_data = {
+                        'name': product.product_tmpl_id.name,
+                        'product_id': product.id,
+                        'order_id': so.id,
+                        'tax_id': [(6, 0, tax.account_tax_id.ids)],
+                        'price_unit': line.get('ProductPrice'),
+                        'product_uom': product.product_tmpl_id.uom_id.id,
+                        'company_id': self.company_id.id,
+                        'product_uom_qty': line.get('Quantity'),
+                        'qty_delivered': line.get('Quantity'),
+                    }
+                    self.env['sale.order.line'].create(line_data)
+        return so
 
+    def get_partner(self, record):
+        partner = self.env['res.partner'].search([('name', 'like', 'Generic Client'),
+                                                  ('company_id', '=', self.company_id.id)])
+        if record.get('Customer'):
+            agora_id = record.get('Customer').get('Id')
+            exist = self.env['res.partner'].search([('agora_id', '=', agora_id),
+                                                    ('company_id', '=', self.company_id.id)], limit=1)
+            if not exist and record.get('Customer').get('FiscalName'):
+                # Create new partner
+                self.env['res.partner'].create({
+                    'name': record.get('Customer').get('FiscalName'),
+                    'agora_id': record.get('Customer').get('Id'),
+                    'vat': record.get('Customer').get('Cif'),
+                    'zip': record.get('Customer').get('ZipCode'),
+                    'street': record.get('Customer').get('Street'),
+                    'city': record.get('Customer').get('City'),
+                })
+            else:
+                partner = exist
+        return partner
 
 # -----------------------------------------------------------------------------------------------------
 # --------------------------------------- ACTIONS -----------------------------------------------------
 # -----------------------------------------------------------------------------------------------------
-
     def action_view_server(self):
         return {
             'type': 'ir.actions.act_window',
@@ -739,7 +807,7 @@ class APIConnection(models.Model):
             record.get_master_sale_center(export_endpoint)
             record.get_master_categories(export_endpoint)
             record.get_master_products(export_endpoint)
-            print(' *************** finish one connection')
+            _logger.info("***Finish a company connection**")
 
     def _update_masters_from_agora(self):
         """"
@@ -764,3 +832,12 @@ class APIConnection(models.Model):
                                                   ('active', 'in', [True, False])])
             if product_to_send:
                 self.post_products(product_to_send)
+
+    def _update_sales_from_agora(self):
+        """"
+        Action to get invoices from Agora
+        """
+        conections = self.search([('state', '=', 'connect')])
+        update_date = fields.Date.today()
+        for connec in conections:
+            connec.get_invoices(update_date)

@@ -8,7 +8,7 @@
                 <form string="Delete Product" >
                     <footer>
                         <button type="object" name="archive_product_template" string="Archive" class="oe_highlight"/>
-                        <button special="cancel" string="CANCEL"  class="btn-secondary" groups="symphonie_base.gov"/>
+                        <button special="cancel" string="CANCEL"  class="btn-secondary"/>
                     </footer>
                 </form>
             </field>

@@ -8,5 +8,6 @@ class ProductPricelist(models.Model):
     _inherit = 'product.pricelist.item'
 
     product_company = fields.Many2one(
+        string='Product Company',
         related='product_tmpl_id.company_id',
     )

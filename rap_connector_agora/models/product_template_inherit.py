@@ -42,10 +42,12 @@ class ProductTemplate(models.Model):
     preparation_id = fields.Many2one(
         string='Preparation Type',
         comodel_name='preparation.type',
+        ondelete='restrict'
     )
     preparation_order_id = fields.Many2one(
         string='Preparation Order',
         comodel_name='preparation.order',
+        ondelete='restrict'
     )
     # agora_tax_id = fields.Many2one(
     #     string='Agora Tax',
@@ -117,7 +119,7 @@ class ProductTemplate(models.Model):
         compute='_compute_agora_taxes'
     )
     # --------------------------------------
-    #           Modified fields
+    #       Modifying standard fields
     # --------------------------------------
     company_id = fields.Many2one(
         default=lambda self: self.env.company
@@ -217,8 +219,10 @@ class ProductTemplate(models.Model):
     def validate_name_duplicity(self):
         is_first_charge = self.env.context.get('first_charge')
         for rec in self:
-            repeated = rec.search([('name', 'ilike', rec.name)])
-            if not is_first_charge and repeated:
+            repeated = rec.search([('name', 'ilike', rec.name),
+                                   ('company_id', '=', rec.company_id.id),
+                                   ('id', '!=', rec.id)])
+            if repeated and not is_first_charge:
                 raise ValidationError(_('Please select another name. Exist already other product with the same'))
 
     @api.constrains('product_sku')
@@ -247,12 +251,15 @@ class ProductTemplate(models.Model):
 
     def action_sent_agora(self):
         """"
-         Action to send 'New' and 'Modifyied' products to Agora
+         Action to send 'New' and 'Modified' products to Agora
         """
         active_ids = self._context.get('active_ids')
         products = self.env['product.template'].search([('id', 'in', active_ids), ('active', 'in', [True, False])])
         if len(products.mapped('company_id')) > 1:
             raise ValidationError(_('Please select products from the same company at time to avoid Error Connection'))
+        if products.mapped('parent_id'):
+            raise ValidationError(_('Sorry this action should be executed from the Parent '
+                                    'product and not from the format'))
         self.env['api.connection'].post_products(products)
 
     def action_add_format(self):

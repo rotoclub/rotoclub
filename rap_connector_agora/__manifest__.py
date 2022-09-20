@@ -39,6 +39,7 @@
         'data/agora_data.xml',
         'data/crons.xml',
     ],
+    'post_init_hook': 'create_data',
     'installable': True,
     'auto_install': False,
     'application': True,

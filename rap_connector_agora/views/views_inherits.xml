@@ -25,5 +25,28 @@
             </field>
         </record>
 
+        <!-- Sale Order Form inherit-->
+        <record id="view_sale_order_form_inherit" model="ir.ui.view">
+            <field name="name">sale.order.form.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='validity_date']" position="before">
+                    <field name="agora_global_id" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="res_partner_agora_view_form_inherit" model="ir.ui.view" >
+            <field name="name">res.partner.view.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="groups_id" eval="[(4, ref('rap_connector_agora.agora_manager_group'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='category_id']" position="after">
+                    <field name="agora_id" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>
