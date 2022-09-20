@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="sale_api_view_tree" model="ir.ui.view">
+            <field name="name">sale.api.view.tree</field>
+            <field name="model">sale.api</field>
+            <field name="arch" type="xml">
+                <tree string="Sale API" decoration-danger="state == 'error'" decoration-info="state == 'draft'" decoration-success="state == 'ready'" decoration-muted="state in ['cancelled','done']">
+                    <field name="name" string="Number" readonly="1"/>
+                    <field name="date_order" string="Order Date" widget="date" />
+                    <field name="partner_id" readonly="1"/>
+                    <field name="user_id"/>
+                    <field name="company_id"/>
+                    <field name="origin"/>
+                    <field name="server_id"/>
+                    <field name="amount_untaxed" sum="Total Tax Excluded" widget="monetary" />
+                    <field name="amount_tax" sum="Tax Total" widget="monetary" />
+                    <field name="amount_total" sum="Total Tax Included" widget="monetary"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="sale_api_view_filter" model="ir.ui.view">
+            <field name="name">sale.api.view.filter</field>
+            <field name="model">sale.api</field>
+            <field name="arch" type="xml">
+                <search string="Sale API" >
+                    <field name="name"/>
+                    <field name="date_order"/>
+                    <field name="partner_id"/>
+                    <field name="user_id"/>
+                    <field name="company_id"/>
+                    <field name="origin"/>
+                    <field name="server_id"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="sale_api_view_form" model="ir.ui.view">
+            <field name="name">sale.api.view.form</field>
+            <field name="model">sale.api</field>
+            <field name="arch" type="xml">
+              <form string="Products" class="o_sale_order" delete="0">
+                <header>
+                    <button name="action_ready" type="object" string="Action Ready" class="oe_highlight" states="draft,error"/>
+                    <button name="action_cancel" type="object" string="Action Cancel" class="btn-secondary" states="ready,done"/>
+                    <button name="action_conver_to_draf" type="object" string="Action Convert to Draft" class="btn-secondary" states="cancelled,error"/>
+                    <button name="execute_sale_api" type="object" string="Execute" class="oe_highlight" states="ready"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,ready,done,cancelled"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group name="sale_header">
+                        <group name="partner_details">
+                            <field name="partner_id" options="{'no_create': True}"/>
+                            <field name="partner_invoice_id" context="{'default_type':'invoice'}" domain="[('type','=','invoice')]" options="{'no_open':True,'no_create': True}"/>
+                            <field name="partner_shipping_id"  context="{'default_type':'delivery'}" domain="[('type','=','delivery')]" options="{'no_open':True,'no_create': True}"/>
+                            <field name="origin" attrs="{'readonly': [('state', 'not in' , ['draft','ready'])]}"/>
+                            <field name="type_ticket" attrs="{'readonly': [('state', 'not in' , ['draft','ready'])]}"/>
+                            <field name="internal_note"/>
+                        </group>
+                        <group name="order_details" >
+                            <field name="sale_order" options="{'no_create': True}" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="date_order" attrs="{'required': [('state', 'in', ['sale', 'done'])]}"/>
+                            <label for="pricelist_id" groups="product.group_product_pricelist"/>
+                            <div groups="product.group_product_pricelist" class="o_row">
+                                <field name="pricelist_id" options="{'no_open':True,'no_create': True}" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            </div>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="payment_term_id" options="{'no_open':True,'no_create': True}" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="server_id" attrs="{'readonly': [('state', '!=', 'draft')]}" options="{'no_open':True,'no_create': True}"/>
+                            <field name="journal_id" attrs="{'readonly': [('state', '!=', 'draft')]}" domain="[('type','in',('bank','cash')),('company_id','=',company_id)]" options="{'no_open': True,'no_create': True, 'no_create_edit':True}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Sale Lines">
+                            <field name="sale_api_line_ids" attrs="{'readonly': [('state', '!=', 'draft')]}">
+                                    <tree editable="bottom" decoration-danger="state == 'error'">
+                                        <field name="product_id" options="{'no_create': True, 'no_open': True}"/>
+                                        <field name="sale_api_id" invisible="1"/>
+                                        <field name="code" invisible="1"/>
+                                        <field name="name"/>
+                                        <field name="product_uom_qty"/>
+                                        <field name="product_uom" options="{'no_create': True, 'no_open': True}"/>
+                                        <field name="product_uom_category_id" invisible="1"/>
+                                        <field name="price_unit"/>
+                                        <field name="tax_id" widget="many2many_tags" options="{'no_create': True}" domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"/>
+                                        <field name="discount" string="Disc.%"/>
+                                        <field name="price_subtotal" widget="monetary"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="price_tax" invisible="1"/>
+                                        <field name="company_id" invisible="1"/>
+                                        <field name="state" invisible="1"/>
+                                    </tree>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+                                <field name="amount_untaxed" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                                <field name="amount_tax" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                                <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                                    <label for="amount_total" />
+                                </div>
+                                <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                        </page>
+                        <page string="Other info">
+                            <group>
+                                <group name="sale" string="Sales">
+                                    <field name="user_id" options="{'no_open':True,'no_create': True}" widget="many2one_avatar_user"/>
+                                    <field name="company_id" groups="base.group_multi_company" options="{'no_open':True,'no_create': True}"/>
+                                    <field name="team_id" kanban_view_ref="%(sales_team.crm_team_view_kanban)s" options="{'no_create': True}"/>
+                                </group>
+                                <group name="invoice" string="Invoices">
+                                    <field name="fiscal_position_id" options="{'no_create': True}"/>
+                                    <field name="analytic_account_id"
+                                           context="{'default_partner_id':partner_invoice_id, 'default_name':name}"
+                                           attrs="{'readonly': [('state','=','done')]}"
+                                           groups="analytic.group_analytic_accounting"
+                                           force_save="1" options="{'no_create': True}"/>
+                                </group>
+                                <group name="result" string="Results" attrs="{'invisible': [('state', '!=', 'done')]}">
+                                    <field name="picking_id"
+                                           options="{'no_create': True}"
+                                           attrs="{'readonly': [('state', '!=', 'draft')], 'invisible': [('picking_id', '=', False)]}"/>
+                                    <field name="invoice_id"
+                                           options="{'no_create': True}"
+                                           attrs="{'readonly': [('state', '!=', 'draft')], 'invisible': [('invoice_id', '=', False)]}"/>
+                                    <field name="payment_id"
+                                           options="{'no_create': True}"
+                                           attrs="{'readonly': [('state', '!=', 'draft')], 'invisible': [('payment_id', '=', False)]}"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Notes">
+                            <group>
+                                <field name="general_notes" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="sale_notes" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="picking_notes" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="invoice_notes" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="payment_notes" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                 <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+              </form>
+            </field>
+        </record>
+
+        <record id="action_sale_api" model="ir.actions.act_window">
+            <field name="name">Products</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.api</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Create a new Sale API, the first step of a future sale!
+              </p><p>
+                Once the Sale API is confirmed by the customer, it could be executed in the future to become in sales order.
+              </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

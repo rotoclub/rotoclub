@@ -7,6 +7,7 @@
     'author': "Rapsodoo Iberia",
     'website': "https://www.rapsodoo.com/es/",
     'category': 'Accounting/Accounting',
+    'license': 'LGPL-3',
 
     'version': '15.0.1.0.5',
 

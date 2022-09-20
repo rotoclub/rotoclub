@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <!-- Agora tax Type Form View-->
+        <record id="agora_tax_form_view" model="ir.ui.view">
+            <field name="name">agora.tax.form.view</field>
+            <field name="model">agora.tax</field>
+            <field name="arch" type="xml">
+                <form string="Agora Tax">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="agora_id"/>
+                                <field name="account_tax_id" domain="[('company_id','=',company_id)]"/>
+                                <field name="charge_rate"/>
+                                <field name="company_id"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Agora Tax Tree View-->
+        <record id="agora_tax_tree_view" model="ir.ui.view">
+            <field name="name">agora.tax.tree.view</field>
+            <field name="model">agora.tax</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="company_id"/>
+                    <field name="agora_id"/>
+                    <field name="account_tax_id"/>
+                    <field name="charge_rate"/>
+                </tree>
+            </field>
+        </record>
+
+        <!--Action for Agora Tax Model-->
+        <record id="agora_tax_action" model="ir.actions.act_window">
+            <field name="name">Agora Tax</field>
+            <field name="res_model">agora.tax</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

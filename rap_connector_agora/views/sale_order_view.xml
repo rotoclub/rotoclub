@@ -1,0 +1,66 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="sale_order_agora_api_form_view">
+            <field name="name">sale.order.agora.api.view</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+               <field name="validity_date" position="before">
+                   <field name="sale_api_origin" options="{'no_create': True}"/>
+                   <field name="origin"/>
+               </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sale_order_agora_api_quotation_tree_view">
+            <field name="name">sale.order.agora.api.quotation.view</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_quotation_tree"/>
+            <field name="arch" type="xml">
+               <field name="user_id" position="after">
+                   <field name="sale_api_origin"/>
+                   <field name="origin"/>
+               </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sale_order_agora_api_order_tree_view">
+            <field name="name">sale.order.agora.api.quotation.tree.view</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_tree"/>
+            <field name="arch" type="xml">
+               <field name="user_id" position="after">
+                   <field name="sale_api_origin"/>
+                   <field name="origin"/>
+               </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sale_order_agora_api_quotation_search_view">
+            <field name="name">sale.order.agora.api.quotation.search.view</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.sale_order_view_search_inherit_quotation"/>
+            <field name="arch" type="xml">
+               <field name="name" position="after">
+                   <field name="sale_api_origin"/>
+                   <field name="origin"/>
+               </field>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="sale_order_agora_api_order_search_view">
+            <field name="name">sale.order.agora.api.order.search.view</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.sale_order_view_search_inherit_sale"/>
+            <field name="arch" type="xml">
+               <field name="name" position="after">
+                   <field name="sale_api_origin"/>
+                   <field name="origin"/>
+               </field>
+            </field>
+        </record>
+    </data>
+</odoo>

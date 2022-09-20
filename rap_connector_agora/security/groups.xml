@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="agora_manager_group" model="res.groups">
+                <field name="name">Administrator Agora</field>
+        </record>
+        <record id="agora_user_group" model="res.groups">
+                <field name="name">User Agora</field>
+        </record>
+
+<!--        TODO: After first import descomment this rules -->
+
+        <!-- Global rule for Api.connection in active company-->
+        <record model="ir.rule" id="api_connection_rule_multi">
+            <field name="name">Api Connection Multicompany</field>
+            <field name="model_id" ref="model_api_connection"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <!-- Global rule for Sale Center in active company-->
+        <record model="ir.rule" id="sale_center_rule_multi">
+            <field name="name">Sale Center Multicompany</field>
+            <field name="model_id" ref="model_sale_center"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+        </record>
+
+                <!-- Global rule for Product pricelist in active company-->
+        <record model="ir.rule" id="product_pricelist_rule_multi">
+            <field name="name">Product Pricelist Multicompany</field>
+            <field name="model_id" ref="model_product_pricelist"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+        </record>
+
+                <!-- Global rule for Agora tax in active company-->
+        <record model="ir.rule" id="agora_tax_rule_multi">
+            <field name="name">Agora Tax Multicompany</field>
+            <field name="model_id" ref="model_agora_tax"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+        </record>
+
+                <!-- Global rule for Preparation Type in active company-->
+        <record model="ir.rule" id="preparation_type_rule_multi">
+            <field name="name">Preparation Type Multicompany</field>
+            <field name="model_id" ref="model_preparation_type"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+        </record>
+
+                <!-- Global rule for Preparation Order in active company-->
+        <record model="ir.rule" id="preparation_order_rule_multi">
+            <field name="name">Preparation Order Multicompany</field>
+            <field name="model_id" ref="model_preparation_order"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+        </record>
+
+            <!-- Rule to filter only -->
+        <record model="ir.rule" id="product_template_agora_rule">
+            <field name="name">Product Template Agora Rule</field>
+            <field name="model_id" ref="model_agora_tax"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+        </record>
+    </data>
+</odoo>
