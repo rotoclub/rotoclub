@@ -29,7 +29,7 @@ class ProductsAddings(models.Model):
         relation='product_template_addings_group_rel',
         column1='product_id',
         column2='group_id',
-        string="Addings Group",
+        string="Addins Group",
         check_company=True,
         copy=False
     )

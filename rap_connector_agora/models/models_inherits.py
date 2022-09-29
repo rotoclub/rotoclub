@@ -41,13 +41,6 @@ class ProductPricelist(models.Model):
         inverse_name='pricelist_id',
     )
 
-    def write(self, vals):
-        res = super(ProductPricelist, self).write(vals)
-        for rec in self:
-            if rec.sync_status != 'new' and (vals.get('discount_policy') or vals.get('name') or 'active' in vals):
-                rec.sync_status = 'modified'
-        return res
-
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
@@ -67,12 +60,45 @@ class ResPartner(models.Model):
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    agora_global_id = fields.Char(
-        string='Global ID'
+    number = fields.Char(
+        string='Number'
+    )
+    work_place_id = fields.Many2one(
+        string='Work Place',
+        comodel_name='work.place'
+    )
+    sale_center_id = fields.Many2one(
+        string='Sale Center',
+        comodel_name='sale.center'
+    )
+    standard_invoice = fields.Integer(
+        string='Standard Inv',
+        help='If there is a value means an Standard Invoice have been generated and this is the ID'
+    )
+    payment_method = fields.Many2one(
+        comodel_name='account.payment.method',
+        string='Payment Method'
     )
 
-    @api.model
-    def create(self, vals):
-        res = super().create(vals)
-        return res
+
+class AccountAnalyticGroup(models.Model):
+    _inherit = 'account.analytic.group'
+
+    work_place_id = fields.Many2one(
+        string='Work Place',
+        comodel_name='work.place'
+    )
+
+
+class AccountAnalyticGroup(models.Model):
+    _inherit = 'account.analytic.group'
+
+    payment_method_id = fields.Many2one(
+        comodel_name='account.payment.method',
+        string='Payment Method',
+    )
+    journal_id = fields.Many2one(
+        comodel_name='account.journal',
+        string='Journal'
+    )
 

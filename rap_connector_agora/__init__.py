@@ -8,6 +8,7 @@ from odoo import api, SUPERUSER_ID
 
 def create_data(cr, registry):
     env = api.Environment(cr, SUPERUSER_ID, {})
+    update_taxes_price_include(env)
     companies = env['res.company'].search([])
     order_data = get_prep_order_data()
     type_data = get_prep_type_data()
@@ -70,3 +71,4 @@ def get_tax_data():
         {'name': 'General', 'agora_id': 4},
     ]
     return data
+

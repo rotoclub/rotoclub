@@ -7,7 +7,9 @@
             <field name="inherit_id" ref="product.product_template_only_form_view"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='detailed_type']" position="before">
-                    <field name="parent_id" domain="[('company_id','=',company_id)]"/>
+                    <field name="parent_id"
+                           domain="[('company_id','=',company_id)]"
+                           attrs="{'invisible': [('parent_id', '=', False)],'readonly':[('parent_id', '!=', False)]}"/>
                 </xpath>
                 <xpath expr="//field[@name='taxes_id']" position="after">
                     <field name="tax_agora_ids" invisible="1"/>
@@ -18,11 +20,27 @@
                 </xpath>
                 <xpath expr="//field[@name='company_id']" position="attributes">
                     <attribute name="required">1</attribute>
-                    <attribute name="attrs">{'readonly': [('agora_id','!=',0)]}</attribute>
+                    <attribute name="attrs">{'readonly': ['|', ('agora_id','!=',0),('parent_id', '!=', False)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='list_price']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//div[@name='pricing']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='detailed_type']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('parent_id', '!=', False)]}</attribute>
                 </xpath>
                 <xpath expr="//field[@name='categ_id']" position="attributes">
                     <attribute name="string">Family</attribute>
                     <attribute name="domain">[('agora_id','!=', False),('company_id','=',company_id)]</attribute>
+                    <attribute name="attrs">{'readonly': [('parent_id', '!=', False)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='uom_id']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('parent_id', '!=', False)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='uom_po_id']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('parent_id', '!=', False)]}</attribute>
                 </xpath>
                 <xpath expr="//page[@name='invoicing']" position="after">
                     <page name="agora_info" string="Agora Info">
@@ -51,10 +69,10 @@
                             <group>
                                 <field name="is_saleable_as_main"/>
                                 <field name="is_saleable_as_adding"/>
-                                <field name="is_sold_by_weight"/>
-                                <field name="ask_preparation_notes"/>
+                                <field name="is_sold_by_weight" attrs="{'invisible': [('parent_id', '!=', False)]}"/>
+                                <field name="ask_preparation_notes" attrs="{'invisible': [('parent_id', '!=', False)]}"/>
                                 <field name="ask_for_addings"/>
-                                <field name="print_zero"/>
+                                <field name="print_zero" attrs="{'invisible': [('parent_id', '!=', False)]}"/>
                             </group>
                         </group>
                     </page>
@@ -77,7 +95,7 @@
                             </field>
                         </group>
                     </page>
-                    <page name="product_addings" string="Addings">
+                    <page name="product_addings" string="Addins">
                         <group col="4">
                             <group>
                                 <field name="min_addings"/>
@@ -97,6 +115,27 @@
             </field>
         </record>
 
+        <record id="product_template_form_agora_inherit" model="ir.ui.view">
+            <field name="name">product.template.agora.inherit</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('o_field_widget')]" position="replace">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="pricelist_item_count"/>
+                        </span>
+                        <span attrs="{'invisible': [('pricelist_item_count', '=', 1)]}">
+                            Prices
+                        </span>
+                        <span attrs="{'invisible': [('pricelist_item_count', '!=', 1)]}">
+                            Price
+                        </span>
+                   </div>
+                </xpath>
+            </field>
+        </record>
+
         <!--New Product template tree view to be used in Agora-->
         <record id="product_template_rap_tree_view" model="ir.ui.view">
             <field name="name">Product Template</field>
@@ -108,7 +147,7 @@
                     <field name="name"/>
                     <field name="company_id"/>
                     <field name="default_code"/>
-                    <field name="categ_id"/>
+                    <field name="categ_id" string="Family"/>
                     <field name="list_price"/>
                     <field name="standard_price"/>
                     <field name="qty_available"/>

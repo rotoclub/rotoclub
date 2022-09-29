@@ -46,25 +46,28 @@ class APIConnection(models.Model):
     server_api_key = fields.Char(
         string='Api Pass'
     )
+    # ---------------------
+    #     Config fields
+    # ---------------------
+    sale_flow = fields.Selection(
+        selection=[
+            ('quotation', 'Quotation'),
+            ('sale', 'Sale'),
+            ('draft_invoice', 'Draft Invoice'),
+            ('invoice', 'Invoice'),
+            ('payment', 'Payment')],
+        string='Sale Flow',
+        default='payment'
+    )
+    is_date_from_invoice = fields.Boolean(
+        string='Date from Invoice',
+        default=True
+    )
     count_api = fields.Integer(
         compute='_compute_server_config'
     )
-    limit_sale_order = fields.Integer(
-        string='Limit Sale Order'
-    )
-    limit_origin = fields.Integer(
-        string='Limit Number'
-    )
-    default_product_id = fields.Many2one(
-        comodel_name="product.product",
-        string="Default Product"
-    )
-    default_partner_id = fields.Many2one(
-        comodel_name="res.partner",
-        string="Default Client"
-    )
     last_connection = fields.Datetime(
-        string='Last Conexion'
+        string='Last Connection'
     )
     last_product_id = fields.Integer(
         string='Last Product ID'
@@ -304,7 +307,7 @@ class APIConnection(models.Model):
             'is_sold_by_weight': record.get('IsSoldByWeight'),
             'ask_preparation_notes': record.get('AskForPreparationNotes'),
             'ask_for_addings': record.get('AskForAddins'),
-            'print_zero': record.get('PrintWhenPriceIsZero'),
+            'print_zero': not record.get('PrintWhenPriceIsZero'),
             'company_id': self.company_id.id,
             'responsible_id': False
         })
@@ -362,7 +365,8 @@ class APIConnection(models.Model):
             product: Product to be updated
             Prices: Dict of prices related with the current product
         """
-        pricelist_item_env = self.env['product.pricelist.item']
+        self_price_creation = self.with_context({'first_charge': True})
+        pricelist_item_env = self_price_creation.env['product.pricelist.item']
         price_list_env = self.env['product.pricelist']
         if prices:
             for price in prices:
@@ -371,32 +375,26 @@ class APIConnection(models.Model):
                 if product:
                     exist = pricelist_item_env.search([('product_tmpl_id', '=', product.id),
                                                        ('date_end', '=', False),
-                                                       ('pricelist_id.agora_id', '=', price.get('PriceListId'))])
+                                                       ('pricelist_id.agora_id', '=', price.get('PriceListId'))],
+                                                      limit=1)
                     if not exist:
                         # create new pricelist
                         data = {
                             'pricelist_id': price_list.id,
                             'product_tmpl_id': product.id,
                             'fixed_price': price.get('MainPrice'),
-                            'date_start': fields.Datetime.now(),
+                            'addin_price': price.get('AddinPrice'),
+                            'menuitem_price': price.get('MenuItemPrice'),
                         }
                         pricelist_item_env.create(data)
-                    elif exist.filtered(lambda pl: pl.fixed_price != price.get('MainPrice')):
-                        # update existing pricelist
-                        # The existing record will keep the old price but will be closed behind the end_date
-                        # New price will be created with start date today. In order to keep the historical prices
-                        uptdata = {
-                            'date_end': fields.Datetime.now(),
-                        }
-                        exist[0].update(uptdata)
-                        # create new price list
-                        data = {
-                            'pricelist_id': price_list.id,
-                            'product_tmpl_id': product.id,
+                    else:
+                        # create values in the existing pricelist
+                        upt_data = {
                             'fixed_price': price.get('MainPrice'),
-                            'date_start': fields.Datetime.now(),
+                            'addin_price': price.get('AddinPrice'),
+                            'menuitem_price': price.get('MenuItemPrice'),
                         }
-                        pricelist_item_env.create(data)
+                        exist.update(upt_data)
 
     def get_master_categories(self, endpoint):
         """"
@@ -489,6 +487,29 @@ class APIConnection(models.Model):
                     })
                     pricelist_env.create(values_dict)
 
+    def get_master_work_places(self, endpoint):
+        """"
+        Function to get Work Places
+        """
+        work_place_env = self.env['work.place']
+        params = {
+            'filter': 'WorkplacesSummary'
+        }
+        prices = self.get_request(self.url_server, endpoint, self.server_api_key, params)
+        if prices and prices.json().get('WorkplacesSummary'):
+            json_centers = prices.json().get('WorkplacesSummary')
+            for record in json_centers:
+                existing_cent = work_place_env.search([('agora_id', '=', int(record.get('Id'))),
+                                                      ('company_id', '=', self.company_id.id)])
+                if not existing_cent:
+                    values_dict = {}
+                    values_dict.update({
+                        'name': record.get('Name'),
+                        'agora_id': int(record.get('Id')),
+                        'company_id': self.company_id.id
+                    })
+                    work_place_env.create(values_dict)
+
     def get_product_dict(self):
         """"
         Return: Clean Product dictionary
@@ -548,7 +569,7 @@ class APIConnection(models.Model):
 
     def get_last_ids(self, record):
         """"
-        Function to get the last Farmat_id and Product_id
+        Function to get the last Format_id and Product_id
         Return:
              Dictionary {'format_id': xx, 'product_id':yy}
         """
@@ -615,8 +636,8 @@ class APIConnection(models.Model):
                 price_rec = {
                     "PriceListId": price.pricelist_id.agora_id,
                     "MainPrice": price.fixed_price,
-                    "AddinPrice": price.fixed_price,
-                    "MenuItemPrice": 0.000
+                    "AddinPrice": price.addin_price,
+                    "MenuItemPrice": price.menuitem_price
                 }
                 prices.append(price_rec)
         return prices
@@ -653,7 +674,7 @@ class APIConnection(models.Model):
                     "IsSoldByWeight": product.is_sold_by_weight,
                     "AskForPreparationNotes": product.ask_preparation_notes,
                     "AskForAddins": product.ask_for_addings,
-                    "PrintWhenPriceIsZero": product.print_zero,
+                    "PrintWhenPriceIsZero": not product.print_zero,
                     "PreparationTypeId": product.preparation_id.agora_id,
                     "PreparationOrderId": product.preparation_order_id.agora_id,
                     "CostPrice": product.standard_price,
@@ -680,42 +701,59 @@ class APIConnection(models.Model):
         """
         product_env = self.env['product.template']
         for product in products:
-            is_new = False
-            if product.sync_status == 'new':
-                is_new = True
-            self.get_last_ids(product)
-            connection = self.get_related_connection(product)
-            data = self.product_data(product, is_new, connection)
-            try:
-                post = self.post_request(connection.url_server, '/import', connection.server_api_key, data)
-                if post and post.status_code and post.status_code == 200:
-                    product.sync_status = 'done'
-                    product.product_formats_ids.sync_status = 'done'
-                    if is_new:
-                        agora_id = data.get('Products')[0].get('Id')
-                        base_format_id = data.get('Products')[0].get('BaseSaleFormatId')
-                        product.update({'agora_id': agora_id, 'base_format_id': base_format_id})
-                    for rec in data.get('Products')[0].get('AdditionalSaleFormats'):
-                        current_format = product_env.search([('name', '=', rec.get('Name')),
-                                                             ('parent_id', '=', product.id)])
-                        if current_format.sale_format == 0:
-                            current_format.sale_format = rec.get('Id')
-                else:
-                    raise ValidationError(_('Sorry the synchronization could not be completed'))
-            except Exception as e:
-                _logger.error(e)
-                raise ValidationError(_("ERROR RESPONSE:\n %s") % e)
+            connection = False
+            if product.company_id:
+                connection = self.get_related_connection(product)
+            if connection:
+                is_new = False
+                if product.sync_status == 'new':
+                    is_new = True
+                self.get_last_ids(product)
+                data = self.product_data(product, is_new, connection)
+                try:
+                    post = self.post_request(connection.url_server, '/import', connection.server_api_key, data)
+                    if post and post.status_code and post.status_code == 200:
+                        # If the execution went OK
+                        # Instantly should be updated the product status, because even if there is block in the function
+                        # because another error this changes are already updated in Agora
+                        # self.update_sync_status(product)
+                        product.sync_status = 'done'
+                        product.product_formats_ids.sync_status = 'done'
+                        # Execute commit() to be sure the product status its updated
+                        # even if the script fail in other products sync
+                        self._cr.commit()
+                        if is_new:
+                            agora_id = data.get('Products')[0].get('Id')
+                            base_format_id = data.get('Products')[0].get('BaseSaleFormatId')
+                            product.update({'agora_id': agora_id, 'base_format_id': base_format_id})
+                        for rec in data.get('Products')[0].get('AdditionalSaleFormats'):
+                            current_format = product_env.search([('name', '=', rec.get('Name')),
+                                                                 ('parent_id', '=', product.id)])
+                            if current_format.sale_format == 0:
+                                current_format.sale_format = rec.get('Id')
+                    else:
+                        raise ValidationError(_('Sorry the synchronization could not be completed for the product {}.\n'
+                                                ' Please verify all the required fields'.format(product.name)))
+                except Exception as e:
+                    _logger.error(e)
+                    raise ValidationError(_("ERROR RESPONSE:\n %s") % e)
 
 # -----------------------------------------------------------------------------------------------------
-# -------------------- GET REQUEST TO GENERATE SALE DATA IN ODOO --------------------------------------
+# -------------------- GET REQUEST TO GENERATE SALES DATA IN ODOO -------------------------------------
 # -----------------------------------------------------------------------------------------------------
+
     def get_invoices(self, date):
         """"
         Function to get Products from Agora
-        Generate Product.template record for each Agora Product that not exist in Odoo
+        Generate Sale Order record for each Agora Invoice
+        Exist 4 type of invoices in Agora:
+            ▪ BasicInvoice: Factura simplificada
+            ▪ StandardInvoice: Factura nominal
+            ▪ BasicRefund: Devolucion de factura simplificada
+            ▪ StandardRefund: Devolucion de factura nominal
+        endpoint example => /export/?business-day=2022-06-05&filter=Invoices
         """
-        # / export /?business - day = 2022 - 06 - 05 & filter = Invoices
-        date = date - relativedelta(months=3)
+        date = date - relativedelta(months=2)
         endpoint = '/export/?business-day={}'.format(date)
         params = {
             'filter': 'Invoices',
@@ -723,43 +761,152 @@ class APIConnection(models.Model):
         invoices = self.get_request(self.url_server, endpoint, self.server_api_key, params)
         if invoices and invoices.json().get('Invoices'):
             json_invoices = invoices.json().get('Invoices')
-            for record in json_invoices:
-                self._create_sale_order(record)
+            basic_invoices = list(filter(lambda inv: inv.get('DocumentType') == 'BasicInvoice', json_invoices))
+            for record in basic_invoices:
+                sos = self._create_sale_order(record)
+                self.generate_invoice(sos)
+
+    def generate_invoice(self, sos):
+        """"
+        Function to generate the Invoices for the provided S.Orders
+        """
+        for so in sos:
+            if so.order_line:
+                # For each So generated should be create the related invoice in POSTED
+                so._force_lines_to_invoice_policy_order()
+                # Create Invoice associated with the SO
+                invoice = so._create_invoices()
+                # Update values in the created Inv
+                invoice.invoice_line_ids.analytic_account_id = so.sale_center_id.analytic_id.id
+                invoice.invoice_date = so.date_order.date()
+                # Post invoices
+                invoice.action_post()
+                # Create the Payment associated with the created invoice
+                self.paid_invoice(invoice)
+                _logger.info("POSTED SO : {} - {}".format(so.number, so.name))
+        return True
+
+    def paid_invoice(self, invoice):
+        """
+         This method create the payment for invoice automatically
+        """
+        self.ensure_one()
+        account_payment_env = self.env['account.payment']
+        if invoice.amount_residual:
+            vals = self.prepare_payment_data(invoice)
+            payment_id = account_payment_env.create(vals)
+            payment_id.action_post()
+            self.reconcile_payment(payment_id, invoice)
+        return True
+
+    def prepare_payment_data(self, invoice):
+        """
+        This method use to prepare a vals dictionary for payment
+        """
+        date = invoice.date
+        if self.is_date_from_invoice:
+            date = invoice.invoice_date
+        return {
+            'journal_id': invoice.analytic_group_id.journal_id.id,
+            'ref': invoice.payment_reference,
+            'currency_id': invoice.currency_id.id,
+            'payment_type': 'inbound',
+            'date': date,
+            'partner_id': invoice.commercial_partner_id.id,
+            'amount': invoice.amount_residual,
+            'payment_method_id': invoice.analytic_group_id.payment_method_id.id,
+            'partner_type': 'customer'
+        }
+
+    def reconcile_payment(self, payment_id, invoice):
+        """
+        This method is use to reconcile payment.
+        """
+        move_line_obj = self.env['account.move.line']
+        domain = [('account_internal_type', 'in', ('receivable', 'payable')),
+                  ('reconciled', '=', False)]
+        line_ids = move_line_obj.search([('move_id', '=', invoice.id)])
+        to_reconcile = [line_ids.filtered(lambda line: line.account_internal_type == 'receivable')]
+
+        for payment, lines in zip([payment_id], to_reconcile):
+            payment_lines = payment.line_ids.filtered_domain(domain)
+            for account in payment_lines.account_id:
+                (payment_lines + lines).filtered_domain([('account_id', '=', account.id),
+                                                         ('reconciled', '=', False)]).reconcile()
+
+    def revert_invoice(self, refund):
+        lines = []
+        inv2revert = self.env['sale.order'].search([('number', '=', refund['RelatedInvoice'].get('Number'))])
+        for value in refund.get('lines'):
+            line = self.env['sale.order.line'].search([('index', '=', value.get('Index'))])
+            if line:
+                lines.append(line)
+        inv2revert._reverse_moves(default_values_list=lines, cancel=False)
 
     def _create_sale_order(self, record):
+        work_place_env = self.env['work.place']
+        so_line_env = self.env['sale.order.line']
+        so_env = self.env['sale.order']
+        sale_center_env = self.env['sale.center']
+        partner = self.get_partner(record)
+        generated_sos = []
+        for item in record.get('InvoiceItems'):
+            exist_so = so_env.search([('number', '=', record.get('Number')),
+                                      ('company_id', '=', self.company_id.id)])
+            if not exist_so:
+                so_data = {
+                    'partner_id': partner.id,
+                    'company_id': self.company_id.id,
+                    'state': 'sale',
+                    'number': record.get('Number'),
+                    'date_order': parser.parse(record.get('Date'))
+                }
+                if record.get('Workplace'):
+                    wp = work_place_env.search([('agora_id', '=', record['Workplace'].get('Id')),
+                                                ('company_id', '=', self.company_id.id)], limit=1)
+                    so_data.update({'work_place_id': wp.id})
+                if item.get('SaleCenter'):
+                    sc = sale_center_env.search([('agora_id', '=', item['SaleCenter'].get('Id')),
+                                                ('company_id', '=', self.company_id.id)], limit=1)
+                    so_data.update({'sale_center_id': sc.id})
+                so = so_env.create(so_data)
+                generated_sos.append(so)
+                for line in item.get('Lines'):
+                    data = self.get_so_lines(line, so)
+                    if data:
+                        so_line_env.create(data)
+                    if line.get('Addins'):
+                        for add in line.get('Addins'):
+                            add_data = self.get_so_lines(add, so)
+                            if add_data:
+                                add_data.update({'is_addins': True})
+                                so_line_env.create(add_data)
+        return generated_sos
+
+    def get_so_lines(self, line, so):
         prod_prod_env = self.env['product.product']
         tax_env = self.env['agora.tax']
-        partner = self.get_partner(record)
-        for item in record.get('InvoiceItems'):
-            so_data = {
-                'partner_id': partner.id,
+        format_id = line.get('SaleFormatId')
+        product = prod_prod_env.search(['|',
+                                        ('product_tmpl_id.base_format_id', '=', format_id),
+                                        ('product_tmpl_id.sale_format', '=', format_id),
+                                        ('product_tmpl_id.company_id', '=', self.company_id.id)], limit=1)
+        tax = tax_env.search([('agora_id', '=', line.get('VatId')), ('company_id', '=', self.company_id.id)])
+        line_data = False
+        if product:
+            line_data = {
+                'index': line.get('Index'),
+                'name': product.product_tmpl_id.name,
+                'product_id': product.id,
+                'order_id': so.id,
+                'tax_id': [(6, 0, tax.account_tax_id.ids)],
+                'price_unit': line.get('ProductPrice'),
+                'product_uom': product.product_tmpl_id.uom_id.id,
                 'company_id': self.company_id.id,
-                'state': 'sale',
-                'agora_global_id': item.get('GlobalId'),
-                'date_order': parser.parse(record.get('Date'))
+                'product_uom_qty': line.get('Quantity') if line.get('Quantity') else 1.0,
+                'qty_delivered': line.get('Quantity') if line.get('Quantity') else 1.0,
             }
-            so = self.env['sale.order'].create(so_data)
-            for line in item.get('Lines'):
-                format_id = line.get('SaleFormatId')
-                product = prod_prod_env.search(['|',
-                                              ('product_tmpl_id.base_format_id', '=', format_id),
-                                              ('product_tmpl_id.sale_format', '=', format_id),
-                                              ('product_tmpl_id.company_id', '=', self.company_id.id)], limit=1)
-                tax = tax_env.search([('agora_id', '=', line.get('VatId')), ('company_id', '=', self.company_id.id)])
-                if product:
-                    line_data = {
-                        'name': product.product_tmpl_id.name,
-                        'product_id': product.id,
-                        'order_id': so.id,
-                        'tax_id': [(6, 0, tax.account_tax_id.ids)],
-                        'price_unit': line.get('ProductPrice'),
-                        'product_uom': product.product_tmpl_id.uom_id.id,
-                        'company_id': self.company_id.id,
-                        'product_uom_qty': line.get('Quantity'),
-                        'qty_delivered': line.get('Quantity'),
-                    }
-                    self.env['sale.order.line'].create(line_data)
-        return so
+        return line_data
 
     def get_partner(self, record):
         partner = self.env['res.partner'].search([('name', 'like', 'Generic Client'),
@@ -804,6 +951,7 @@ class APIConnection(models.Model):
         for record in conections:
             export_endpoint = '/export-master'
             record.get_master_pricelist(export_endpoint)
+            record.get_master_work_places(export_endpoint)
             record.get_master_sale_center(export_endpoint)
             record.get_master_categories(export_endpoint)
             record.get_master_products(export_endpoint)
@@ -817,6 +965,7 @@ class APIConnection(models.Model):
         for record in conections:
             export_endpoint = '/export-master'
             record.get_master_pricelist(export_endpoint)
+            record.get_master_work_places(export_endpoint)
             record.get_master_sale_center(export_endpoint)
             record.get_master_categories(export_endpoint)
 
@@ -833,11 +982,21 @@ class APIConnection(models.Model):
             if product_to_send:
                 self.post_products(product_to_send)
 
-    def _update_sales_from_agora(self):
+    def _update_sales_from_agora(self, date=False):
         """"
         Action to get invoices from Agora
         """
         conections = self.search([('state', '=', 'connect')])
-        update_date = fields.Date.today()
+        if not date:
+            date = fields.Date.today()
         for connec in conections:
-            connec.get_invoices(update_date)
+            connec.get_invoices(date)
+
+    def download_by_date(self, date, company):
+        """"
+        Action to get invoices from Agora
+        But just for the related company and for specific date
+        """
+        conection = self.search([('state', '=', 'connect'), ('company_id', '=', company.id)], limit=1)
+        if conection:
+            conection.get_invoices(date)
