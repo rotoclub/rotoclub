@@ -189,7 +189,7 @@ class ProductTemplate(models.Model):
 
     @api.onchange('detailed_type')
     def onchange_parent_id(self):
-        # When a product is 'Consumible' can't be Sold but 'Purchased'
+        # When a product is 'Consumible' can be Sold but not 'Purchased'
         # When a product is 'Storaged' can be Sold and 'Purchased'
         if self.detailed_type == 'consu':
             self.purchase_ok = False
