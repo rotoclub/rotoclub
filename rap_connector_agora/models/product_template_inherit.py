@@ -49,11 +49,6 @@ class ProductTemplate(models.Model):
         comodel_name='preparation.order',
         ondelete='restrict'
     )
-    # agora_tax_id = fields.Many2one(
-    #     string='Agora Tax',
-    #     comodel_name='agora.tax',
-    #     check_company=True
-    # )
     is_saleable_as_main = fields.Boolean(
         string='Saleable as Main',
         help='Allow Sale as main product.'
@@ -101,7 +96,7 @@ class ProductTemplate(models.Model):
         relation='product_template_add_addings_rel',
         column1='product_id',
         column2='addins_id',
-        string="Addings",
+        string="Addins",
         check_company=True,
         copy=False,
     )
@@ -126,6 +121,9 @@ class ProductTemplate(models.Model):
     )
     name = fields.Char(
         copy=False
+    )
+    detailed_type = fields.Selection(
+        default='product'
     )
 
     @api.model
@@ -180,13 +178,29 @@ class ProductTemplate(models.Model):
 
     @api.onchange('parent_id')
     def onchange_parent_id(self):
+        # When parent_id get a value Can be 'Sold' but can not be 'Purchased'
+        # When parent_id is False Can be 'Sold' and 'Purchased'
         if self.parent_id:
             self.purchase_ok = False
+            self.detailed_type = 'consu'
         else:
             self.purchase_ok = True
+            self.detailed_type = 'product'
+
+    @api.onchange('detailed_type')
+    def onchange_parent_id(self):
+        # When a product is 'Consumible' can be Sold but not 'Purchased'
+        # When a product is 'Storaged' can be Sold and 'Purchased'
+        if self.detailed_type == 'consu':
+            self.purchase_ok = False
+            self.sale_ok = True
+        elif self.detailed_type == 'product':
+            self.purchase_ok = True
+            self.sale_ok = True
 
     @api.onchange('name')
     def change_button_text(self):
+        # Set button test as default when Name is set
         if self.name:
             self.button_text = self.name
 
@@ -195,6 +209,7 @@ class ProductTemplate(models.Model):
         is_first_charge = self.env.context.get('first_charge')
         for rec in self:
             if not is_first_charge:
+                # During the first charge any of these validations are applied
                 if rec.parent_id:
                     repeated = rec.product_formats_ids.filtered(lambda l: l.name == rec.name)
                     if len(repeated) > 1:
@@ -210,10 +225,20 @@ class ProductTemplate(models.Model):
         is_first_charge = self.env.context.get('first_charge')
         for rec in self:
             if not is_first_charge and rec.sync_status != 'new':
+                # During the first charge is never set as 'modified'
+                # Not even when is new
                 if rec.parent_id:
                     rec.parent_id.sync_status = 'modified'
                 else:
                     rec.sync_status = 'modified'
+
+    @api.constrains('taxes_id')
+    def validate_one_tax(self):
+        for rec in self:
+            if len(rec.taxes_id) > 1:
+                # Agora only allow one tax in the product
+                # Same behaviour is replated in Odoo
+                raise ValidationError(_('Sorry!! Only one Tax can be set'))
 
     @api.constrains('name')
     def validate_name_duplicity(self):
@@ -247,7 +272,7 @@ class ProductTemplate(models.Model):
         """
         return ['color', 'button_text', 'preparation_id', 'preparation_order_id', 'is_saleable_as_main',
                 'is_saleable_as_adding', 'is_sold_by_weight', 'ask_preparation_notes', 'ask_for_addings', 'print_zero',
-                'standard_price', 'active', 'categ_id', 'pricelist_item_count']
+                'standard_price', 'active', 'categ_id', 'product_addins_ids', 'max_addings', 'min_addings']
 
     def action_sent_agora(self):
         """"
@@ -281,6 +306,7 @@ class ProductTemplate(models.Model):
                         'mail_create_nosubscribe': True,
                         'tracking_disable': True,
                         'default_list_price': 0.0,
+                        'default_detailed_type': 'consu',
                         'default_taxes_id': self.taxes_id.ids,
                         }
         })

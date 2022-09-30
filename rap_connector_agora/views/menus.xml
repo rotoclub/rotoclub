@@ -21,7 +21,7 @@
                       sequence="15" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group"/>
             <menuitem name="Sales"
                       id="agora_connector_menu_sale_item1"
-                      action="action_sale_api"
+                      action="action_so_from_agora"
                       sequence="16" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group"/>
         </menuitem>
 

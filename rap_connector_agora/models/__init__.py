@@ -3,7 +3,7 @@
 
 from . import agora_connector
 from . import sale_api
-from . import sale_order
+from . import sale_order_inherit
 from . import models_inherits
 from . import sale_center
 from . import preparation_type
@@ -12,6 +12,7 @@ from . import preparation_order
 from . import product_template_inherit
 from . import product_pricelist_inherit
 from . import server_config
+from . import work_place
 
 
 

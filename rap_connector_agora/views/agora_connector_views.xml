@@ -25,14 +25,12 @@
                         <h1><field name="name" readonly="1" required="True"/></h1>
                     </div>
                     <group>
-                        <group name="firs_group" string="Login Data">
-                            <field name="limit_sale_order"/>
-                            <field name="limit_origin"/>
+                        <group name="first_group" string="Server Config">
+                            <field name="sale_flow"/>
+                            <field name="is_date_from_invoice" attrs="{'invisible': [('sale_flow','!=', 'payment')]}"/>
+                            <field name="company_id" required="True" options="{'no_create': True, 'no_open': True}"/>
                             <field name="last_product_id"/>
                             <field name="last_format_id"/>
-                            <field name="default_partner_id" options="{'no_create': True}"/>
-                            <field name="default_product_id" options="{'no_create': True}"/>
-                            <field name="company_id" required="True" options="{'no_create': True, 'no_open': True}"/>
                         </group>
                         <group name="second_group" string="API Data">
                             <field name="url_server" placeholder="Ex. https//Agora.com/api"/>

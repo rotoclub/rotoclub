@@ -70,3 +70,4 @@ def get_tax_data():
         {'name': 'General', 'agora_id': 4},
     ]
     return data
+
