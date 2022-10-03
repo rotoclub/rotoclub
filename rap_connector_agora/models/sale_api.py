@@ -318,7 +318,6 @@ class SaleApi(models.Model):
             analytic_id = self.analytic_account_id
             order_vals = {
                 'partner_id': record.partner_id.id,
-                'sale_api_origin': record.id,
                 'date_order': record.date_order,
                 'order_line': order_lines,
                 'partner_shipping_id': record.partner_shipping_id.id,
