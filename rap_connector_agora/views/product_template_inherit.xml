@@ -52,11 +52,9 @@
                                 <field name="ratio" attrs="{'invisible':[('parent_id', '=', False)]}"/>
                                 <field name="product_sku"/>
                                 <field name="preparation_id"
-                                       required="1"
                                        options="{'no_create': 1}"
                                        domain="[('agora_id','!=', False),('company_id','=',company_id)]"/>
                                 <field name="preparation_order_id"
-                                       required="1"
                                        options="{'no_create': 1}"
                                        domain="[('agora_id','!=', False),('company_id','=',company_id)]"/>
                             </group>

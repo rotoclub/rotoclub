@@ -285,6 +285,7 @@ class ProductTemplate(models.Model):
         if products.mapped('parent_id'):
             raise ValidationError(_('Sorry this action should be executed from the Parent '
                                     'product and not from the format'))
+        # Post products calling the main function in Api connection
         self.env['api.connection'].post_products(products)
 
     def action_add_format(self):
