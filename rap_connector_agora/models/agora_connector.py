@@ -760,7 +760,6 @@ class APIConnection(models.Model):
             ▪ StandardRefund: Devolucion de factura nominal
         endpoint example => /export/?business-day=2022-06-05&filter=Invoices
         """
-        date = date - relativedelta(months=2)
         endpoint = '/export/?business-day={}'.format(date)
         params = {
             'filter': 'Invoices',
