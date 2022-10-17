@@ -155,6 +155,10 @@ class ProductTemplate(models.Model):
         for rec in self:
             if vals.get('product_addins_ids'):
                 rec.ask_for_addings = True
+            if vals.get('ratio') and rec.parent_id:
+                prods = rec.bom_ids.bom_line_ids.filtered(lambda l: l.product_id.product_tmpl_id.id == rec.parent_id.id)
+                if prods:
+                    prods.product_qty = rec.ratio
         return res
 
     def unlink(self):
@@ -272,7 +276,7 @@ class ProductTemplate(models.Model):
         """
         return ['color', 'button_text', 'preparation_id', 'preparation_order_id', 'is_saleable_as_main',
                 'is_saleable_as_adding', 'is_sold_by_weight', 'ask_preparation_notes', 'ask_for_addings', 'print_zero',
-                'standard_price', 'active', 'categ_id', 'product_addins_ids', 'max_addings', 'min_addings']
+                'standard_price', 'active', 'categ_id', 'product_addins_ids', 'max_addings', 'min_addings', 'taxes_id']
 
     def action_sent_agora(self):
         """"
