@@ -35,7 +35,7 @@ class ProductPricelistItem(models.Model):
         res = super(ProductPricelistItem, self).write(vals)
         is_first_charge = self.env.context.get('first_charge')
         for rec in self:
-            if not is_first_charge and res.product_tmpl_id.sync_status != 'new' and \
+            if not is_first_charge and rec.product_tmpl_id.sync_status != 'new' and \
                     (vals.get('pricelist_id') or vals.get('fixed_price') or vals.get('addin_price') or vals.get('menuitem_price')):
                 # When some values change the Product related should be mark as modified
                 rec.product_tmpl_id.sync_status = 'modified'
