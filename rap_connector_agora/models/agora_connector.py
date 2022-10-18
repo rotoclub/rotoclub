@@ -1009,7 +1009,7 @@ class APIConnection(models.Model):
         product_env = self.env['product.template']
         for connec in conections:
             product_to_send = product_env.search([('company_id', '=', connec.company_id.id),
-                                                  ('sync_status', 'in', ['new', 'modifyied']),
+                                                  ('sync_status', 'in', ['new', 'modified']),
                                                   ('active', 'in', [True, False])])
             if product_to_send:
                 self.post_products(product_to_send)
