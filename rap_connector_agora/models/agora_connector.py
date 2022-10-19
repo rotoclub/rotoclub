@@ -6,9 +6,9 @@ from odoo.exceptions import UserError
 import requests
 import logging
 from odoo.exceptions import ValidationError
-from dateutil.relativedelta import relativedelta
 from dateutil import parser
 from datetime import datetime
+requests.packages.urllib3.util.connection.HAS_IPV6 = False
 
 
 _logger = logging.getLogger(__name__)
@@ -569,7 +569,7 @@ class APIConnection(models.Model):
         if len(self.env.companies) > 1:
             raise ValidationError(_('Please select only one company to make this operation.'))
 
-    def _action_update_last_ids(self):
+    def _get_last_ids(self):
         """"
         Function to update the last Format_id and Product_id at the api_connection
         This IDs will be used to assign new agora_id when a product or format is created
@@ -577,19 +577,14 @@ class APIConnection(models.Model):
         conections = self.search([('state', '=', 'connect')])
         for connec in conections:
             params = {
-                'filter': 'Products'
+                'QueryGuid': '{533750D6-11DE-4D33-8D11-8A3B63C33F22}',
+                'Params': {}
             }
-            products = self.get_request(connec.url_server, '/export-master', connec.server_api_key, params)
-            if products and products.json().get('Products'):
-                json_products = products.json().get('Products')
-                last_product = max([rec['Id'] for rec in json_products if rec['BaseSaleFormatId']])
-                base_formats = [rec['BaseSaleFormatId'] for rec in json_products if rec['BaseSaleFormatId']]
-                list_formats = [rec['AdditionalSaleFormats'] for rec in json_products if rec['AdditionalSaleFormats']]
-                for formats in list_formats:
-                    for form in formats:
-                        base_formats.append(form['Id'])
-                last_format = max(base_formats)
-            connec.update({'last_format_id': last_format, 'last_product_id': last_product})
+            agora_ids = self.post_request(connec.url_server, '/custom-query', connec.server_api_key, params)
+            if agora_ids:
+                ids = agora_ids.json()[0]
+                connec.update({'last_format_id': ids.get('last_format_id'),
+                               'last_product_id': ids.get('last_product_id')})
 
     def get_additional_formats(self, parent_product, connection):
         """"
@@ -710,6 +705,7 @@ class APIConnection(models.Model):
         Function to send to Agora all products provided in the params
         """
         product_env = self.env['product.template']
+        self._get_last_ids()
         for product in products:
             connection = self.get_related_connection(product)
             if connection:
@@ -767,7 +763,7 @@ class APIConnection(models.Model):
         invoices = self.get_request(self.url_server, endpoint, self.server_api_key, params)
         if invoices and invoices.json().get('Invoices'):
             json_invoices = invoices.json().get('Invoices')
-            basic_invoices = list(filter(lambda inv: inv.get('DocumentType') == 'BasicInvoice', json_invoices))
+            basic_invoices = list(filter(lambda inv: inv.get('DocumentType') in ['BasicInvoice', 'StandardInvoice'], json_invoices))
             basic_refunds = list(filter(lambda inv: inv.get('DocumentType') == 'BasicRefund', json_invoices))
             for record in basic_invoices:
                 sos = self._create_sale_order(record)
@@ -787,6 +783,7 @@ class APIConnection(models.Model):
                     so._force_lines_to_invoice_policy_order()
                     # Create Invoice associated with the SO
                     invoice = so._create_invoices()
+                    invoice.update({'number': so.number, 'serie': so.serie})
                     invoices.append(invoice)
                     # Update values in the created Inv
                     invoice.invoice_line_ids.analytic_account_id = so.sale_center_id.analytic_id.id
@@ -852,26 +849,53 @@ class APIConnection(models.Model):
                 (payment_lines + lines).filtered_domain([('account_id', '=', account.id),
                                                          ('reconciled', '=', False)]).reconcile()
 
+    def validate_picking(self, so):
+        """"
+            Function to Assign and Validate the Stock Picking
+        """
+        for picking in so.picking_ids:
+            picking.action_confirm()
+            picking.action_assign()
+            picking._action_done()
+            # The Picking should be validated only if all the products are covered
+            all_available = True
+            for so_line in so.order_line:
+                if so_line.product_id.id not in so.picking_ids.move_ids_without_package.mapped('product_id').ids:
+                    all_available = False
+            if all_available:
+                # If are all available should be Done the Picking
+                for line in picking.move_ids_without_package:
+                    line.quantity_done = line.product_uom_qty
+                picking.button_validate()
+
     def generate_credit_note(self, refund):
         """This function will generate a credit note in Odoo when a refund come from Agora.
             :param refund: Record of refund coming from Agora.
         """
         if self.sale_flow == 'payment':
-            order = self.env['sale.order'].search([('number', '=', refund['RelatedInvoice'].get('Number'))])
-            if order:
+            order = self.env['sale.order'].search([('number', '=', refund['RelatedInvoice'].get('Number')),
+                                                   ('serie', '=', refund['RelatedInvoice'].get('Serie'))], limit=1)
+            refund_inv = self.env['account.move'].search([('number', '=', refund.get('Number')),
+                                                          ('move_type', '=', 'out_refund'),
+                                                          ('serie', '=', refund.get('Serie'))], limit=1)
+            if order and not refund_inv:
                 moves2revert = order.invoice_ids.filtered(lambda m: m.move_type == 'out_invoice' and m.payment_state in ['paid',
                                                                                                                      'in_payment'])
                 default_values_list = []
                 for move in moves2revert:
                     default_values_list.append({
-                        'ref': _('Reversal of: %s') % (move.name),
+                        'ref': _('Reversal of: {}'.format(move.name)),
                         'date': move.date,
+                        'number': refund.get('Number'),
+                        'serie': refund.get('Serie'),
                         'invoice_date': move.is_invoice(include_receipts=True) and move.date,
                         'journal_id': move.journal_id.id,
-                        'invoice_payment_term_id': None,
-                        'auto_post': True,
+                        'invoice_payment_term_id': None
                     })
-                moves2revert._reverse_moves(default_values_list)
+                revert = moves2revert._reverse_moves(default_values_list)
+                revert.action_post()
+                self.paid_invoice(revert)
+                order.picking_ids.write({'state': 'cancel'})
                 return True
 
     def _create_sale_order(self, record):
@@ -883,6 +907,7 @@ class APIConnection(models.Model):
         generated_sos = []
         for item in record.get('InvoiceItems'):
             exist_so = so_env.search([('number', '=', record.get('Number')),
+                                      ('serie', '=', record.get('Serie')),
                                       ('company_id', '=', self.company_id.id)])
             if not exist_so:
                 so_data = {
@@ -890,6 +915,7 @@ class APIConnection(models.Model):
                     'company_id': self.company_id.id,
                     'state': 'sale',
                     'number': record.get('Number'),
+                    'serie': record.get('Serie'),
                     'date_order': parser.parse(record.get('Date')),
                     'business_date': datetime.strptime(record.get('BusinessDay'), '%Y-%m-%d').date()
                 }
@@ -913,6 +939,7 @@ class APIConnection(models.Model):
                             if add_data:
                                 add_data.update({'is_addins': True})
                                 so_line_env.create(add_data)
+                self.validate_picking(so)
         return generated_sos
 
     def get_so_lines(self, line, so):

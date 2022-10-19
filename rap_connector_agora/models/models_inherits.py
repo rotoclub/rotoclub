@@ -63,6 +63,9 @@ class SaleOrder(models.Model):
     number = fields.Char(
         string='Number'
     )
+    serie = fields.Char(
+        string='Serie'
+    )
     work_place_id = fields.Many2one(
         string='Work Place',
         comodel_name='work.place'
@@ -110,3 +113,13 @@ class AccountAnalyticGroup(models.Model):
         string='Journal'
     )
 
+
+class AccountMove(models.Model):
+    _inherit = 'account.move'
+
+    number = fields.Char(
+        string='Number'
+    )
+    serie = fields.Char(
+        string='Serie'
+    )
