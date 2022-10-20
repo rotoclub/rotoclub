@@ -219,8 +219,6 @@ class ProductTemplate(models.Model):
                     if len(repeated) > 1:
                         raise ValidationError(_("Sorry!! Already exist a format with the same name."
                                                 " Duplicity are not allowed"))
-                if not rec.categ_id.agora_id:
-                    raise ValidationError(_("Please verify the Family"))
                 if rec.parent_id and rec.ratio <= 0:
                     raise ValidationError(_("All Formats should have Ratio bigger than zero"))
 
