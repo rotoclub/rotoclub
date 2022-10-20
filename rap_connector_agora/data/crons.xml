@@ -48,15 +48,4 @@
         <field name="state">code</field>
     </record>
 
-    <!--Cron to update Invoices from Agora-->
-    <record id="ir_cron_update_last_ids" model="ir.cron">
-        <field name="name">Update last products IDS</field>
-        <field name="interval_number">1</field>
-        <field name="interval_type">days</field>
-        <field name="numbercall">-1</field>
-        <field name="doall" eval="False"/>
-        <field name="model_id" ref="model_api_connection"/>
-        <field name="code">model._action_update_last_ids()</field>
-        <field name="state">code</field>
-    </record>
 </odoo>
