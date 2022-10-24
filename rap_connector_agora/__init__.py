@@ -35,6 +35,14 @@ def create_data(cr, registry):
                 'agora_id': tax.get('agora_id'),
                 'company_id': company.id
             })
+        env['product.template'].create({
+            'name': 'Discount Product [{}]'.format(company.name),
+            'type': 'service',
+            'default_code': 'Discount',
+            'invoice_policy': 'order',
+            'is_product_discount': True,
+            'company_id': company.id
+        })
 
 
 def get_prep_order_data():

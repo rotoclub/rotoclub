@@ -123,3 +123,20 @@ class AccountMove(models.Model):
     serie = fields.Char(
         string='Serie'
     )
+
+
+class ResCompany(models.Model):
+    _inherit = 'res.company'
+
+    @api.model
+    def create(self, vals):
+        res = super(ResCompany, self).create(vals)
+        self.env['product.template'].create({
+            'name': 'Discount Product [{}]'.format(res.name),
+            'type': 'service',
+            'default_code': 'Discount',
+            'invoice_policy': 'order',
+            'is_product_discount': True,
+            'company_id': res.id
+        })
+        return res

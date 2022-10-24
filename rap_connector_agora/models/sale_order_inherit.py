@@ -10,9 +10,10 @@ class SaleOrderLine(models.Model):
     is_addins = fields.Boolean(
         string='Is Addins'
     )
+    is_invitation = fields.Boolean(
+        string='Invitation'
+    )
     index = fields.Integer(
         string='Index',
         help='Number of the line coming from Agora to be identify'
     )
-
-

@@ -62,17 +62,6 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='parent_id']" position="after">
                     <field name="work_place_id" options="{'no_create': True}" domain="[('company_id', '=', company_id)]"/>
-                </xpath>
-            </field>
-        </record>
-
-                <!-- Analytic Account Group FORM inherit-->
-        <record id="account_analytic_group_agora_inherit" model="ir.ui.view">
-            <field name="name">account.analytic.group.agora.inherit</field>
-            <field name="model">account.analytic.group</field>
-            <field name="inherit_id" ref="analytic.account_analytic_group_form_view"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='parent_id']" position="after">
                     <field name="journal_id"/>
                     <field name="payment_method_id"
                            domain="[('payment_type', '=', 'inbound')]"
