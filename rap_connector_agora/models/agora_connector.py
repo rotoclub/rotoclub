@@ -913,7 +913,6 @@ class APIConnection(models.Model):
                 so_data = {
                     'partner_id': partner.id,
                     'company_id': self.company_id.id,
-                    'state': 'sale',
                     'number': record.get('Number'),
                     'serie': record.get('Serie'),
                     'date_order': parser.parse(record.get('Date')),
@@ -929,20 +928,46 @@ class APIConnection(models.Model):
                     so_data.update({'sale_center_id': sc.id})
                 so = so_env.create(so_data)
                 generated_sos.append(so)
+                global_discount = 0.0
+                if item['Discounts'].get('DiscountRate'):
+                    global_discount = item['Discounts'].get('DiscountRate') * 100
                 for line in item.get('Lines'):
-                    data = self.get_so_lines(line, so)
+                    data = self.get_so_lines(line, so, global_discount, False)
                     if data:
                         so_line_env.create(data)
                     if line.get('Addins'):
                         for add in line.get('Addins'):
-                            add_data = self.get_so_lines(add, so)
+                            add_data = self.get_so_lines(add, so, global_discount, True)
                             if add_data:
-                                add_data.update({'is_addins': True})
+                                add_data.update({'is_addins': True,
+                                                 'product_uom_qty': line.get('Quantity'),
+                                                 'qty_delivered': line.get('Quantity')})
                                 so_line_env.create(add_data)
+                if item['Discounts'].get('CashDiscount'):
+                    amount = item['Discounts'].get('CashDiscount')
+                    discount_line = self.get_discount_line(so, amount)
+                    so_line_env.create(discount_line)
+                so.action_confirm()
                 self.validate_picking(so)
         return generated_sos
 
-    def get_so_lines(self, line, so):
+    def get_discount_line(self, so, amount):
+        discount_prod = self.env['product.product'].search([('product_tmpl_id.is_product_discount', '=', True),
+                                                            ('company_id', '=', so.company_id.id)], limit=1)
+        line_data = {
+            'name': discount_prod.product_tmpl_id.name,
+            'product_id': discount_prod.id,
+            'order_id': so.id,
+            'tax_id': [(6, 0, [])],
+            'price_unit': abs(amount) * -1,
+            'product_uom': discount_prod.product_tmpl_id.uom_id.id,
+            'company_id': self.company_id.id,
+            'product_uom_qty': 1,
+            'qty_delivered': 1,
+        }
+        return line_data
+
+    def get_so_lines(self, line, so, global_discount, is_addin):
         prod_prod_env = self.env['product.product']
         tax_env = self.env['agora.tax']
         format_id = line.get('SaleFormatId')
@@ -959,12 +984,15 @@ class APIConnection(models.Model):
                 'product_id': product.id,
                 'order_id': so.id,
                 'tax_id': [(6, 0, tax.account_tax_id.ids)],
-                'price_unit': line.get('ProductPrice'),
+                'price_unit': line.get('TotalAmount') / line.get('Quantity') if not is_addin else 0.0,
                 'product_uom': product.product_tmpl_id.uom_id.id,
                 'company_id': self.company_id.id,
-                'product_uom_qty': line.get('Quantity') if line.get('Quantity') else 1.0,
-                'qty_delivered': line.get('Quantity') if line.get('Quantity') else 1.0,
+                'discount': global_discount,
+                'product_uom_qty': line.get('Quantity') or 1.0,
+                'qty_delivered': line.get('Quantity') or 1.0,
             }
+            if line.get('DiscountRate') and line['DiscountRate'] == 1:
+                line_data.update({'is_invitation': True})
         return line_data
 
     def get_partner(self, record):

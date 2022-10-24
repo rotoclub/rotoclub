@@ -113,6 +113,13 @@ class ProductTemplate(models.Model):
         string="Agora Taxes",
         compute='_compute_agora_taxes'
     )
+    is_product_discount = fields.Boolean(
+        string='Is Discount Product'
+    )
+    is_wrong_categ = fields.Boolean(
+        string='Wrong Family',
+        compute='_computed_family_validation'
+    )
     # --------------------------------------
     #       Modifying standard fields
     # --------------------------------------
@@ -133,21 +140,23 @@ class ProductTemplate(models.Model):
         mrp_bom_line_env = self.env['mrp.bom.line']
         product_env = self.env['product.product']
         is_first_charge = self.env.context.get('first_charge')
-        if res.parent_id and not is_first_charge:
-            # When a format is created automatically a List of materials should be created
-            # Should be created a list of material line too, as required in odoo
-            material_list = mrp_bom_env.create({
-                'product_tmpl_id': res.id,
-                'type': 'phantom',
-                'company_id': res.company_id.id
-            })
-            product_product = product_env.search([('product_tmpl_id', '=', res.parent_id.id)], limit=1)
-            mrp_bom_line_env.create({
-                'bom_id': material_list.id,
-                'product_id': product_product.id,
-                'product_qty': res.ratio,
-                'company_id': res.company_id.id
-            })
+        if not is_first_charge:
+            if res.parent_id:
+                # When a format is created automatically a List of materials should be created
+                # Should be created a list of material line too, as required in odoo
+                material_list = mrp_bom_env.create({
+                    'product_tmpl_id': res.id,
+                    'type': 'phantom',
+                    'company_id': res.company_id.id
+                })
+                product_product = product_env.search([('product_tmpl_id', '=', res.parent_id.id)], limit=1)
+                mrp_bom_line_env.create({
+                    'bom_id': material_list.id,
+                    'product_id': product_product.id,
+                    'product_qty': res.ratio,
+                    'company_id': res.company_id.id
+                })
+            res.fields_validation()
         return res
 
     def write(self, vals):
@@ -159,6 +168,10 @@ class ProductTemplate(models.Model):
                 prods = rec.bom_ids.bom_line_ids.filtered(lambda l: l.product_id.product_tmpl_id.id == rec.parent_id.id)
                 if prods:
                     prods.product_qty = rec.ratio
+            if vals.get('uom_id'):
+                rec.bom_line_ids.product_uom_id = rec.uom_id
+            if vals.get('name') or vals.get('categ_id') or vals.get('ratio'):
+                rec.fields_validation()
         return res
 
     def unlink(self):
@@ -171,6 +184,9 @@ class ProductTemplate(models.Model):
                 # Can be deleted
                 raise ValidationError(_('Sorry!! This product cant be deleted because its already synchronize'
                                         ' with Agora. Should be Archive instead'))
+            if rec.is_product_discount:
+                raise ValidationError(_('Sorry!! This product cant be deleted because its used'
+                                        ' for discount by the system'))
         return super(ProductTemplate, self).unlink()
 
     @api.depends('company_id')
@@ -179,6 +195,14 @@ class ProductTemplate(models.Model):
             recs = self.env['agora.tax'].search([('company_id', '=', rec.company_id.id)])
             recs_taxes = recs.mapped('account_tax_id')
             rec.tax_agora_ids = recs_taxes.ids
+
+    @api.depends('categ_id')
+    def _computed_family_validation(self):
+        for rec in self:
+            is_wrong = False
+            if not rec.categ_id.agora_id:
+                is_wrong = True
+            rec.is_wrong_categ = is_wrong
 
     @api.onchange('parent_id')
     def onchange_parent_id(self):
@@ -208,19 +232,18 @@ class ProductTemplate(models.Model):
         if self.name:
             self.button_text = self.name
 
-    @api.constrains('categ_id', 'categ_id.agora_id', 'name', 'ratio', 'parent_id', 'product_formats_ids')
     def fields_validation(self):
         is_first_charge = self.env.context.get('first_charge')
-        for rec in self:
-            if not is_first_charge:
-                # During the first charge any of these validations are applied
-                if rec.parent_id:
-                    repeated = rec.product_formats_ids.filtered(lambda l: l.name == rec.name)
-                    if len(repeated) > 1:
-                        raise ValidationError(_("Sorry!! Already exist a format with the same name."
-                                                " Duplicity are not allowed"))
-                if rec.parent_id and rec.ratio <= 0:
-                    raise ValidationError(_("All Formats should have Ratio bigger than zero"))
+        if not is_first_charge:
+            # During the first charge any of these validations will be considering
+            repeated = self.search([('name', 'ilike', self.name),
+                                   ('company_id', '=', self.company_id.id),
+                                   ('id', '!=', self.id)])
+            if repeated:
+                raise ValidationError(_("Sorry!! Already exist a format with the same name."
+                                        " Duplicity are not allowed"))
+            if self.parent_id and self.ratio <= 0:
+                raise ValidationError(_("All Formats should have Ratio bigger than zero"))
 
     @api.constrains(lambda self: self.get_onchange_fields())
     def verify_changed_values(self):
@@ -241,16 +264,6 @@ class ProductTemplate(models.Model):
                 # Agora only allow one tax in the product
                 # Same behaviour is replated in Odoo
                 raise ValidationError(_('Sorry!! Only one Tax can be set'))
-
-    @api.constrains('name')
-    def validate_name_duplicity(self):
-        is_first_charge = self.env.context.get('first_charge')
-        for rec in self:
-            repeated = rec.search([('name', 'ilike', rec.name),
-                                   ('company_id', '=', rec.company_id.id),
-                                   ('id', '!=', rec.id)])
-            if repeated and not is_first_charge:
-                raise ValidationError(_('Please select another name. Exist already other product with the same'))
 
     @api.constrains('product_sku')
     def validate_sku_duplicity(self):

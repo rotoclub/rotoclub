@@ -29,9 +29,11 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='order_line']//tree//field[@name='company_id']" position="after">
                 <field name="is_addins" readonly="1"/>
+                <field name="is_invitation" readonly="1"/>
             </xpath>
             <xpath expr="//field[@name='order_line']//tree" position="attributes">
                 <attribute name="decoration-bf">is_addins</attribute>
+                <attribute name="decoration-warning">is_invitation</attribute>
                 <attribute name="decoration-success">is_addins</attribute>
             </xpath>
         </field>

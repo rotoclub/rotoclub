@@ -6,6 +6,14 @@
             <field name="model">product.template</field>
             <field name="inherit_id" ref="product.product_template_only_form_view"/>
             <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('oe_button_box')]" position="after">
+                    <field name="is_wrong_categ" invisible="1"/>
+                    <div class="alert alert-warning  text-center info_icon"
+                         role="alert"
+                         attrs="{'invisible': [('is_wrong_categ', '!=', True), ('is_product_discount', '=', True)]}">
+                        Please Verify the Family, should be selected a Family related with Agora instance.
+                    </div>
+                 </xpath>
                 <xpath expr="//field[@name='detailed_type']" position="before">
                     <field name="parent_id"
                            domain="[('company_id','=',company_id)]"
@@ -30,6 +38,9 @@
                 </xpath>
                 <xpath expr="//field[@name='detailed_type']" position="attributes">
                     <attribute name="attrs">{'readonly': [('parent_id', '!=', False)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='detailed_type']" position="after">
+                    <field name="is_product_discount" readonly="1"/>
                 </xpath>
                 <xpath expr="//field[@name='categ_id']" position="attributes">
                     <attribute name="string">Family</attribute>
@@ -167,8 +178,12 @@
                eval="[(5, 0, 0),
                       (0, 0, {'view_mode': 'tree', 'view_id': ref('product_template_rap_tree_view')}),
                       (0, 0, {'view_mode': 'form', 'view_id': ref('product.product_template_only_form_view')})]"/>
-            <field name="domain">[('sync_status', 'in', ['new', 'modified']),
-                ('parent_id', '=', False), ('active', 'in', [True, False])]</field>
+            <field name="domain">[
+                ('sync_status', 'in', ['new', 'modified']),
+                ('parent_id', '=', False),
+                ('is_product_discount', '=', False),
+                ('active', 'in', [True, False])
+                ]</field>
         </record>
 
         <!--New Product template Action to be used in Agora-->
