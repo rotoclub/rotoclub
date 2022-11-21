@@ -126,7 +126,7 @@ class APIConnection(models.Model):
         }
         url = '{}{}'.format(url, end_point)
         try:
-            connect = requests.get(url=url, headers=headers, params=params)
+            connect = requests.get(url=url, headers=headers, params=params, verify=False)
             if connect:
                 if connect.status_code == 200:
                     return connect
@@ -159,7 +159,7 @@ class APIConnection(models.Model):
         }
         url = '{}{}'.format(url, end_point)
         try:
-            connect = requests.post(url=url, headers=headers, json=json)
+            connect = requests.post(url=url, headers=headers, json=json, verify=False)
             if connect:
                 if connect.status_code == 200:
                     return connect
