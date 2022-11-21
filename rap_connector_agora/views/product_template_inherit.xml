@@ -10,7 +10,7 @@
                     <field name="is_wrong_categ" invisible="1"/>
                     <div class="alert alert-warning  text-center info_icon"
                          role="alert"
-                         attrs="{'invisible': [('is_wrong_categ', '!=', True), ('is_product_discount', '=', True)]}">
+                         attrs="{'invisible': ['|',('is_wrong_categ', '!=', True), ('is_product_discount', '=', True)]}">
                         Please Verify the Family, should be selected a Family related with Agora instance.
                     </div>
                  </xpath>
