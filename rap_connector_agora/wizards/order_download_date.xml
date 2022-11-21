@@ -1,0 +1,33 @@
+<odoo>
+    <data>
+        <!-- Update Orders SYNC Wizard -->
+        <record model="ir.ui.view" id="order_downloaded_wizard">
+            <field name="name">order.download.date</field>
+            <field name="model">order.download.date</field>
+            <field name="arch" type="xml">
+                <form string="Download Orders" >
+                    <group>
+                        <field name="tikect_date"/>
+                    </group>
+                    <footer>
+                        <button type="object" name="get_order_from_agora" string="Get Orders" class="oe_highlight"/>
+                        <button special="cancel" string="CANCEL"  class="btn-secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+         <!-- Action order.download.date -->
+        <record model="ir.actions.act_window" id="download_order_by_date_action">
+            <field name="name">Download Orders by date</field>
+            <field name="res_model">order.download.date</field>
+            <field name="view_mode">form</field>
+            <field name="view_ids"
+                   eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('order_downloaded_wizard')}),
+                         ]"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</odoo>

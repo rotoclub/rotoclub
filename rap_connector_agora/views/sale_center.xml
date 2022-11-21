@@ -1,0 +1,57 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <!-- Sale Center Form View-->
+        <record id="sale_center_form_view" model="ir.ui.view">
+            <field name="name">sale.center.form.view</field>
+            <field name="model">sale.center</field>
+            <field name="arch" type="xml">
+                <form string="Sale Center">
+                    <sheet string="Analytic Entry">
+                        <group>
+                            <group string="Accounting fields">
+                                <field name="name"/>
+                                <field name="company_id"/>
+                                <field name="analytic_id" required="1"/>
+                                <field name="analytic_group_id"/>
+                                <field name="pricelist_id"/>
+                                <field name="location_ids" widget="many2many_tags"/>
+                            </group>
+                            <group string="Agora fields">
+                                <field name="button_text"/>
+                                <field name="color" widget="color"/>
+                                <field name="agora_id" readonly="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Sale Center Tree View-->
+        <record id="sale_center_tree_view" model="ir.ui.view">
+            <field name="name">sale.center.tree.view</field>
+            <field name="model">sale.center</field>
+            <field name="arch" type="xml">
+                <tree string="Sale Center" create="0" delete="0" duplicate="0">
+                    <field name="name"/>
+                    <field name="analytic_id"/>
+                    <field name="company_id"/>
+                    <field name="agora_id"/>
+                    <field name="tax_included" optional="hide"/>
+                </tree>
+            </field>
+        </record>
+
+        <!--Action for Sale Center Model-->
+        <record id="account_sale_center_action" model="ir.actions.act_window">
+            <field name="name">Sale Center</field>
+            <field name="res_model">sale.center</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('sale_center_tree_view')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('sale_center_form_view')})]"/>
+        </record>
+
+    </data>
+</odoo>

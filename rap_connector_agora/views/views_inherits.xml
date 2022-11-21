@@ -1,0 +1,74 @@
+<odoo>
+    <data>
+        <!-- Product Pricelist Form inherit-->
+        <record id="view_product_pricelist_inherit" model="ir.ui.view">
+            <field name="name">product.pricelist.inherit</field>
+            <field name="model">product.pricelist</field>
+            <field name="inherit_id" ref="product.product_pricelist_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='company_id']" position="after">
+                    <field name="agora_id" readonly="1"/>
+                    <field name="sale_center_ids" widget="one2many"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Product Pricelist Tree inherit-->
+        <record id="view_product_pricelist_tree_inherit" model="ir.ui.view">
+            <field name="name">product.pricelist.tree.inherit</field>
+            <field name="model">product.pricelist</field>
+            <field name="inherit_id" ref="product.product_pricelist_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="delete">0</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Sale Order Form inherit-->
+        <record id="view_sale_order_form_inherit" model="ir.ui.view">
+            <field name="name">sale.order.form.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='validity_date']" position="before">
+                    <field name="serie" readonly="1"/>
+                    <field name="number" readonly="1"/>
+                    <field name="work_place_id" readonly="1"/>
+                    <field name="business_date" readonly="1"/>
+                    <field name="sale_center_id" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Res Partner FORM inherit-->
+        <record id="res_partner_agora_view_form_inherit" model="ir.ui.view" >
+            <field name="name">res.partner.view.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="groups_id" eval="[(4, ref('rap_connector_agora.agora_manager_group'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='category_id']" position="after">
+                    <field name="agora_id" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Analytic Account Group FORM inherit-->
+        <record id="account_analytic_group_agora_inherit" model="ir.ui.view">
+            <field name="name">account.analytic.group.agora.inherit</field>
+            <field name="model">account.analytic.group</field>
+            <field name="inherit_id" ref="analytic.account_analytic_group_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='parent_id']" position="after">
+                    <field name="work_place_id" options="{'no_create': True}" domain="[('company_id', '=', company_id)]"/>
+                    <field name="journal_id"/>
+                    <field name="payment_method_id"
+                           domain="[('payment_type', '=', 'inbound')]"
+                           options="{'no_create': True}"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

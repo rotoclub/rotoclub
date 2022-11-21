@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+<odoo>
+    <!-- View Form api.connection -->
+    <record model="ir.ui.view" id="api_connection_form">
+        <field name="name">api.connection.form</field>
+        <field name="model">api.connection</field>
+        <field name="arch" type="xml">
+            <form string="API Connection">
+                <header>
+                    <button name="test_connection" string="Connect server" type="object" icon="fa-television" class="btn-primary" attrs="{'invisible':[('state','=','connect')]}"/>
+                    <button name="test_disconnection" string="Disconnect" type="object" attrs="{'invisible':[('state','!=','connect')]}"/>
+                    <field name="state" widget="statusbar" statusbar_visible="no_connect,connect" required="True"/>
+                </header>
+                <field name="check_message" invisible="1"/>
+                <div class="alert alert-warning" role="alert" attrs="{'invisible': [('check_message', '!=', True)]}">
+                  It has not been possible to establish the connection with the Agora server. <span class="o_vat_label"> Contact an Administrator</span>.
+                </div>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object" class="oe_stat_button" icon="fa-file-text-o" name="action_view_server">
+                            <field name="count_api" widget="statinfo" string="API"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1" required="True"/></h1>
+                    </div>
+                    <group>
+                        <group name="first_group" string="Server Config">
+                            <field name="sale_flow"/>
+                            <field name="is_date_from_invoice" attrs="{'invisible': [('sale_flow','!=', 'payment')]}"/>
+                            <field name="company_id" required="True" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="last_product_id"/>
+                            <field name="last_format_id"/>
+                        </group>
+                        <group name="second_group" string="API Data">
+                            <field name="url_server" placeholder="Ex. https//Agora.com/api"/>
+                            <field name="server_api_key"/>
+                            <field name="last_connection" readonly="True"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="resources" string="Resources">
+
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- View Tree api.connection -->
+    <record model="ir.ui.view" id="api_connection_tree">
+        <field name="name">api.connection.tree</field>
+        <field name="model">api.connection</field>
+        <field name="arch" type="xml">
+            <tree string="API Connection" decoration-info="state == 'connect'" decoration-muted = "state in ['no_connect']" sample="1">
+                <field name="name"/>
+                <field name="url_server"/>
+                <field name="company_id"/>
+                <field name="last_connection" readonly="True"/>
+                <field name="state" decoration-info="state == 'connect'" decoration-muted="state == 'no_connect'" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_api_connection" model="ir.actions.act_window">
+        <field name="name">API Connection</field>
+        <field name="res_model">api.connection</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+               eval="[(5, 0, 0),
+                      (0, 0, {'view_mode': 'tree', 'view_id': ref('api_connection_tree')}),
+                      (0, 0, {'view_mode': 'form', 'view_id': ref('api_connection_form')})]"/>
+    </record>
+
+    <!-- View Form server.config -->
+    <record id="server_config_form" model="ir.ui.view">
+        <field name="name">server.config.form</field>
+        <field name="model">server.config</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="open,closed" required="True"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object" class="oe_stat_button" icon="fa-cog" name="action_view_api">
+                            <field name="sale_api_count" widget="statinfo" string="Sale Api"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1 class="o_row"><field name="name" class="field_name" readonly="True"/></h1>
+                    </div>
+                    <group>
+                        <group name="first_group">
+                            <field name="title" placeholder="Ex. TPV No.1"/>
+                            <field name="analytic_account_id" context="{'default_name':title}" force_save="1" options="{'no_create': True}" required="True" groups="analytic.group_analytic_accounting"/>
+                            <field name="sale_flow" required="1"/>
+                            <field name="agora_id" required="1" options="{'no_create': True, 'no_open': True}"/>
+                        </group>
+                        <group name="second_group">
+                            <field name="user_id" required="1" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="search_product_by" required="1"/>
+                            <field name="company_id" required="1" options="{'no_create': True, 'no_open': True}"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- View tree server.config -->
+    <record id="server_config_tree" model="ir.ui.view">
+        <field name="name">server.config.tree</field>
+        <field name="model">server.config</field>
+        <field name="arch" type="xml">
+            <tree sample="1">
+                <field name="name"/>
+                <field name="title"/>
+                <field name="sale_flow"/>
+                <field name="agora_id"/>
+                <field name="company_id"/>
+                <field name="create_uid"/>
+                <field name="create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_server_config" model="ir.actions.act_window">
+        <field name="name">Server Config</field>
+        <field name="res_model">server.config</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>

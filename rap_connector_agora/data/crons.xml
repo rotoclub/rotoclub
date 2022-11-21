@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--Cron to make the first charge of products from Agora to Odoo-->
+    <record id="ir_cron_first_sinc_charge_masters_in_odoo" model="ir.cron">
+        <field name="name">First Charge from Agora (Only One execution)</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model_id" ref="model_api_connection"/>
+        <field name="code">model._agora_first_sync()</field>
+        <field name="state">code</field>
+    </record>
+
+    <!--Cron to update keep updated Masters (Dont consider Products)-->
+    <record id="ir_cron_update_masters_in_odoo" model="ir.cron">
+        <field name="name">Update masters from Agora</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model_id" ref="model_api_connection"/>
+        <field name="code">model._update_masters_from_agora()</field>
+        <field name="state">code</field>
+    </record>
+
+        <!--Cron to update Products in Agora from Odoo-->
+    <record id="ir_cron_update_products_in_agora" model="ir.cron">
+        <field name="name">Update Products in Agora</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model_id" ref="model_api_connection"/>
+        <field name="code">model._update_products_from_odoo()</field>
+        <field name="state">code</field>
+    </record>
+
+    <!--Cron to update Invoices from Agora-->
+    <record id="ir_cron_update_invoices_in_odoo" model="ir.cron">
+        <field name="name">Update Odoo Invoices from Agora</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model_id" ref="model_api_connection"/>
+        <field name="code">model._update_sales_from_agora()</field>
+        <field name="state">code</field>
+    </record>
+
+</odoo>

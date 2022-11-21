@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--New Sale Order Action to be used in Agora-->
+        <record id="action_so_from_agora" model="ir.actions.act_window">
+            <field name="name">Sale Orders</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids"
+               eval="[(5, 0, 0),
+                      (0, 0, {'view_mode': 'tree', 'view_id': ref('sale.view_order_tree')}),
+                      (0, 0, {'view_mode': 'form', 'view_id': ref('sale.view_order_form')})]"/>
+            <field name="context">{'group_by': 'business_date:day'}</field>
+        </record>
+
+    </data>
+</odoo>

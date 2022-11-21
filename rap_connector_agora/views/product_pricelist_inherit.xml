@@ -1,0 +1,28 @@
+<odoo>
+    <data>
+        <record id="product_pricelist_tree_agora_inherit" model="ir.ui.view">
+            <field name="name">product.pricelist.agora.inherit</field>
+            <field name="model">product.pricelist.item</field>
+            <field name="inherit_id" ref="product.product_pricelist_item_tree_view_from_product"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='pricelist_id']" position="after">
+                    <field name="product_company" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='pricelist_id']" position="attributes">
+                    <attribute name="domain">[('company_id','=',product_company)]</attribute>
+                </xpath>
+                <xpath expr="//field[@name='min_quantity']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='fixed_price']" position="after">
+                    <field name="addin_price"/>
+                    <field name="menuitem_price"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
+
+
+

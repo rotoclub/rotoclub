@@ -1,0 +1,16 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+rap_connector_agora.access_server_config_admin,access_server_config_admin,rap_connector_agora.model_server_config,agora_manager_group,1,1,1,1
+rap_connector_agora.access_server_config_user,access_server_config_user,rap_connector_agora.model_server_config,agora_user_group,1,1,1,0
+rap_connector_agora.access_api_connection_admin,access_api_connection_admin,rap_connector_agora.model_api_connection,,1,1,1,1
+rap_connector_agora.access_api_connection_user,access_api_connection_user,rap_connector_agora.model_api_connection,,1,1,1,0
+rap_connector_agora.access_sale_api_line_admin,access_sale_api_line_admin,rap_connector_agora.model_sale_api_line,,1,1,1,1
+rap_connector_agora.access_sale_api_line_user,access_sale_api_line_user,rap_connector_agora.model_sale_api_line,,1,1,1,0
+rap_connector_agora.access_sale_api_admin,access_sale_api_admin,rap_connector_agora.model_sale_api,,1,1,1,1
+rap_connector_agora.access_sale_api_user,access_sale_api_user,rap_connector_agora.model_sale_api,,1,1,1,0
+rap_connector_agora.access_sale_center_user,access_sale_center_user,model_sale_center,,1,1,1,0
+rap_connector_agora.access_sale_location_user,access_sale_location_user,model_sale_location,,1,1,1,0
+rap_connector_agora.preparation_type_user,access_preparation_type_user,model_preparation_type,,1,1,1,1
+rap_connector_agora.agora_tax_user,access_agora_tax_user,model_agora_tax,,1,1,1,0
+rap_connector_agora.preparation_order_user,access_preparation_order_user,model_preparation_order,,1,1,1,1
+rap_connector_agora.work_place,access_work_place_user,model_work_place,,1,1,1,0
+rap_connector_agora.order_wizard,access_order_wizard_user,model_order_download_date,,1,1,1,0

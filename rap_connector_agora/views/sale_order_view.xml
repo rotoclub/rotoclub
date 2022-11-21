@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<odoo>
+        <record id="view_order_tree_agora_inherit" model="ir.ui.view">
+            <field name="name">sale.order.tree.agora.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="inside">
+                    <header>
+                        <button name="%(rap_connector_agora.download_order_by_date_action)d"
+                                string="Download Orders"
+                                type="action"
+                                attrs="{'always_visible': True}"
+                                class="btn-secondary"/>
+                    </header>
+                </xpath>
+            <xpath expr="//field[@name='date_order']" position="after">
+                <field name="number" readonly="1"/>
+            </xpath>
+            </field>
+        </record>
+
+    <!--Inherit Sale.order Form-->
+    <record id="view_order_form_agora_inherit" model="ir.ui.view">
+        <field name="name">sale.order.form.agora.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']//tree//field[@name='company_id']" position="after">
+                <field name="is_addins" readonly="1"/>
+                <field name="is_invitation" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']//tree" position="attributes">
+                <attribute name="decoration-bf">is_addins</attribute>
+                <attribute name="decoration-warning">is_invitation</attribute>
+                <attribute name="decoration-success">is_addins</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Sale Order Search View Inherit-->
+    <record id="sale_order_view_search_agora_inherit" model="ir.ui.view">
+            <field name="name">sale.order.search.agora.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="before">
+                    <field name="number"/>
+                </xpath>
+            </field>
+    </record>
+
+</odoo>
