@@ -239,9 +239,9 @@ class ProductTemplate(models.Model):
             repeated = self.search([('name', 'ilike', self.name),
                                    ('company_id', '=', self.company_id.id),
                                    ('id', '!=', self.id)])
-            if repeated:
-                raise ValidationError(_("Sorry!! Already exist a format with the same name."
-                                        " Duplicity are not allowed"))
+            # if repeated:
+            #     raise ValidationError(_("Sorry!! Already exist a format with the same name."
+            #                             " Duplicity are not allowed"))
             if self.parent_id and self.ratio <= 0:
                 raise ValidationError(_("All Formats should have Ratio bigger than zero"))
 
