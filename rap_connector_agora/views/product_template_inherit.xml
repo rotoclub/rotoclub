@@ -108,6 +108,7 @@
                         <group col="4">
                             <group>
                                 <field name="min_addings"/>
+                                <field name="aux_category" domain="[('company_id','=',company_id)]"/>
                             </group>
                             <group>
                                 <field name="max_addings"/>

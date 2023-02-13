@@ -120,6 +120,10 @@ class ProductTemplate(models.Model):
         string='Wrong Family',
         compute='_computed_family_validation'
     )
+    aux_category = fields.Many2one(
+        string='Family',
+        comodel_name='product.category'
+    )
     # --------------------------------------
     #       Modifying standard fields
     # --------------------------------------
@@ -188,6 +192,16 @@ class ProductTemplate(models.Model):
                 raise ValidationError(_('Sorry!! This product cant be deleted because its used'
                                         ' for discount by the system'))
         return super(ProductTemplate, self).unlink()
+
+    @api.onchange('aux_category')
+    def onchange_aux_category(self):
+        if self.aux_category:
+            categs = self.search([('is_saleable_as_adding', '=', True),
+                                  ('categ_id', '=', self.aux_category.id),
+                                  ('company_id', '=', self.company_id.id)])
+            self.product_addins_ids = [(6, 0, categs.mapped('id'))]
+        else:
+            self.product_addins_ids = [(6, 0, [])]
 
     @api.depends('company_id')
     def _compute_agora_taxes(self):
