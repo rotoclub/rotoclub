@@ -1,0 +1,21 @@
+<odoo>
+    <data>
+        <!-- Supplier Info in Products inherit-->
+        <record id="product_supplierinfo_tree_view_inherit_roto" model="ir.ui.view">
+            <field name="name">product.template.product.form.roto.inherit</field>
+            <field name="model">product.supplierinfo</field>
+            <field name="inherit_id" ref="product.product_supplierinfo_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_uom']" position="after">
+                    <field name="supplier_qty"/>
+                    <field name="supplier_uom"/>
+                    <field name="price_per_unit"/>
+                </xpath>
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="default_order">price_per_unit</attribute>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
