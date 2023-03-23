@@ -131,7 +131,7 @@ class ResCompany(models.Model):
     @api.model
     def create(self, vals):
         res = super(ResCompany, self).create(vals)
-        self.env['product.template'].create({
+        self.env['product.template'].sudo().create({
             'name': 'Discount Product [{}]'.format(res.name),
             'type': 'service',
             'default_code': 'Discount',
