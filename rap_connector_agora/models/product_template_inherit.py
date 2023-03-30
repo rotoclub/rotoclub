@@ -37,7 +37,8 @@ class ProductTemplate(models.Model):
                    ('new', 'New'),
                    ('modified', 'Modified'),
                    ('error', 'Error')],
-        default='new'
+        default='new',
+        copy=False
     )
     preparation_id = fields.Many2one(
         string='Preparation Type',
