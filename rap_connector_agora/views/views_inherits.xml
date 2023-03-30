@@ -63,9 +63,7 @@
                 <xpath expr="//field[@name='parent_id']" position="after">
                     <field name="work_place_id" options="{'no_create': True}" domain="[('company_id', '=', company_id)]"/>
                     <field name="journal_id"/>
-                    <field name="payment_method_id"
-                           domain="[('payment_type', '=', 'inbound')]"
-                           options="{'no_create': True}"/>
+                    <field name="warehouse_id"/>
                 </xpath>
             </field>
         </record>

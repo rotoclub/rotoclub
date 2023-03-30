@@ -778,7 +778,7 @@ class APIConnection(models.Model):
         if self.sale_flow != 'sale':
             invoices = []
             for so in sos:
-                if so.order_line:
+                if so.order_line and not so.is_incomplete:
                     # For each So generated should be create the related invoice in POSTED
                     so._force_lines_to_invoice_policy_order()
                     # Create Invoice associated with the SO
@@ -829,7 +829,6 @@ class APIConnection(models.Model):
             'date': date,
             'partner_id': invoice.commercial_partner_id.id,
             'amount': invoice.amount_residual,
-            'payment_method_id': invoice.analytic_group_id.payment_method_id.id,
             'partner_type': 'customer'
         }
 
@@ -915,40 +914,44 @@ class APIConnection(models.Model):
                     'company_id': self.company_id.id,
                     'number': record.get('Number'),
                     'serie': record.get('Serie'),
-                    'date_order': parser.parse(record.get('Date')),
                     'business_date': datetime.strptime(record.get('BusinessDay'), '%Y-%m-%d').date()
                 }
                 if record.get('Workplace'):
                     wp = work_place_env.search([('agora_id', '=', record['Workplace'].get('Id')),
                                                 ('company_id', '=', self.company_id.id)], limit=1)
-                    so_data.update({'work_place_id': wp.id})
+                    so_data.update({'work_place_id': wp.id, 'warehouse_id': wp.analytic_group_id.warehouse_id.id})
                 if item.get('SaleCenter'):
                     sc = sale_center_env.search([('agora_id', '=', item['SaleCenter'].get('Id')),
                                                 ('company_id', '=', self.company_id.id)], limit=1)
-                    so_data.update({'sale_center_id': sc.id})
+                    so_data.update({'sale_center_id': sc.id, 'analytic_account_id': sc.analytic_id.id})
                 so = so_env.create(so_data)
-                generated_sos.append(so)
-                global_discount = 0.0
-                if item['Discounts'].get('DiscountRate'):
-                    global_discount = item['Discounts'].get('DiscountRate') * 100
-                for line in item.get('Lines'):
-                    data = self.get_so_lines(line, so, global_discount, False)
-                    if data:
-                        so_line_env.create(data)
-                    if line.get('Addins'):
-                        for add in line.get('Addins'):
-                            add_data = self.get_so_lines(add, so, global_discount, True)
-                            if add_data:
-                                add_data.update({'is_addins': True,
-                                                 'product_uom_qty': line.get('Quantity'),
-                                                 'qty_delivered': line.get('Quantity')})
-                                so_line_env.create(add_data)
-                if item['Discounts'].get('CashDiscount'):
-                    amount = item['Discounts'].get('CashDiscount')
-                    discount_line = self.get_discount_line(so, amount)
-                    so_line_env.create(discount_line)
-                so.action_confirm()
-                self.validate_picking(so)
+                if so:
+                    generated_sos.append(so)
+                    global_discount = 0.0
+                    if item['Discounts'].get('DiscountRate'):
+                        global_discount = item['Discounts'].get('DiscountRate') * 100
+                    for line in item.get('Lines'):
+                        data = self.get_so_lines(line, so, global_discount, False)
+                        if data:
+                            so_line_env.create(data)
+                        else:
+                            so.is_incomplete = True
+                        if line.get('Addins'):
+                            for add in line.get('Addins'):
+                                add_data = self.get_so_lines(add, so, global_discount, True)
+                                if add_data:
+                                    add_data.update({'is_addins': True,
+                                                     'product_uom_qty': line.get('Quantity'),
+                                                     'qty_delivered': line.get('Quantity')})
+                                    so_line_env.create(add_data)
+                    if item['Discounts'].get('CashDiscount'):
+                        amount = item['Discounts'].get('CashDiscount')
+                        discount_line = self.get_discount_line(so, amount)
+                        so_line_env.create(discount_line)
+                    if not so.is_incomplete:
+                        so.action_confirm()
+                        self.validate_picking(so)
+                    so.date_order = parser.parse(record.get('Date'))
         return generated_sos
 
     def get_discount_line(self, so, amount):

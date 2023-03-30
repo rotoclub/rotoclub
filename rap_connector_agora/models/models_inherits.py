@@ -33,7 +33,8 @@ class ProductPricelist(models.Model):
                    ('new', 'New'),
                    ('modified', 'Modified'),
                    ('error', 'Error')],
-        default='new'
+        default='new',
+        copy=False
     )
     sale_center_ids = fields.One2many(
         string='Sale Center',
@@ -90,27 +91,30 @@ class SaleOrder(models.Model):
         string='Sale Api',
         ondelete='restrict'
     )
-
-
-class AccountAnalyticGroup(models.Model):
-    _inherit = 'account.analytic.group'
-
-    work_place_id = fields.Many2one(
-        string='Work Place',
-        comodel_name='work.place'
+    is_incomplete = fields.Boolean(
+        string='Is not complete'
     )
 
 
 class AccountAnalyticGroup(models.Model):
     _inherit = 'account.analytic.group'
 
-    payment_method_id = fields.Many2one(
-        comodel_name='account.payment.method',
-        string='Payment Method',
-    )
     journal_id = fields.Many2one(
         comodel_name='account.journal',
-        string='Journal'
+        string='Journal',
+        help='This field is will be use to assign the journal in the payments related with this analytic group'
+    )
+    work_place_id = fields.Many2one(
+        string='Work Place',
+        comodel_name='work.place',
+        help='This field will be use to define the Group related with the SO. '
+             'Work place always will come in the order data from Agora'
+    )
+    warehouse_id = fields.Many2one(
+        string='Warehouse',
+        comodel_name='stock.warehouse',
+        help='This field will be use to define the Warehouse in the SO. '
+             'Work place always will come in the order data from Agora'
     )
 
 
