@@ -18,3 +18,7 @@
 	path = thir_party
 	url = https://github.com/rotoclub/third_party
 	branch = 15.0
+[submodule "OCA/account-financial-tools"]
+	path = OCA/account-financial-tools
+	url = https://github.com/OCA/account-financial-tools.git
+	branch = 15.0
