@@ -971,19 +971,13 @@ class APIConnection(models.Model):
         return line_data
 
     def get_so_lines(self, line, so, global_discount, is_addin):
-        prod_prod_env = self.env['product.product']
         tax_env = self.env['agora.tax']
-        format_id = line.get('SaleFormatId')
-        product = prod_prod_env.search(['|',
-                                        ('product_tmpl_id.base_format_id', '=', format_id),
-                                        ('product_tmpl_id.sale_format', '=', format_id),
-                                        ('product_tmpl_id.company_id', '=', self.company_id.id)], limit=1)
+        product = self.get_product_for_line(line)
         tax = tax_env.search([('agora_id', '=', line.get('VatId')), ('company_id', '=', self.company_id.id)])
-        line_data = False
         if product:
             line_data = {
                 'index': line.get('Index'),
-                'name': product.product_tmpl_id.name,
+                'name': line.get('ProductName'),
                 'product_id': product.id,
                 'order_id': so.id,
                 'tax_id': [(6, 0, tax.account_tax_id.ids)],
@@ -997,6 +991,24 @@ class APIConnection(models.Model):
             if line.get('DiscountRate') and line['DiscountRate'] == 1:
                 line_data.update({'is_invitation': True})
         return line_data
+
+    def get_product_for_line(self, line):
+        """"
+         Function to Identify the related product with an Order Line
+         Exist a default product to be used for Menus.
+         In case Its not a Menu should be localize by the Format ID coming in the ticket line
+        """
+        prod_prod_env = self.env['product.product']
+        format_id = line.get('SaleFormatId')
+        if line.get('Type') == 'MenuHeader':
+            product = prod_prod_env.search([('is_product_menu', '=', True),
+                                            ('product_tmpl_id.company_id', '=', self.company_id.id)], limit=1)
+        else:
+            product = prod_prod_env.search(['|',
+                                            ('product_tmpl_id.base_format_id', '=', format_id),
+                                            ('product_tmpl_id.sale_format', '=', format_id),
+                                            ('product_tmpl_id.company_id', '=', self.company_id.id)], limit=1)
+        return product
 
     def get_partner(self, record):
         partner = self.env['res.partner'].search([('name', 'like', 'Generic Client'),
