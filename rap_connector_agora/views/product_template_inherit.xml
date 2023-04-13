@@ -40,7 +40,8 @@
                     <attribute name="attrs">{'readonly': [('parent_id', '!=', False)]}</attribute>
                 </xpath>
                 <xpath expr="//field[@name='detailed_type']" position="after">
-                    <field name="is_product_discount" readonly="1"/>
+                    <field name="is_product_discount" invisible="1"/>
+                    <field name="is_product_menu" invisible="1"/>
                 </xpath>
                 <xpath expr="//field[@name='categ_id']" position="attributes">
                     <attribute name="string">Family</attribute>
