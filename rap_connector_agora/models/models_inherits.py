@@ -143,4 +143,12 @@ class ResCompany(models.Model):
             'is_product_discount': True,
             'company_id': res.id
         })
+        self.env['product.template'].sudo().create({
+            'name': 'Menu [{}]'.format(res.name),
+            'type': 'service',
+            'default_code': 'Menu',
+            'is_product_menu': True,
+            'invoice_policy': 'order',
+            'company_id': res.id
+        })
         return res

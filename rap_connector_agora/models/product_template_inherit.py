@@ -117,6 +117,9 @@ class ProductTemplate(models.Model):
     is_product_discount = fields.Boolean(
         string='Is Discount Product'
     )
+    is_product_menu = fields.Boolean(
+        string='Is Menu Product'
+    )
     is_wrong_categ = fields.Boolean(
         string='Wrong Family',
         compute='_computed_family_validation'
@@ -177,6 +180,12 @@ class ProductTemplate(models.Model):
                 rec.bom_line_ids.product_uom_id = rec.uom_id
             if vals.get('name') or vals.get('categ_id') or vals.get('ratio'):
                 rec.fields_validation()
+            # When products are archive/unarchive correspondent formats should be updated too
+            if 'active' in vals and rec.product_formats_ids and vals.get('active') is False:
+                rec.product_formats_ids.active = False
+            if 'active' in vals and vals.get('active') is True:
+                archived_formats = self.search([('parent_id', '=', rec.id), ('active', '=', False)])
+                archived_formats.active = True
         return res
 
     def unlink(self):
@@ -190,6 +199,9 @@ class ProductTemplate(models.Model):
                 raise ValidationError(_('Sorry!! This product cant be deleted because its already synchronize'
                                         ' with Agora. Should be Archive instead'))
             if rec.is_product_discount:
+                raise ValidationError(_('Sorry!! This product cant be deleted because its used'
+                                        ' for discount by the system'))
+            if rec.is_product_menu:
                 raise ValidationError(_('Sorry!! This product cant be deleted because its used'
                                         ' for discount by the system'))
         return super(ProductTemplate, self).unlink()

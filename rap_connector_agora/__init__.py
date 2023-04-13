@@ -43,6 +43,14 @@ def create_data(cr, registry):
             'is_product_discount': True,
             'company_id': company.id
         })
+        env['product.template'].create({
+            'name': 'Menu [{}]'.format(company.name),
+            'type': 'service',
+            'default_code': 'Menu',
+            'is_product_menu': True,
+            'invoice_policy': 'order',
+            'company_id': company.id
+        })
 
 
 def get_prep_order_data():
