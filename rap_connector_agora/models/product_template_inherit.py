@@ -177,6 +177,12 @@ class ProductTemplate(models.Model):
                 rec.bom_line_ids.product_uom_id = rec.uom_id
             if vals.get('name') or vals.get('categ_id') or vals.get('ratio'):
                 rec.fields_validation()
+            # When products are archive/unarchive correspondent formats should be updated too
+            if 'active' in vals and rec.product_formats_ids and vals.get('active') is False:
+                rec.product_formats_ids.active = False
+            if 'active' in vals and vals.get('active') is True:
+                archived_formats = self.search([('parent_id', '=', rec.id), ('active', '=', False)])
+                archived_formats.active = True
         return res
 
     def unlink(self):
