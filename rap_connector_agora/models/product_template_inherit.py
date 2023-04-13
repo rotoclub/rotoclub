@@ -117,6 +117,9 @@ class ProductTemplate(models.Model):
     is_product_discount = fields.Boolean(
         string='Is Discount Product'
     )
+    is_product_menu = fields.Boolean(
+        string='Is Menu Product'
+    )
     is_wrong_categ = fields.Boolean(
         string='Wrong Family',
         compute='_computed_family_validation'
@@ -196,6 +199,9 @@ class ProductTemplate(models.Model):
                 raise ValidationError(_('Sorry!! This product cant be deleted because its already synchronize'
                                         ' with Agora. Should be Archive instead'))
             if rec.is_product_discount:
+                raise ValidationError(_('Sorry!! This product cant be deleted because its used'
+                                        ' for discount by the system'))
+            if rec.is_product_menu:
                 raise ValidationError(_('Sorry!! This product cant be deleted because its used'
                                         ' for discount by the system'))
         return super(ProductTemplate, self).unlink()
