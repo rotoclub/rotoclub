@@ -10,7 +10,7 @@
                     <field name="is_wrong_categ" invisible="1"/>
                     <div class="alert alert-warning  text-center info_icon"
                          role="alert"
-                         attrs="{'invisible': ['|',('is_wrong_categ', '!=', True), ('is_product_discount', '=', True)]}">
+                         attrs="{'invisible': ['|', '|', ('is_wrong_categ', '!=', True), ('is_product_discount', '=', True), ('is_product_menu', '=', True)]}">
                         Please Verify the Family, should be selected a Family related with Agora instance.
                     </div>
                  </xpath>
@@ -40,7 +40,8 @@
                     <attribute name="attrs">{'readonly': [('parent_id', '!=', False)]}</attribute>
                 </xpath>
                 <xpath expr="//field[@name='detailed_type']" position="after">
-                    <field name="is_product_discount" readonly="1"/>
+                    <field name="is_product_discount" invisible="1"/>
+                    <field name="is_product_menu" invisible="1"/>
                 </xpath>
                 <xpath expr="//field[@name='categ_id']" position="attributes">
                     <attribute name="string">Family</attribute>

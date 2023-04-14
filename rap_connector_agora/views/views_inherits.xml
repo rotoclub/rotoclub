@@ -63,12 +63,33 @@
                 <xpath expr="//field[@name='parent_id']" position="after">
                     <field name="work_place_id" options="{'no_create': True}" domain="[('company_id', '=', company_id)]"/>
                     <field name="journal_id"/>
-                    <field name="payment_method_id"
-                           domain="[('payment_type', '=', 'inbound')]"
-                           options="{'no_create': True}"/>
+                    <field name="warehouse_id"/>
                 </xpath>
             </field>
         </record>
 
+        <!-- Product Category Form inherit to add company field-->
+        <record id="view_category_property_form_roto_inherit" model="ir.ui.view">
+            <field name="name">product.category.form.roto.inherit</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="product.product_category_form_view"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//field[@name='parent_id']" position="after">
+                    <field name="company_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Product Category Tree inherit to Add company field-->
+        <record id="view_category_property_tree_roto_inherit" model="ir.ui.view">
+            <field name="name">product.category.tree.roto.inherit</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="product.product_category_list_view"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//field[@name='display_name']" position="after">
+                    <field name="company_id"/>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>
