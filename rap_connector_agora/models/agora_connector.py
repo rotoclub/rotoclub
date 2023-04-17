@@ -160,15 +160,14 @@ class APIConnection(models.Model):
         url = '{}{}'.format(url, end_point)
         try:
             connect = requests.post(url=url, headers=headers, json=json, verify=False)
-            if connect:
+            if connect is not None:
                 if connect.status_code == 200:
-                    return connect
+                    return connect, connect.content
                 else:
-                    return False
+                    return False, connect.content
         except Exception as e:
             _logger.error(e)
-            raise UserError(_("There was an error during the connection, please try again in a few minutes\n"
-                              "The following error was return:\n%s") % e)
+            return False, connect.content
 
 # -----------------------------------------------------------------------------------------------------
 # ------------------------------ ACTIVATE/DEACTIVATE CONNECTIONS --------------------------------------
@@ -714,7 +713,7 @@ class APIConnection(models.Model):
                     is_new = True
                 data = self.product_data(product, is_new, connection)
                 try:
-                    post = self.post_request(connection.url_server, '/import', connection.server_api_key, data)
+                    post, message = self.post_request(connection.url_server, '/import', connection.server_api_key, data)
                     if post and post.status_code and post.status_code == 200:
                         # If the execution went OK
                         # Instantly should be updated the product status, because even if there is block in the function
@@ -735,8 +734,7 @@ class APIConnection(models.Model):
                             if current_format.sale_format == 0:
                                 current_format.sale_format = rec.get('Id')
                     else:
-                        raise ValidationError(_('Sorry the synchronization could not be completed for the product {}.\n'
-                                                ' Please verify all the required fields'.format(product.name)))
+                        raise ValidationError(_(" Agora system detected the following exception:\n%s") % message.decode())
                 except Exception as e:
                     _logger.error(e)
                     raise ValidationError(_("ERROR RESPONSE:\n %s") % e)
