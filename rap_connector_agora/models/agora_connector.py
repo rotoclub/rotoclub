@@ -579,7 +579,7 @@ class APIConnection(models.Model):
                 'QueryGuid': '{533750D6-11DE-4D33-8D11-8A3B63C33F22}',
                 'Params': {}
             }
-            agora_ids = self.post_request(connec.url_server, '/custom-query', connec.server_api_key, params)
+            agora_ids, message = self.post_request(connec.url_server, '/custom-query', connec.server_api_key, params)
             if agora_ids:
                 ids = agora_ids.json()[0]
                 connec.update({'last_format_id': ids.get('last_format_id'),
