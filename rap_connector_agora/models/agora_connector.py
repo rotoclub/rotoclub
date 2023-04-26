@@ -220,7 +220,7 @@ class APIConnection(models.Model):
             for record in json_products:
                 existing_prod = products_env.search([('agora_id', '=', record.get('Id')),
                                                      ('active', 'in', [True, False]),
-                                                     ('company_id', '=', self.company_id.id)])
+                                                     ('company_id', '=', self.company_id.id)], limit=1)
                 if record.get('DeletionDate') and existing_prod.active:
                     # If the product have being deleted in Agora Should be Archive in Odoo
                     existing_prod.active = False
