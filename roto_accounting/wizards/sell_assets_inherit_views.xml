@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="asset_sell_form">
+        <field name="name">wizard.asset.sell.form</field>
+        <field name="model">account.asset.sell</field>
+        <field name="inherit_id" ref="account_asset.asset_sell_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group//group[2]//field[@name='loss_account_id']" position="after">
+                <field name="disable_reason"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

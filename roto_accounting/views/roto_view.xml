@@ -126,5 +126,19 @@
             </field>
         </record>
 
+        <!-- Account.asset form view inherit -->
+        <record id="view_account_asset_form_inherit" model="ir.ui.view">
+            <field name="name">account.asset.form.inherit</field>
+            <field name="model">account.asset</field>
+            <field name="inherit_id" ref="account_asset.view_account_asset_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet//group//group[5]" position="after">
+                    <group string="Disable reason">
+                        <field name="disable_reason" readonly="1"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </odoo>
