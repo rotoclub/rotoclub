@@ -73,5 +73,11 @@
                   action="action_product_template_variants_agora"
                   sequence="1"/>
 
+        <!--Menu Item Stock/Product Formats-->
+        <menuitem id="agora_product_format_menu"
+                  parent="stock.menu_stock_inventory_control"
+                  action="action_product_template_variants_agora"
+                  sequence="1"/>
+
     </data>
 </odoo>
