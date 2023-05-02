@@ -9,11 +9,13 @@
     'category': 'Uncategorized',
     'license': 'LGPL-3',
 
-    'version': '15.0.1.0.0',
+    'version': '15.0.1.1.0',
 
     'depends': [
         'base',
-        'product'
+        'product',
+        'purchase',
+        'purchase_stock'
     ],
     'data': [
         'security/ir.model.access.csv',
