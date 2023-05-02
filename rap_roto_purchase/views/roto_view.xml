@@ -7,12 +7,16 @@
             <field name="inherit_id" ref="product.product_supplierinfo_tree_view"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='product_uom']" position="after">
+                    <field name="price_per_unit" force_save="1"/>
                     <field name="supplier_qty"/>
                     <field name="supplier_uom"/>
-                    <field name="price_per_unit"/>
                 </xpath>
                 <xpath expr="//tree" position="attributes">
                     <attribute name="default_order">price_per_unit</attribute>
+                </xpath>
+                <xpath expr="//field[@name='min_qty']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                    <attribute name="force_save">1</attribute>
                 </xpath>
             </field>
         </record>

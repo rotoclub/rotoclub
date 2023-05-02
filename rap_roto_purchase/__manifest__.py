@@ -13,7 +13,9 @@
 
     'depends': [
         'base',
-        'product'
+        'product',
+        'purchase',
+        'purchase_stock'
     ],
     'data': [
         'security/ir.model.access.csv',
