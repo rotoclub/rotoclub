@@ -40,8 +40,10 @@ class Orderpoint(models.Model):
                         values = orderpoint._prepare_procurement_values(date=date)
                         # Get the new values to create the procurement
                         # New values came from the cheaper supplier orderpoint.qty_to_order, orderpoint.product_uom
-                        new_uom, new_qty = self.get_supplier_qty_and_uom(orderpoint.product_uom,
+                        new_uom, new_qty, supp = self.get_supplier_qty_and_uom(orderpoint.product_uom,
                                                                          orderpoint.product_id, orderpoint.qty_to_order)
+                        if supp:
+                            values.update({'supplierinfo_id': supp})
                         # The Procurement will be created with the new QTY and UOM
                         procurements.append(self.env['procurement.group'].Procurement(
                             orderpoint.product_id, new_qty, new_uom,
@@ -102,16 +104,18 @@ class Orderpoint(models.Model):
         # By deafult will uom and qty will take the recommended value from odoo
         new_uom = uom
         new_qty = qty
+        supplier = False
         product_suppliers = self.env['product.supplierinfo'].search([('product_tmpl_id', '=', product.product_tmpl_id.id)])
         if product_suppliers:
             # If the product has suppliers. The cheaper should be found.
             min_price = min(product_suppliers.mapped('price_per_unit'))
             cheap_supplier = product_suppliers.filtered(lambda m: m.price_per_unit == min_price)
+            supplier = cheap_supplier[0]
             # Get new Uom from supplier
-            new_uom = cheap_supplier[0].supplier_uom
+            new_uom = supplier.supplier_uom
             # Convert old qty to the new UOM
             new_qty = uom._compute_quantity(qty, new_uom, rounding_method='HALF-UP')
-        return new_uom, new_qty
+        return new_uom, new_qty, supplier
 
     def _get_lead_days_values(self):
         """"
