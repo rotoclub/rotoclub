@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="account_asset.asset_sell_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='loss_account_id']" position="after">
-                <field name="disable_reason"/>
+                <field name="disable_reason" required="1"/>
             </xpath>
         </field>
     </record>

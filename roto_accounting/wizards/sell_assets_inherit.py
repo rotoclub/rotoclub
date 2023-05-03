@@ -4,7 +4,7 @@
 from odoo import models,fields,api
 
 
-class assetSell(models.TransientModel):
+class AssetSell(models.TransientModel):
     _inherit = "account.asset.sell"
 
     disable_reason = fields.Char(
@@ -12,8 +12,7 @@ class assetSell(models.TransientModel):
     )
 
     def do_action(self):
+        res = super(AssetSell, self).do_action()
         dis_reas = self.env['account.asset']
         dis_reas.browse(self._context.get("active_ids")).update({'disable_reason': self.disable_reason})
-        invoice_line = self.env[
-            'account.move.line'] if self.action == 'dispose' else self.invoice_line_id or self.invoice_id.invoice_line_ids
-        return self.asset_id.set_to_close(invoice_line_id=invoice_line, date=invoice_line.move_id.invoice_date)
+        return res

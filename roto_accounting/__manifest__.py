@@ -16,6 +16,7 @@
         'purchase',
         'sale_management',
         'account_accountant',
+        'account_asset',
         'analytic',
         'stock'
     ],
