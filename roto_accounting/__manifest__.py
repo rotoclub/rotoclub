@@ -9,19 +9,21 @@
     'category': 'Accounting/Accounting',
     'license': 'LGPL-3',
 
-    'version': '15.0.1.0.5',
+    'version': '15.0.1.0.6',
 
     'depends': [
         'base',
         'purchase',
         'sale_management',
         'account_accountant',
+        'account_asset',
         'analytic',
         'stock'
     ],
     'data': [
         'security/ir.model.access.csv',
         'views/roto_view.xml',
+        'wizards/sell_assets_inherit_views.xml',
     ],
     'application': False,
 }
