@@ -13,6 +13,6 @@ class AssetSell(models.TransientModel):
 
     def do_action(self):
         res = super(AssetSell, self).do_action()
-        dis_reas = self.env['account.asset']
-        dis_reas.browse(self._context.get("active_ids")).update({'disable_reason': self.disable_reason})
+        dis_reason = self.env['account.asset']
+        dis_reason.browse(self._context.get("active_ids")).update({'disable_reason': self.disable_reason})
         return res
