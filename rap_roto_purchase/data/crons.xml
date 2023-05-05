@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Cron to change the state of a purchase -->
+    <record id="ir_cron_change_state_draft_to_purchase" model="ir.cron">
+        <field name="name">Change state of a purchase</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model_id" ref="model_purchase_order"/>
+        <field name="code">model._change_draft_to_purchase()</field>
+        <field name="state">code</field>
+    </record>
+
+</odoo>
