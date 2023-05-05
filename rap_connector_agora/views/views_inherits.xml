@@ -34,7 +34,7 @@
                 <xpath expr="//field[@name='validity_date']" position="before">
                     <field name="serie" readonly="1"/>
                     <field name="number" readonly="1"/>
-                    <field name="work_place_id" readonly="0"/>
+                    <field name="work_place_id" readonly="0" domain="[('company_id','=',company_id)]"/>
                     <field name="business_date" readonly="1"/>
                     <field name="sale_center_id" readonly="0"/>
                 </xpath>
