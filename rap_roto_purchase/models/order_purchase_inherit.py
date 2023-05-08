@@ -43,3 +43,11 @@ class PurchaseOrder(models.Model):
                 if product:
                     val.product_uom = product.supplier_uom
 
+    def _change_draft_to_purchase(self):
+        """
+        Action to change the state of a purchase from draft to purchase
+        """
+        drafts = self.search([('state', '=', 'draft')])
+        for rec in drafts:
+            rec.button_confirm()
+            rec.action_rfq_send()
