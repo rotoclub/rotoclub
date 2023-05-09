@@ -8,7 +8,7 @@ class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 
     @api.onchange('product_id')
-    def _onchange_set_supplier_uom(self):
+    def onchange_set_supplier_uom(self):
         # Set supplier info by default
         if self.product_id and self.order_id.partner_id:
             # Convert standard qty to supplier uom
@@ -44,5 +44,4 @@ class PurchaseOrder(models.Model):
                 if product:
                     val.product_uom = product.supplier_uom
                     val.product_qty = product.supplier_qty
-
 
