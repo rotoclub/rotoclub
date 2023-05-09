@@ -45,4 +45,4 @@ class PurchaseOrder(models.Model):
                     val.product_uom = product.supplier_uom
                     val.product_qty = product.supplier_qty
 
- 
+
