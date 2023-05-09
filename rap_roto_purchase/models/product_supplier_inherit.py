@@ -8,7 +8,9 @@ class ProductSupplierinfo(models.Model):
     _inherit = 'product.supplierinfo'
 
     supplier_qty = fields.Float(
-        string='Supplier Qty'
+        string='Supplier Qty',
+        required=True,
+        default="1"
     )
     supplier_uom = fields.Many2one(
         string='Supplier Uom',
