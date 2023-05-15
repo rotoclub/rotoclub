@@ -89,6 +89,7 @@ class StockRule(models.Model):
                         # When Purchase order is created the bussiness center should be set
                         acc_group = account_group_env.search([('picking_type_id', '=', po.picking_type_id.id)], limit=1)
                         po.analytic_group_id = acc_group
+                        po.auto_send = True
                 else:
                     # If a purchase order is found, adapt its `origin` field.
                     if po.origin:
