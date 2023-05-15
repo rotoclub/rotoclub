@@ -23,9 +23,24 @@ class PurchaseOrderLine(models.Model):
     def _prepare_purchase_order_line(self, product_id, product_qty, product_uom, company_id, supplier, po):
         res = super()._prepare_purchase_order_line(product_id, product_qty, product_uom, company_id, supplier, po)
         if self._context.get('from_orderpoint'):
+            product_taxes = product_id.supplier_taxes_id.filtered(lambda x: x.company_id.id == company_id.id)
+            taxes = po.fiscal_position_id.map_tax(product_taxes)
+            partner = supplier.name
+            uom_po_qty = product_uom._compute_quantity(product_qty, product_id.uom_po_id)
+            seller = product_id.with_company(company_id)._select_seller(
+                partner_id=partner,
+                quantity=uom_po_qty,
+                date=po.date_order and po.date_order.date(),
+                uom_id=product_id.uom_po_id)
+            price_unit = self.env['account.tax']._fix_tax_included_price_company(
+                supplier.supplier_price, product_taxes, taxes, company_id) if supplier else 0.0
+            if price_unit and seller and po.currency_id and seller.currency_id != po.currency_id:
+                price_unit = seller.currency_id._convert(
+                    price_unit, po.currency_id, po.company_id, po.date_order or fields.Date.today())
             res.update({
                 'product_qty': product_qty,
                 'product_uom': product_uom.id,
+                'price_unit': price_unit
             })
         return res
 
