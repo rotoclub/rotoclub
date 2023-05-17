@@ -33,8 +33,6 @@ class ProductSupplierinfo(models.Model):
         # Convert from supplier unit of messure to product unit of messure
         if self.supplier_uom and self.product_uom:
             qty = self.supplier_uom._compute_quantity(self.supplier_qty, self.product_uom, rounding_method='HALF-UP')
-            converted_qty = self.product_uom._compute_quantity(self.min_qty, self.supplier_uom)
-            factor = self.min_qty / converted_qty
-            calculated_price = self.supplier_price * factor
+            price = self.product_uom._compute_price(self.supplier_price, self.supplier_uom)
             self.min_qty = qty
-            self.price = calculated_price
+            self.price = price
