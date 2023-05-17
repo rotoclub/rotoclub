@@ -108,8 +108,8 @@ class Orderpoint(models.Model):
         product_suppliers = self.env['product.supplierinfo'].search([('product_tmpl_id', '=', product.product_tmpl_id.id)])
         if product_suppliers:
             # If the product has suppliers. The cheaper should be found.
-            min_price = min(product_suppliers.mapped('supplier_price'))
-            cheap_supplier = product_suppliers.filtered(lambda m: m.supplier_price == min_price)
+            min_price = min(product_suppliers.mapped('price'))
+            cheap_supplier = product_suppliers.filtered(lambda m: m.price == min_price)
             supplier = cheap_supplier[0]
             # Get new Uom from supplier
             new_uom = supplier.supplier_uom
@@ -125,7 +125,7 @@ class Orderpoint(models.Model):
         values = super()._get_lead_days_values()
         product_suppliers = self.env['product.supplierinfo'].search([('product_tmpl_id', '=', self.product_tmpl_id.id)])
         if product_suppliers and self._context.get('from_orderpoint'):
-            min_price = min(product_suppliers.mapped('supplier_price'))
-            cheap_supplier = product_suppliers.filtered(lambda m: m.supplier_price == min_price)
+            min_price = min(product_suppliers.mapped('price'))
+            cheap_supplier = product_suppliers.filtered(lambda m: m.price == min_price)
             values['supplierinfo'] = cheap_supplier[0]
         return values
