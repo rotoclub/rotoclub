@@ -20,7 +20,7 @@
     'data': [
         'security/ir.model.access.csv',
         'views/roto_view.xml',
-        'data/crons.xml',
+        'data/crons.xml'
     ],
     'application': False,
 }
