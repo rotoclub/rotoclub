@@ -9,7 +9,7 @@
     'category': 'Uncategorized',
     'license': 'LGPL-3',
 
-    'version': '15.0.1.2.0',
+    'version': '15.0.1.2.1',
 
     'depends': [
         'base',
@@ -20,7 +20,7 @@
     'data': [
         'security/ir.model.access.csv',
         'views/roto_view.xml',
-        'data/crons.xml'
+        'data/crons.xml',
     ],
     'application': False,
 }
