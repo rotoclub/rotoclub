@@ -13,7 +13,7 @@ class PurchaseOrderLine(models.Model):
         if self.product_id and self.order_id.partner_id:
             # Convert standard qty to supplier uom
             product = self.env['product.supplierinfo'].search([('name', '=', self.order_id.partner_id.id),
-                                                               ('product_tmpl_id', '=', self.product_id.id)])
+                                                               ('product_tmpl_id', '=', self.product_id.product_tmpl_id.id)], limit=1)
             if product:
                 # If there is not supplier product should be keeped the standard values
                 self.product_uom = product.supplier_uom
@@ -59,7 +59,7 @@ class PurchaseOrder(models.Model):
         for val in self.order_line:
             if val.product_id and self.partner_id:
                 product = self.env['product.supplierinfo'].search([('name', '=', self.partner_id.id),
-                                                                   ('product_tmpl_id', '=', val.product_id.id)])
+                                                                   ('product_tmpl_id', '=', val.product_id.product_tmpl_id.id)], limit=1)
                 if product:
                     val.product_uom = product.supplier_uom
                     val.product_qty = product.supplier_qty
