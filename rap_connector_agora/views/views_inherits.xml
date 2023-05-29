@@ -62,7 +62,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='parent_id']" position="after">
                     <field name="work_place_id" options="{'no_create': True}" domain="[('company_id', '=', company_id)]"/>
-                    <field name="journal_id" domain="[('type','in',('cash','bank'))]"/>
+                    <field name="journal_id" domain="[('type','in',('cash','bank'))]" required="1"/>
                     <field name="warehouse_id"/>
                 </xpath>
             </field>

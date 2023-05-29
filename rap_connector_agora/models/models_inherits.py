@@ -86,13 +86,11 @@ class SaleOrder(models.Model):
     business_date = fields.Date(
         string='Business Day'
     )
-    sale_api_origin = fields.Many2one(
-        comodel_name='sale.api',
-        string='Sale Api',
-        ondelete='restrict'
-    )
     is_incomplete = fields.Boolean(
         string='Is not complete'
+    )
+    waiter = fields.Char(
+        string='Waiter'
     )
 
 
