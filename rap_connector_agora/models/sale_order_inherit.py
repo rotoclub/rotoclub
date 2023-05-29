@@ -17,3 +17,6 @@ class SaleOrderLine(models.Model):
         string='Index',
         help='Number of the line coming from Agora to be identify'
     )
+    agora_loss_id = fields.Integer(
+        string='Agora Loss'
+    )

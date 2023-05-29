@@ -1,0 +1,51 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <!-- Agora reports config Form View-->
+        <record id="agora_reports_config_form_view" model="ir.ui.view">
+            <field name="name">agora.reports.form.view</field>
+            <field name="model">agora.reports.config</field>
+            <field name="arch" type="xml">
+                <form string="Resports config">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="guid" required="1"/>
+                                <field name="description"/>
+                                <field name="company_id"/>
+                            </group>
+                            <group>
+                                <field name="report_type" widget="selection"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Agora reports config Tree View-->
+        <record id="agora_reports_config_tree_view" model="ir.ui.view">
+            <field name="name">agora.reports.config.tree.view</field>
+            <field name="model">agora.reports.config</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="guid"/>
+                    <field name="company_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <!--Action for Agora Reports config-->
+        <record id="agora_report_config_action" model="ir.actions.act_window">
+            <field name="name">Agora Report Config</field>
+            <field name="res_model">agora.reports.config</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('agora_reports_config_tree_view')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('agora_reports_config_form_view')})]"/>
+        </record>
+
+    </data>
+</odoo>

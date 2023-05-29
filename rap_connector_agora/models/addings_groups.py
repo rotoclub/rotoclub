@@ -34,5 +34,6 @@ class ProductsAddings(models.Model):
         copy=False
     )
     company_id = fields.Many2one(
-        string='Company',
+        comodel_name='res.company',
+        string='Company'
     )

@@ -9,7 +9,8 @@ class OrderDownloadDate(models.TransientModel):
     _description = 'Wizard to select the date to be downloaded from Agora'
 
     tikect_date = fields.Date(
-        string='Date'
+        string='Date',
+        default=fields.Date.context_today
     )
     company_id = fields.Many2one(
         string='Company',

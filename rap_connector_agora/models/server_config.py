@@ -67,14 +67,6 @@ class ServerConfig(models.Model):
         required=True,
         default=lambda self: self.env.user
     )
-    sale_api_ids = fields.One2many(
-        string='Api requests',
-        comodel_name='sale.api',
-        inverse_name='server_id'
-    )
-    sale_api_count = fields.Integer(
-        compute='_compute_sale_api_count'
-    )
     search_product_by = fields.Selection(
         selection=[('id', 'Id'),
                    ('reference', 'Reference'),
@@ -90,21 +82,3 @@ class ServerConfig(models.Model):
             vals['name'] = self.env['ir.sequence'].next_by_code('server.config', sequence_date=seq_date) or _('New')
         return super(ServerConfig, self).create(vals)
 
-    def action_view_api(self):
-        """"
-        Action for smart button Sale Api
-        """
-        return {
-            'type': 'ir.actions.act_window',
-            'name': 'Sale API',
-            'res_model': 'sale.api',
-            'view_mode': 'tree,form',
-            'view_type': 'form',
-            'domain': [('server_id', '=', self.id)],
-            'context': {'default_server_id': self.id}
-        }
-
-    @api.depends('sale_api_ids')
-    def _compute_sale_api_count(self):
-        for record in self:
-            record.sale_api_count = len(record.sale_api_ids)
