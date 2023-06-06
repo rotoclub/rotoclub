@@ -14,18 +14,38 @@ class AccountingMapping(models.Model):
         comodel_name='api.connection',
         string='Agora Instance'
     )
-    agora_payment_ids = fields.One2many(
-        comodel_name='payment.method.account',
-        inverse_name='account_mapping_id',
-        string='Payment Methods/Account'
-    )
     invoice_journal_ids = fields.One2many(
         comodel_name='invoice.type.journal',
         inverse_name='account_mapping_id',
         string='Journal/Invoice Type'
     )
     company_id = fields.Many2one(
-        related='instance_id.company_id'
+        related='instance_id.company_id',
+        store=True
+    )
+    center_account_ids = fields.One2many(
+        comodel_name='sale.center.account',
+        inverse_name='account_mapping_id',
+        string='Sale Center/Accounts'
+    )
+    tips_config_ids = fields.One2many(
+        comodel_name='tips.config',
+        inverse_name='account_mapping_id',
+        string='Tips Setting',
+        required=True
+    )
+    tip_journal_id = fields.Many2one(
+        comodel_name="account.journal",
+        string="Tips Journal"
+    )
+    inbound_payment_method_id = fields.Many2one(
+        comodel_name='account.payment.method',
+        string="Debit Method",
+        domain=[('payment_type', '=', 'inbound')],
+        help="Means of payment for collecting money. Odoo modules offer various"
+             "payments handling facilities, but you can always use the 'Manual'"
+             "payment method in order to manage payments outside of the"
+             "software."
     )
 
     @api.constrains('instance_id')
@@ -41,8 +61,8 @@ class InvoiceTypeJournal(models.Model):
     _description = 'Depending the Agora Invoice Type will have a journal associated'
 
     invoice_type = fields.Selection(
-        selection=[('simplified', 'Simplified'),
-                   ('regular', 'Regular')],
+        selection=[('basic', 'Basic'),
+                   ('standard', 'Standard')],
         required=True,
         string="Invoice type"
     )
@@ -56,6 +76,10 @@ class InvoiceTypeJournal(models.Model):
         required=True,
         string="Account Mapping"
     )
+    company_id = fields.Many2one(
+        related='account_mapping_id.company_id',
+        store=True
+    )
 
     @api.constrains('invoice_type')
     def validate_invoice_type_repeated(self):
@@ -66,29 +90,70 @@ class InvoiceTypeJournal(models.Model):
                 raise ValidationError("Already exist a configuration for the selected Invoice Type")
 
 
-class PaymentMethodAccount(models.Model):
-    _name = 'payment.method.account'
+class SaleCenterAccount(models.Model):
+    _name = 'sale.center.account'
+    _description = 'Relation of Sale Center with Accounts'
 
     payment_method_id = fields.Many2one(
-        comodel_name='agora.payment.method',
-        required=True,
-        string="Payment method"
+        string='Agora Payment Method',
+        comodel_name='agora.payment.method'
+    )
+    sale_center_id = fields.Many2one(
+        string='Sale Center',
+        comodel_name='sale.center',
+        required=True
     )
     account_id = fields.Many2one(
+        string='Account',
         comodel_name='account.account',
-        required=True,
-        string="Account"
+        required=True
+    )
+    counterpart_account_id = fields.Many2one(
+        string='Counterpart Account',
+        comodel_name='account.account',
+        required=True
     )
     account_mapping_id = fields.Many2one(
         comodel_name="account.mapping",
-        required=True,
         string="Account Mapping"
     )
+    company_id = fields.Many2one(
+        related='account_mapping_id.company_id',
+        store=True
+    )
 
-    @api.constrains('payment_method_id')
-    def validate_invoice_type_repeated(self):
+    @api.constrains('payment_method_id', 'sale_center_id')
+    def model_validation(self):
         for rec in self:
-            repeated = rec.search_count([('payment_method_id', '=', rec.payment_method_id.id),
-                                         ('account_mapping_id', '=', rec.account_mapping_id.id)])
-            if repeated > 1:
-                raise ValidationError("Already exist a configuration for the selected Payment Method")
+            duplicated = rec.search_count([
+                ('sale_center_id', '=', rec.sale_center_id.id),
+                ('payment_method_id', '=', rec.payment_method_id.id)])
+            if duplicated > 1:
+                raise ValidationError(_("There is a duplicity of Sale Center Configuration"))
+
+
+class TipsConfig(models.Model):
+    _name = 'tips.config'
+    _description = 'Configurations needed for tips'
+
+    account_id = fields.Many2one(
+        string='Account',
+        comodel_name='account.account',
+        required=True
+    )
+    counterpart_account_id = fields.Many2one(
+        string='Counterpart Account',
+        comodel_name='account.account',
+        required=True
+    )
+    account_mapping_id = fields.Many2one(
+        comodel_name="account.mapping",
+        string="Account Mapping"
+    )
+    company_id = fields.Many2one(
+        related='account_mapping_id.company_id',
+        store=True
+    )
+
+    _sql_constraints = [('unique_company', 'unique(company_id)',
+                         "Already exist a configuration for this company! Only one its allowed")]

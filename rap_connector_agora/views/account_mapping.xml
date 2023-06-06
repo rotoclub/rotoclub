@@ -11,21 +11,38 @@
                         <group>
                             <field name="instance_id"/>
                             <field name="company_id"/>
+                            <field name="inbound_payment_method_id" required="1"/>
                         </group>
                         <notebook>
-                            <page string="Payment Methods/Account">
-                                <field name="agora_payment_ids">
-                                    <tree editable="bottom">
-                                        <field name="payment_method_id"/>
-                                        <field name="account_id"/>
-                                    </tree>
-                                </field>
-                            </page>
                             <page string="Journal/Invoice Type">
                                 <field name="invoice_journal_ids">
                                     <tree editable="bottom">
                                         <field name="invoice_type"/>
-                                        <field name="journal_id"/>
+                                        <field name="journal_id" domain="[('type', '=', 'sale')]"/>
+                                    </tree>
+                                </field>
+                            </page>
+                             <page string="Sale Center/Accounts">
+                                <field name="center_account_ids">
+                                    <tree editable="bottom">
+                                        <field name="sale_center_id"/>
+                                        <field name="payment_method_id"/>
+                                        <field name="account_id"/>
+                                        <field name="counterpart_account_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Tips Setting">
+                                <group>
+                                    <group>
+                                        <field name="tip_journal_id"/>
+                                    </group>
+                                </group>
+                                <field name="tips_config_ids">
+                                    <tree editable="bottom">
+                                        <field name="account_id"/>
+                                        <field name="counterpart_account_id"/>
+                                        <field name="company_id"/>
                                     </tree>
                                 </field>
                             </page>

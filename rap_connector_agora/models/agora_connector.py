@@ -8,6 +8,8 @@ import logging
 from odoo.exceptions import ValidationError
 from dateutil import parser
 from datetime import datetime
+from itertools import groupby
+
 requests.packages.urllib3.util.connection.HAS_IPV6 = False
 
 
@@ -572,15 +574,18 @@ class APIConnection(models.Model):
         """
         conections = self.search([('state', '=', 'connect')])
         for connec in conections:
-            params = {
-                'QueryGuid': '{533750D6-11DE-4D33-8D11-8A3B63C33F22}',
-                'Params': {}
-            }
-            agora_ids, message = self.post_request(connec.url_server, '/custom-query', connec.server_api_key, params)
-            if agora_ids:
-                ids = agora_ids.json()[0]
-                connec.update({'last_format_id': ids.get('last_format_id'),
-                               'last_product_id': ids.get('last_product_id')})
+            report_config = self.env['agora.reports.config'].search([('company_id', '=', connec.company_id.id),
+                                                                     ('report_type', '=', 'last_ids')], limit=1)
+            if report_config:
+                params = {
+                    'QueryGuid': '{%s}' % report_config.guid,
+                    'Params': {}
+                    }
+                agora_ids, message = self.post_request(connec.url_server, '/custom-query', connec.server_api_key, params)
+                if agora_ids:
+                    ids = agora_ids.json()[0]
+                    connec.update({'last_format_id': ids.get('last_format_id'),
+                                   'last_product_id': ids.get('last_product_id')})
 
     def get_additional_formats(self, parent_product, connection):
         """"
@@ -760,13 +765,14 @@ class APIConnection(models.Model):
             json_invoices = invoices.json().get('Invoices')
             self.generate_sale_api_logs(json_invoices)
             basic_invoices = list(filter(lambda inv: inv.get('DocumentType') in ['BasicInvoice', 'StandardInvoice'], json_invoices))
-            basic_refunds = list(filter(lambda inv: inv.get('DocumentType') == 'BasicRefund', json_invoices))
+            basic_refunds = list(filter(lambda inv: inv.get('DocumentType') in ['BasicRefund', 'StandardRefund'], json_invoices))
             for record in basic_invoices:
                 log_line = self.get_related_log_line(record)
                 sos = self._create_sale_order(record, log_line)
-                self.generate_invoice(sos)
+                self.generate_invoice(sos, record.get('DocumentType'))
             for refund in basic_refunds:
-                self.generate_credit_note(refund)
+                log_refund = self.get_related_log_line(refund)
+                self.generate_credit_note(refund, log_refund)
 
     def generate_sale_api_logs(self, json_invoices):
         """"
@@ -798,7 +804,12 @@ class APIConnection(models.Model):
             log.api_line_ids = [(4, x.id) for x in api_line_ids]
             self._cr.commit()
 
-    def generate_invoice(self, sos):
+    @staticmethod
+    def complete_sequence(number):
+        length = 6
+        return str(number).zfill(length)
+
+    def generate_invoice(self, sos, doc_type):
         """"
         Function to generate the Invoices for the provided S.Orders
         """
@@ -812,16 +823,58 @@ class APIConnection(models.Model):
                     so._force_lines_to_invoice_policy_order()
                     # Create Invoice associated with the SO
                     invoice = so._create_invoices()
-                    invoice.update({'number': so.number, 'serie': so.serie})
+                    invoice.sale_center_id = so.sale_center_id
+                    self.update_account_and_journal(invoice, doc_type)
                     invoices.append(invoice)
                     # Update values in the created Inv
                     invoice.invoice_line_ids.analytic_account_id = so.sale_center_id.analytic_id.id
                     invoice.invoice_date = so.date_order.date()
+                    name = '{}/{}'.format(so.serie, self.complete_sequence(so.number))
+                    invoice.update({
+                        'invoice_date_due': invoice.invoice_date,
+                        'date': invoice.invoice_date,
+                        'number': so.number,
+                        'serie': so.serie,
+                        'name': name
+                    })
                     self.post_invoice(invoice)
                     # Create the Payment associated with the created invoice
                     self.paid_invoice(invoice, order_data)
                     _logger.info("POSTED SO : {} - {}".format(so.number, so.name))
             return invoices
+
+    def get_custom_journal(self, doc_type):
+        """"
+        Function to get the rigth journal in case its mapped in configuration.
+        Mapped is get it from Agora/Settings/Accounting config/Journal-Invoice
+        @Return the journal related with the document type coming in the Agora ticket
+        """
+        journal = False
+        if doc_type == 'BasicInvoice':
+            journal = self.env['invoice.type.journal'].search([('invoice_type', '=', 'basic')])
+        if doc_type == 'StandardInvoice':
+            journal = self.env['invoice.type.journal'].search([('invoice_type', '=', 'standard')])
+        return journal
+
+    def update_custom_mapping_accounts(self, invoice):
+        """"
+        Function to get the rigth journal in case its mapped in configuration.
+        Mapped is get it from Agora/Settings/Accounting config/Sale Center-Accounts
+        @Return the Accounts related with the Sale Center coming from Agora ticket
+        """
+        center_account = self.env['sale.center.account'].search([('sale_center_id', '=', invoice.sale_center_id.id)], limit=1)
+        if center_account:
+            invoice.invoice_line_ids.account_id = center_account.account_id
+            counterpart = invoice.line_ids.filtered(lambda l: l.debit > 0)
+            counterpart.account_id = center_account.counterpart_account_id
+
+    def update_account_and_journal(self, invoice, doc_type):
+        # Assign the journal depending the invoice type (Standard or basic)
+        invoice.document_type = doc_type
+        journal = self.get_custom_journal(doc_type)
+        if journal:
+            invoice.update({'journal_id': journal.journal_id.id})
+        self.update_custom_mapping_accounts(invoice)
 
     def post_invoice(self, invoices):
         if self.sale_flow in ['invoice', 'payment']:
@@ -834,12 +887,28 @@ class APIConnection(models.Model):
          This method create the payment for invoice automatically
         """
         account_payment_env = self.env['account.payment']
+        center_account = self.env['sale.center.account'].search([('sale_center_id', '=', invoices.sale_center_id.id)], limit=1)
         if self.sale_flow == 'payment':
             for invoice in invoices:
                 if invoice.amount_residual:
                     payments = self.prepare_payment_data(invoice, order_data)
                     for payment in payments:
                         payment_id = account_payment_env.create(payment)
+                        # Update the account in case a configuration exist
+                        if center_account:
+                            # Change the accounts in the payment lines before posted
+                            # Filter Counterpart lines
+                            if payment_id.payment_type == 'inbound':
+                                counterpart_account = payment_id.line_ids.filtered(lambda l: l.credit > 0)
+                                counterpart_account.account_id = center_account.counterpart_account_id
+                                # Filter Liquidity lines
+                                account_id = payment_id.line_ids.filtered(lambda l: l.credit == 0)
+                                account_id.account_id = center_account.account_id
+                            elif payment_id.payment_type == 'outbound':
+                                account_id = payment_id.line_ids.filtered(lambda l: l.credit > 0)
+                                account_id.account_id = center_account.account_id
+                                counterpart_account = payment_id.line_ids.filtered(lambda l: l.credit == 0)
+                                counterpart_account.account_id = center_account.counterpart_account_id
                         payment_id.action_post()
                         self.reconcile_payment(payment_id, invoice)
             return True
@@ -848,13 +917,13 @@ class APIConnection(models.Model):
         """"
         Return {'code': 'efectivo' , 'qty': 200}
         """
-        from itertools import groupby
         total_payments = []
         for k, g in groupby(order_data.get('Payments'), key=lambda x: (x.get('MethodName'))):
             groupList = list(g)
             total_payments.append({
                 'method': k,
-                'qty': sum(c['Amount'] for c in groupList)
+                'qty': sum(c['Amount'] for c in groupList),
+                'tip': sum(c['TipAmount'] for c in groupList)
             })
         total_payments = self.verify_payment_methods(total_payments)
         return total_payments
@@ -876,12 +945,12 @@ class APIConnection(models.Model):
         """
         payment_list = []
         date = invoice.date
+        mapping = self.env['account.mapping'].search([('company_id', '=', self.company_id.id)])
         if self.is_date_from_invoice:
             date = invoice.invoice_date
         payments = self.get_payments_group_by_method(order_data)
         for method in payments:
-            # method_journal = self.env['invoice.type.journal'].search([('')])
-            journal = invoice.analytic_group_id.journal_id.id
+            journal = invoice.journal_id.id
             payment_type = 'inbound'
             if method.get('qty') < 0:
                 payment_type = 'outbound'
@@ -891,12 +960,14 @@ class APIConnection(models.Model):
                 'currency_id': invoice.currency_id.id,
                 'payment_type': payment_type,
                 'date': date,
+                'agora_payment_id': method.get('method').id,
                 'partner_id': invoice.commercial_partner_id.id,
                 'amount': abs(method.get('qty')),
-                'partner_type': 'customer'
+                'partner_type': 'customer',
+                'sale_center_id': invoice.sale_center_id.id,
+                'analytic_group_id': invoice.analytic_group_id.id,
+                'payment_method_line_id': mapping.inbound_payment_method_id.id,
             })
-
-
         return payment_list
 
     def reconcile_payment(self, payment_id, invoice):
@@ -934,25 +1005,31 @@ class APIConnection(models.Model):
                     line.quantity_done = line.product_uom_qty
                 picking.button_validate()
 
-    def generate_credit_note(self, refund):
+    def generate_credit_note(self, refund, log_refund):
         """This function will generate a credit note in Odoo when a refund come from Agora.
             :param refund: Record of refund coming from Agora.
         """
         if self.sale_flow == 'payment':
             order = self.env['sale.order'].search([('number', '=', refund['RelatedInvoice'].get('Number')),
+                                                   ('company_id', '=', self.company_id.id),
                                                    ('serie', '=', refund['RelatedInvoice'].get('Serie'))], limit=1)
             refund_inv = self.env['account.move'].search([('number', '=', refund.get('Number')),
                                                           ('move_type', '=', 'out_refund'),
+                                                          ('company_id', '=', self.company_id.id),
                                                           ('serie', '=', refund.get('Serie'))], limit=1)
             if order and not refund_inv:
                 moves2revert = order.invoice_ids.filtered(lambda m: m.move_type == 'out_invoice' and m.payment_state in ['paid',
                                                                                                                      'in_payment'])
                 default_values_list = []
                 for move in moves2revert:
+                    serie = refund.get('Serie').replace('0', '00')
+                    name = '{}/{}'.format(serie, self.complete_sequence(refund.get('Number')))
                     default_values_list.append({
                         'ref': _('Reversal of: {}'.format(move.name)),
                         'date': move.date,
+                        'name': name,
                         'number': refund.get('Number'),
+                        'document_type': refund.get('DocumentType'),
                         'serie': refund.get('Serie'),
                         'invoice_date': move.is_invoice(include_receipts=True) and move.date,
                         'journal_id': move.journal_id.id,
@@ -962,6 +1039,7 @@ class APIConnection(models.Model):
                 revert.action_post()
                 self.paid_invoice(revert, refund)
                 order.picking_ids.write({'state': 'cancel'})
+                log_refund.update({'state': 'done'})
                 return True
 
     def get_related_log_line(self, data):
@@ -970,6 +1048,19 @@ class APIConnection(models.Model):
                                              ('ticket_serial', '=', data.get('Serie')),
                                              ('sale_api_id.company_id', '=', self.company_id.id)])
         return existing_line or False
+
+    def get_card_tips(self, record):
+        """"
+        Function to get tips related with tarjeta.
+        Its a little bit harcoding because in Agora there is not a property to
+        recognize the different method types. Only the name(string) can give us a clou
+        """
+        payments = self.get_payments_group_by_method(record)
+        total_tip = 0.0
+        for pay in payments:
+            if 'tarjeta' in pay.get('method').code.lower():
+                total_tip += pay.get('tip')
+        return total_tip
 
     def _create_sale_order(self, record, log_line):
         """"
@@ -981,6 +1072,7 @@ class APIConnection(models.Model):
         so_env = self.env['sale.order']
         sale_center_env = self.env['sale.center']
         partner = self.get_partner(record)
+        card_tips = self.get_card_tips(record)
         generated_sos = []
         for item in record.get('InvoiceItems'):
             exist_so = so_env.search([('number', '=', record.get('Number')),
@@ -1001,8 +1093,10 @@ class APIConnection(models.Model):
                         'partner_id': partner.id,
                         'company_id': self.company_id.id,
                         'number': record.get('Number'),
+                        'tips_amount': card_tips,
+                        'document_type': record.get('DocumentType'),
                         'waiter': record.get('User').get('Name') if record.get('User') else 'Generic Waiter',
-                        'serie': record.get('Serie'),
+                        'serie': record.get('Serie').replace('0', '00'),
                         'business_date': datetime.strptime(record.get('BusinessDay'), '%Y-%m-%d').date()
                     }
                     if record.get('Workplace'):
@@ -1042,6 +1136,9 @@ class APIConnection(models.Model):
                             self.validate_picking(so)
                             log_line.update({'state': 'done'})
                         so.date_order = parser.parse(record.get('Date'))
+                        so.effective_date = so.expected_date
+                        if so.tips_amount > 0:
+                            so.generate_tip_account()
         return generated_sos
 
     def get_discount_line(self, so, amount):
