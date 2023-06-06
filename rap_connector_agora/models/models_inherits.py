@@ -92,6 +92,16 @@ class SaleOrder(models.Model):
     waiter = fields.Char(
         string='Waiter'
     )
+    document_type = fields.Selection(
+        selection=[('BasicInvoice', 'Basic Invoice'),
+                   ('StandardInvoice', 'Standard Invoice')],
+        default='BasicInvoice',
+        string="Document type"
+    )
+    tips_amount = fields.Monetary(
+        string='Tips amount',
+        default=0.0
+    )
 
 
 class AccountAnalyticGroup(models.Model):
@@ -125,6 +135,18 @@ class AccountMove(models.Model):
     serie = fields.Char(
         string='Serie'
     )
+    document_type = fields.Selection(
+        selection=[('BasicInvoice', 'Basic Invoice'),
+                   ('StandardInvoice', 'Standard Invoice'),
+                   ('BasicRefund', 'Basic Refund'),
+                   ('StandardRefund', 'Standard Refund')],
+        default='BasicInvoice',
+        string="Document type"
+    )
+    sale_center_id = fields.Many2one(
+        string='Sale Center',
+        comodel_name='sale.center'
+    )
 
 
 class ResCompany(models.Model):
@@ -149,4 +171,24 @@ class ResCompany(models.Model):
             'invoice_policy': 'order',
             'company_id': res.id
         })
+        return res
+
+
+class AccountPayment(models.Model):
+    _inherit = 'account.payment'
+
+    agora_payment_id = fields.Many2one(
+        comodel_name='agora.payment.method',
+        string="Agora Payment"
+    )
+
+    def _get_valid_liquidity_accounts(self):
+        """"
+            Inherit the standard function to add the account related with the center
+            This change its important because its need to allow the account change in payment lines
+        """
+        res = super(AccountPayment, self)._get_valid_liquidity_accounts()
+        center_account = self.env['sale.center.account'].search([('sale_center_id', '=', self.sale_center_id.id)], limit=1)
+        if center_account:
+            res = res + (center_account.account_id,)
         return res
