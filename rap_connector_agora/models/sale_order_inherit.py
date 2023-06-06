@@ -36,7 +36,7 @@ class SaleOrder(models.Model):
         The tips amount should not be considered with the Invoice directly. That's why is done directly the move.
         """
         # search the journal for sales
-        journal_id = self.env['account.mapping'].search([], limit=1).tip_journal_id
+        journal_id = self.env['account.mapping'].search([('company_id', '=', self.company_id.id)], limit=1).tip_journal_id
         accounts = self.env['tips.config'].search([('company_id', '=', self.company_id.id)], limit=1)
         lines_type = ['debit', 'credit']
         # prepare the value dictionary to create the movement
