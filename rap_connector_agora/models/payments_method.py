@@ -6,6 +6,7 @@ from odoo import models, fields, api, _
 
 class AgoraPaymentMethod(models.Model):
     _name = 'agora.payment.method'
+    _description = 'Payments coming from Agora'
 
     name = fields.Char(
         string="Name"
@@ -15,4 +16,8 @@ class AgoraPaymentMethod(models.Model):
     )
     code = fields.Char(
         string="Code"
+    )
+    company_id = fields.Many2one(
+        string='Company',
+        comodel_name='res.company'
     )

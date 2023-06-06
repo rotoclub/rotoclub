@@ -851,9 +851,11 @@ class APIConnection(models.Model):
         """
         journal = False
         if doc_type == 'BasicInvoice':
-            journal = self.env['invoice.type.journal'].search([('invoice_type', '=', 'basic')])
+            journal = self.env['invoice.type.journal'].search([('invoice_type', '=', 'basic'),
+                                                               ('company_id', '=', self.company_id.id)])
         if doc_type == 'StandardInvoice':
-            journal = self.env['invoice.type.journal'].search([('invoice_type', '=', 'standard')])
+            journal = self.env['invoice.type.journal'].search([('invoice_type', '=', 'standard'),
+                                                               ('company_id', '=', self.company_id.id)])
         return journal
 
     def update_custom_mapping_accounts(self, invoice):
@@ -931,10 +933,12 @@ class APIConnection(models.Model):
     def verify_payment_methods(self, total_payments):
         method_env = self.env['agora.payment.method']
         for rec in total_payments:
-            exist = method_env.search([('code', '=', rec.get('method'))])
+            exist = method_env.search([('code', '=', rec.get('method')),
+                                       ('company_id', '=', self.company_id.id)])
             if not exist:
                 exist = method_env.create({'code': rec.get('method'),
                                            'name': rec.get('method'),
+                                           'company_id': self.company_id.id,
                                            'description': 'Auto-Generated'})
             rec.update({'method': exist})
         return total_payments

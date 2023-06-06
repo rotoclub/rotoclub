@@ -21,3 +21,4 @@ rap_connector_agora.sale_center_account,access_sale_center_account,model_sale_ce
 rap_connector_agora.report_config,access_agora_report_config_user,model_agora_reports_config,,1,1,1,1
 rap_connector_agora.tips_config,access_agora_tips_config_user,model_tips_config,,1,1,1,1
 rap_connector_agora.import_data,access_agora_import_data,model_import_agora_data,,1,1,1,1
+rap_connector_agora.agora_payment_method,access_agora_payment_method,model_agora_payment_method,,1,1,1,1
