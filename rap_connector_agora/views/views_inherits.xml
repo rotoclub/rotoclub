@@ -34,6 +34,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='category_id']" position="after">
                     <field name="agora_id" readonly="1"/>
+                    <field name="is_generic" readonly="1"/>
                 </xpath>
             </field>
         </record>

@@ -75,12 +75,8 @@ class APIConnection(models.Model):
         string='Last Format ID'
     )
 
-    @api.model
-    def create(self, vals):
-        if not vals.get('name'):
-            seq_date = None
-            vals['name'] = self.env['ir.sequence'].next_by_code('api.connection', sequence_date=seq_date) or _('New')
-        return super().create(vals)
+    _sql_constraints = [('unique_name', 'unique(name)',
+                         "Already exist an Instance with the same Name, to avoid confusions please select a New Name")]
 
     def write(self, vals):
         for rec in self:
@@ -954,7 +950,7 @@ class APIConnection(models.Model):
             date = invoice.invoice_date
         payments = self.get_payments_group_by_method(order_data)
         for method in payments:
-            journal = invoice.journal_id.id
+            journal = invoice.analytic_group_id.journal_id.id
             payment_type = 'inbound'
             if method.get('qty') < 0:
                 payment_type = 'outbound'

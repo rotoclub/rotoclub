@@ -17,7 +17,7 @@
                 </div>
                 <sheet>
                     <div class="oe_title">
-                        <h1><field name="name" readonly="1" required="True"/></h1>
+                        <h1><field name="name" required="True"/></h1>
                     </div>
                     <group>
                         <group name="first_group" string="Server Config">
