@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="1">
-    <record id="seq_api_connection" model="ir.sequence">
-        <field name="name">API Connection</field>
-        <field name="code">api.connection</field>
-        <field name="prefix">API/%(y)s/%(month)s/</field>
-        <field name="padding">5</field>
-        <field name="company_id" eval="False"/>
-    </record>
-
     <record id="seq_server_config" model="ir.sequence">
         <field name="name">Server Config</field>
         <field name="code">server.config</field>

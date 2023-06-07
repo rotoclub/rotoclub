@@ -15,7 +15,8 @@ def create_data(cr, registry):
     for company in companies:
         env['res.partner'].create({
             'name': 'Generic Client {}'.format(company.name),
-            'company_id': company.id
+            'company_id': company.id,
+            'is_generic': True
         })
         for order in order_data:
             env['preparation.order'].create({

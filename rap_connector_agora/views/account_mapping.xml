@@ -26,7 +26,6 @@
                                 <field name="center_account_ids">
                                     <tree editable="bottom">
                                         <field name="sale_center_id"/>
-                                        <field name="payment_method_id"/>
                                         <field name="account_id"/>
                                         <field name="counterpart_account_id"/>
                                     </tree>

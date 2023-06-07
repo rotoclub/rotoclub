@@ -49,11 +49,14 @@ class ResPartner(models.Model):
     agora_id = fields.Integer(
         string='Agora ID'
     )
+    is_generic = fields.Boolean(
+        string='Is generic Client'
+    )
 
     def unlink(self):
         for rec in self:
-            if rec.name == 'Generic client':
-                raise ValidationError(_('Sorry the record named {} can not be deleted.'
+            if rec.is_generic:
+                raise ValidationError(_('Sorry a Generic record can not be deleted. ({})'
                                         ' Its used for sync purposes').format(rec.name))
         return super().unlink()
 
@@ -170,6 +173,11 @@ class ResCompany(models.Model):
             'is_product_menu': True,
             'invoice_policy': 'order',
             'company_id': res.id
+        })
+        self.env['res.partner'].sudo().create({
+            'name': 'Generic Client {}'.format(res.name),
+            'company_id': res.id,
+            'is_generic': True
         })
         return res
 

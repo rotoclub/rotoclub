@@ -3,7 +3,7 @@
 
 {
     'name': 'Agora connector',
-    'version': '15.0.1.3.0',
+    'version': '15.0.1.3.1',
     'category': 'Extra Tools',
     'summary': """Agora connector: Sales in Odoo""",
     'description': """Agora connector: Sales, Customer, Invoice address, Products in Odoo""",

@@ -96,5 +96,13 @@
             <field eval="True" name="global"/>
             <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
         </record>
+
+        <!-- Global rule for Agora Report Config in active company-->
+        <record model="ir.rule" id="agora_reports_config_rule_multi">
+            <field name="name">Agora Reports Config Multicompany</field>
+            <field name="model_id" ref="model_agora_reports_config"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+        </record>
     </data>
 </odoo>
