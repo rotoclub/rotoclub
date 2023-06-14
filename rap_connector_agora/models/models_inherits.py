@@ -189,6 +189,10 @@ class AccountPayment(models.Model):
         comodel_name='agora.payment.method',
         string="Agora Payment"
     )
+    sale_center_id = fields.Many2one(
+        string='Sale Center',
+        comodel_name='sale.center'
+    )
 
     def _get_valid_liquidity_accounts(self):
         """"
