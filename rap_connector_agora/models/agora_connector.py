@@ -965,8 +965,7 @@ class APIConnection(models.Model):
                 'amount': abs(method.get('qty')),
                 'partner_type': 'customer',
                 'sale_center_id': invoice.sale_center_id.id,
-                'analytic_group_id': invoice.analytic_group_id.id,
-                'payment_method_line_id': mapping.inbound_payment_method_id.id,
+                'analytic_group_id': invoice.analytic_group_id.id
             })
         return payment_list
 
