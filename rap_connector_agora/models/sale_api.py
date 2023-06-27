@@ -45,6 +45,26 @@ class SaleApis(models.Model):
         string='Done count',
         compute="_compute_total_record_count"
     )
+    state = fields.Selection(
+        string='State',
+        selection=[("draft", "Draft"),
+                   ("fail", "Failed"),
+                   ("done", "Done")],
+        compute='_compute_state_log'
+    )
+
+    @api.depends('api_line_ids', 'api_line_ids.state')
+    def _compute_state_log(self):
+        for rec in self:
+            state = 'draft'
+            if rec.api_line_ids:
+                fails = rec.api_line_ids.filtered(lambda l: l.state == 'fail')
+                drafts = rec.api_line_ids.filtered(lambda l: l.state == 'draft')
+                if fails:
+                    state = 'fail'
+                elif not fails and not drafts:
+                    state = 'done'
+            rec.state = state
 
     @api.depends('data_date')
     def _compute_name(self):
@@ -103,6 +123,9 @@ class SaleApiLine(models.Model):
     message = fields.Text(
         string='Error Message'
     )
+    product_with_error = fields.Char(
+        string='Products with error'
+    )
 
     def update_log_message(self, value):
         message = ''
@@ -111,3 +134,9 @@ class SaleApiLine(models.Model):
                       " Probably its necessary a masive Product List Update"
         self.update({'message': message, 'state': 'fail'})
 
+    def update_product_error(self, product):
+        message = self.product_with_error
+        if message:
+            self.product_with_error = '{},{}'.format(message, product)
+        else:
+            self.product_with_error = '{}'.format(product)
