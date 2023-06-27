@@ -695,6 +695,9 @@ class APIConnection(models.Model):
             data['Products'][0].update({'MinAddins': product.min_addings,
                                         'MaxAddins': product.max_addings,
                                         'Addins': addins})
+        # # Discomment the following lines to get de json data
+        # import json
+        # json = json.dumps(data, indent=4)
         return data
 
     def post_products(self, products):
@@ -950,12 +953,12 @@ class APIConnection(models.Model):
             date = invoice.invoice_date
         payments = self.get_payments_group_by_method(order_data)
         for method in payments:
-            journal = invoice.analytic_group_id.journal_id.id
+            journal = invoice.analytic_group_id.journal_id
             payment_type = 'inbound'
             if method.get('qty') < 0:
                 payment_type = 'outbound'
             payment_list.append({
-                'journal_id': journal,
+                'journal_id': journal.id,
                 'ref': invoice.ref,
                 'currency_id': invoice.currency_id.id,
                 'payment_type': payment_type,
@@ -1073,9 +1076,11 @@ class APIConnection(models.Model):
         partner = self.get_partner(record)
         card_tips = self.get_card_tips(record)
         generated_sos = []
+        log_line.message = ''
+        serie = record.get('Serie').replace('0', '00') if record.get('Serie').count('0') == 1 else record.get('Serie')
         for item in record.get('InvoiceItems'):
             exist_so = so_env.search([('number', '=', record.get('Number')),
-                                      ('serie', '=', record.get('Serie')),
+                                      ('serie', '=', serie),
                                       ('company_id', '=', self.company_id.id)])
             # Validate if its available the SO creation
             so_creation_ok = True
@@ -1084,6 +1089,7 @@ class APIConnection(models.Model):
                 if exist_prod != 0:
                     so_creation_ok = False
                     log_line.update_log_message(exist_prod)
+                    log_line.update_product_error(line.get('ProductName'))
             if exist_so:
                 log_line.update({'state': 'done'})
             if not exist_so and so_creation_ok:
@@ -1095,7 +1101,7 @@ class APIConnection(models.Model):
                         'tips_amount': card_tips,
                         'document_type': record.get('DocumentType'),
                         'waiter': record.get('User').get('Name') if record.get('User') else 'Generic Waiter',
-                        'serie': record.get('Serie').replace('0', '00'),
+                        'serie': serie,
                         'business_date': datetime.strptime(record.get('BusinessDay'), '%Y-%m-%d').date()
                     }
                     if record.get('Workplace'):
