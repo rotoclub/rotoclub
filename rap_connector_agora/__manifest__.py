@@ -3,7 +3,7 @@
 
 {
     'name': 'Agora connector',
-    'version': '15.0.1.3.4',
+    'version': '15.0.1.4.0',
     'category': 'Extra Tools',
     'summary': """Agora connector: Sales in Odoo""",
     'description': """Agora connector: Sales, Customer, Invoice address, Products in Odoo""",
@@ -36,6 +36,7 @@
         'views/sale_order_view.xml',
         'views/views_inherits.xml',
         'views/sale_center.xml',
+        'views/work_place.xml',
         'views/preparation_type.xml',
         'views/preparation_order.xml',
         'views/agora_tax.xml',

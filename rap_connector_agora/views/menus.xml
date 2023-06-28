@@ -38,6 +38,10 @@
                 <menuitem id="sale_center_agora_menu"
                           action="account_sale_center_action"
                           sequence="20" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group"/>
+                        <!--Menu Item Work Center in Agora-->
+                <menuitem id="work_center_agora_menu"
+                          action="work_place_center_action"
+                          sequence="20" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group"/>
                         <!--Menu Item Pricelist in Agora-->
                 <menuitem id="pricelist_agora_menu"
                           action="product.product_pricelist_action2"
