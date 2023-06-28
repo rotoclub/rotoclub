@@ -7,6 +7,13 @@
             <field name="arch" type="xml">
                 <form string="Sale API">
                     <sheet>
+                        <field name="is_completed" invisible="1"/>
+                        <div class="alert alert-warning  text-center info_icon"
+                             role="alert"
+                             attrs="{'invisible': [('is_completed', '!=', True)]}">
+                            Sorry!! All the Orders couldn't be proccess. Only 180 Orders will be downloaded in just one try.
+                            Please: Execute the function in Agora/Sales "Download Order" Again
+                        </div>
                         <group>
                             <group>
                                 <field name="executed_by" readonly="1"/>

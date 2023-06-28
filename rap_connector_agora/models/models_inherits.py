@@ -118,6 +118,7 @@ class AccountAnalyticGroup(models.Model):
     work_place_id = fields.Many2one(
         string='Work Place',
         comodel_name='work.place',
+        compute='_compute_work_place',
         help='This field will be use to define the Group related with the SO. '
              'Work place always will come in the order data from Agora'
     )
@@ -127,6 +128,12 @@ class AccountAnalyticGroup(models.Model):
         help='This field will be use to define the Warehouse in the SO. '
              'Work place always will come in the order data from Agora'
     )
+
+    def _compute_work_place(self):
+        group_env = self.env['work.place']
+        for rec in self:
+            a_group = group_env.search([('analytic_group_id', '=', rec.id)], limit=1)
+            rec.work_place_id = a_group.id
 
 
 class AccountMove(models.Model):

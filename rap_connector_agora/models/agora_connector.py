@@ -9,6 +9,7 @@ from odoo.exceptions import ValidationError
 from dateutil import parser
 from datetime import datetime
 from itertools import groupby
+import json
 
 requests.packages.urllib3.util.connection.HAS_IPV6 = False
 
@@ -762,16 +763,25 @@ class APIConnection(models.Model):
         invoices = self.get_request(self.url_server, endpoint, self.server_api_key, params)
         if invoices and invoices.json().get('Invoices'):
             json_invoices = invoices.json().get('Invoices')
-            self.generate_sale_api_logs(json_invoices)
-            basic_invoices = list(filter(lambda inv: inv.get('DocumentType') in ['BasicInvoice', 'StandardInvoice'], json_invoices))
-            basic_refunds = list(filter(lambda inv: inv.get('DocumentType') in ['BasicRefund', 'StandardRefund'], json_invoices))
-            for record in basic_invoices:
+            # Generate the Logs from the data
+            log = self.generate_sale_api_logs(json_invoices)
+            # Divide Invoices and Refunds
+            basic_invoices = log.api_line_ids.filtered(
+                lambda l: l.state != 'done' and l.document_type in ['BasicInvoice', 'StandardInvoice'])
+            basic_refunds = log.api_line_ids.filtered(
+                lambda l: l.state != 'done' and l.document_type in ['BasicRefund', 'StandardRefund'])
+            # Firstable will be process the invoice, because could be a refund related with one of this refunds
+            # Only 100 Invoices will be process to avoid time out in Odoo.sh
+            for invoice in basic_invoices[0:100]:
+                record = json.loads(invoice.order_data)
                 log_line = self.get_related_log_line(record)
                 sos = self._create_sale_order(record, log_line)
                 self.generate_invoice(sos, record.get('DocumentType'))
-            for refund in basic_refunds:
-                log_refund = self.get_related_log_line(refund)
-                self.generate_credit_note(refund, log_refund)
+            for refund in basic_refunds[0:100]:
+                record = json.loads(refund.order_data)
+                if record:
+                    log_refund = self.get_related_log_line(record)
+                    self.generate_credit_note(record, log_refund)
 
     def generate_sale_api_logs(self, json_invoices):
         """"
@@ -781,8 +791,8 @@ class APIConnection(models.Model):
         log_obj = self.env['sale.api']
         log_line_obj = self.env['sale.api.line']
         if json_invoices:
-            business_date = datetime.strptime(json_invoices[0].get('BusinessDay'), '%Y-%m-%d').date()
             api_line_ids = []
+            business_date = datetime.strptime(json_invoices[0].get('BusinessDay'), '%Y-%m-%d').date()
             log = log_obj.search([('data_date', '=', business_date), ('company_id', '=', self.company_id.id)])
             if not log:
                 log = log_obj.create({'data_date': business_date, 'executed_by': self._uid,
@@ -792,8 +802,9 @@ class APIConnection(models.Model):
                                                      ('ticket_serial', '=', record.get('Serie')),
                                                      ('sale_api_id.company_id', '=', self.company_id.id)])
                 if not existing_line:
+                    json_record = json.dumps(record)
                     line = log_line_obj.create({
-                        'order_data': record,
+                        'order_data': json_record,
                         'order_customer': record.get('Customer').get('FiscalName') if record.get('Customer') else 'Generic',
                         'ticket_number': record.get('Number'),
                         'ticket_serial': record.get('Serie'),
@@ -802,6 +813,7 @@ class APIConnection(models.Model):
                     api_line_ids.append(line)
             log.api_line_ids = [(4, x.id) for x in api_line_ids]
             self._cr.commit()
+        return log
 
     @staticmethod
     def complete_sequence(number):
@@ -902,9 +914,6 @@ class APIConnection(models.Model):
                             if payment_id.payment_type == 'inbound':
                                 counterpart_account = payment_id.line_ids.filtered(lambda l: l.credit > 0)
                                 counterpart_account.account_id = center_account.counterpart_account_id
-                                # Filter Liquidity lines
-                                account_id = payment_id.line_ids.filtered(lambda l: l.credit == 0)
-                                account_id.account_id = center_account.account_id
                             elif payment_id.payment_type == 'outbound':
                                 account_id = payment_id.line_ids.filtered(lambda l: l.credit > 0)
                                 account_id.account_id = center_account.account_id
@@ -1084,13 +1093,14 @@ class APIConnection(models.Model):
                                       ('company_id', '=', self.company_id.id)])
             # Validate if its available the SO creation
             so_creation_ok = True
-            for line in item.get('Lines'):
-                exist_prod = self.verify_so_line_product(line)
-                if exist_prod != 0:
-                    so_creation_ok = False
-                    log_line.update_log_message(exist_prod)
-                    log_line.update_product_error(line.get('ProductName'))
-            if exist_so:
+            if not exist_so:
+                for line in item.get('Lines'):
+                    exist_prod = self.verify_so_line_product(line)
+                    if exist_prod != 0:
+                        so_creation_ok = False
+                        log_line.update_log_message(exist_prod)
+                        log_line.update_product_error(line.get('ProductName'))
+            else:
                 log_line.update({'state': 'done'})
             if not exist_so and so_creation_ok:
                 if so_creation_ok:

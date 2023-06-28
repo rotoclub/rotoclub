@@ -52,6 +52,19 @@ class SaleApis(models.Model):
                    ("done", "Done")],
         compute='_compute_state_log'
     )
+    is_completed = fields.Boolean(
+        string='Is completed',
+        compute='_compute_completed_logs'
+    )
+
+    @api.depends('api_line_ids', 'api_line_ids.state')
+    def _compute_completed_logs(self):
+        for rec in self:
+            complet = True
+            draft = rec.api_line_ids.filtered(lambda l: l.state == 'draft')
+            if draft:
+                complet = False
+            rec.is_completed = complet
 
     @api.depends('api_line_ids', 'api_line_ids.state')
     def _compute_state_log(self):
