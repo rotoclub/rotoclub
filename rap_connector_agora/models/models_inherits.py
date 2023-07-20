@@ -211,3 +211,11 @@ class AccountPayment(models.Model):
         if center_account:
             res = res + (center_account.account_id,)
         return res
+
+
+class StockPicking(models.Model):
+    _inherit = 'stock.picking'
+
+    validation_counter = fields.Integer(
+        string='Counter'
+    )

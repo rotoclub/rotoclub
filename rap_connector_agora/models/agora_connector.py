@@ -997,24 +997,21 @@ class APIConnection(models.Model):
                 (payment_lines + lines).filtered_domain([('account_id', '=', account.id),
                                                          ('reconciled', '=', False)]).reconcile()
 
-    def validate_picking(self, so):
+    def validate_picking(self, pickings):
         """"
             Function to Assign and Validate the Stock Picking
         """
-        for picking in so.picking_ids:
+        for picking in pickings:
             picking.action_confirm()
             picking.action_assign()
             picking._action_done()
-            # The Picking should be validated only if all the products are covered
-            all_available = True
-            for so_line in so.order_line:
-                if so_line.product_id.id not in so.picking_ids.move_ids_without_package.mapped('product_id').ids:
-                    all_available = False
-            if all_available:
+            if picking.products_availability_state == 'available':
                 # If are all available should be Done the Picking
                 for line in picking.move_ids_without_package:
                     line.quantity_done = line.product_uom_qty
                 picking.button_validate()
+            else:
+                picking.validation_counter += 1
 
     def generate_credit_note(self, refund, log_refund):
         """This function will generate a credit note in Odoo when a refund come from Agora.
@@ -1148,7 +1145,8 @@ class APIConnection(models.Model):
                             so_line_env.create(discount_line)
                         if not so.is_incomplete:
                             so.action_confirm()
-                            self.validate_picking(so)
+                            so.picking_ids.sale_id = so.id
+                            self.validate_picking(so.picking_ids)
                             log_line.update({'state': 'done'})
                         so.date_order = parser.parse(record.get('Date'))
                         so.effective_date = so.expected_date
@@ -1309,7 +1307,7 @@ class APIConnection(models.Model):
                     }
                     so_line_env.create(line_data)
             so.action_confirm()
-            self.validate_picking(so)
+            self.validate_picking(so.picking_ids)
 
 # -----------------------------------------------------------------------------------------------------
 # --------------------------------------- ACTIONS -----------------------------------------------------
@@ -1395,3 +1393,12 @@ class APIConnection(models.Model):
                 # Generate a SO
                 connec._create_so_for_loss_products(loss_products, end_datetime)
 
+    def action_to_validate_pickings(self):
+        """"
+        Action called from Schedulle action to set to Done the Picking coming from SO.
+        Was stablich a limit to avoid time out problems
+        """
+        pickings = self.env['stock.picking'].search([('state', 'not in', ['done', 'cancel']), ('sale_id', '!=', False)],
+                                                    limit=100, order='validation_counter asc')
+        if pickings:
+            self.validate_picking(pickings)
