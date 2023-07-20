@@ -25,7 +25,7 @@
             <field name="state">code</field>
         </record>
 
-            <!--Cron to update Products in Agora from Odoo-->
+        <!--Cron to update Products in Agora from Odoo-->
         <record id="ir_cron_update_products_in_agora" model="ir.cron">
             <field name="name">Update Products in Agora</field>
             <field name="interval_number">1</field>
@@ -49,7 +49,7 @@
             <field name="state">code</field>
         </record>
 
-            <!--Cron to get loss from Agora-->
+        <!--Cron to get loss from Agora-->
         <record id="ir_cron_get_loss_products" model="ir.cron">
             <field name="name">Get Loss Products from Agora</field>
             <field name="interval_number">1</field>
@@ -58,6 +58,18 @@
             <field name="doall" eval="False"/>
             <field name="model_id" ref="model_api_connection"/>
             <field name="code">model._update_loss_products()</field>
+            <field name="state">code</field>
+        </record>
+
+        <!--Cron to get loss from Agora-->
+        <record id="ir_cron_validate_pickings_not_done" model="ir.cron">
+            <field name="name">Validate Pickings not Done</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model_id" ref="model_api_connection"/>
+            <field name="code">model.action_to_validate_pickings()</field>
             <field name="state">code</field>
         </record>
 
