@@ -14,3 +14,11 @@ rap_connector_agora.agora_tax_user,access_agora_tax_user,model_agora_tax,,1,1,1,
 rap_connector_agora.preparation_order_user,access_preparation_order_user,model_preparation_order,,1,1,1,1
 rap_connector_agora.work_place,access_work_place_user,model_work_place,,1,1,1,0
 rap_connector_agora.order_wizard,access_order_wizard_user,model_order_download_date,,1,1,1,0
+rap_connector_agora.payment_method,access_payment_method,model_agora_payment_method,,1,1,1,1
+rap_connector_agora.journal_invoice_type,access_journal_invoice_type,model_invoice_type_journal,,1,1,1,1
+rap_connector_agora.account_mapping_user,access_account_mapping,model_account_mapping,,1,1,1,1
+rap_connector_agora.sale_center_account,access_sale_center_account,model_sale_center_account,,1,1,1,1
+rap_connector_agora.report_config,access_agora_report_config_user,model_agora_reports_config,,1,1,1,1
+rap_connector_agora.tips_config,access_agora_tips_config_user,model_tips_config,,1,1,1,1
+rap_connector_agora.import_data,access_agora_import_data,model_import_agora_data,,1,1,1,1
+rap_connector_agora.agora_payment_method,access_agora_payment_method,model_agora_payment_method,,1,1,1,1

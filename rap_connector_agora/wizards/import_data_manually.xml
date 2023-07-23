@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <!-- Import DataForm View-->
+        <record id="import_data_form_view" model="ir.ui.view">
+            <field name="name">import.data.form.view</field>
+            <field name="model">import.agora.data</field>
+            <field name="arch" type="xml">
+                <form string="Preparation Order">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="data_model"/>
+                            </group>
+                            <group>
+                                <field name="instance_id"/>
+                                <field name="company_id"/>
+                            </group>
+                        </group>
+                        <group>
+                            <div name="msg_opr_main">
+                                <div>
+                                    <p colspan="2" class="alert alert-info info_icon" role="alert">
+                                        <b>
+                                            <u>
+                                                <h3 style="font-weight:bold;color:#7d5a29">Info :
+                                                </h3>
+                                            </u>
+                                            <ol>
+                                                <li>
+                                                    The new records created in Agora will be generated in Odoo
+                                                </li>
+                                                <li>
+                                                    The changes in Agora records will not be updated in Odoo, only the newones.
+                                                </li>
+                                            </ol>
+                                        </b>
+                                    </p>
+                                </div>
+                            </div>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button type="object" name="import_agora_data_action" string="Import Data" class="oe_highlight"/>
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!--Action for Import Data Model-->
+        <record id="import_agora_data_action" model="ir.actions.act_window">
+            <field name="name">Import Agora Data</field>
+            <field name="res_model">import.agora.data</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</odoo>

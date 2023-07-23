@@ -4,26 +4,66 @@
 
         <!--Main Menu Agora and Agora/Configuration-->
         <menuitem id='rap_connector_menu_principal' name='Agora' sequence="10" web_icon="rap_connector_agora,static/description/icon.png">
-            <menuitem name="Settings" id="agora_connector_menu_item_last" sequence="999" groups="rap_connector_agora.agora_manager_group">
-                <menuitem name="Server Config" id="agora_connector_menu_item0" action="action_server_config" sequence="1" groups="rap_connector_agora.agora_manager_group"/>
-                <menuitem name="API Connection" id="agora_connector_menu_item2" action="action_api_connection" sequence="999" groups="rap_connector_agora.agora_manager_group"/>
+            <!--Menu Item Agora, Agora/Product, Agora/Sales-->
+            <menuitem name="Agora"
+                      id="agora_connector_menu_sale_first"
+                      sequence="1" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group">
+                        <!--Menu Item Products in Agora-->
+                <menuitem name="Products"
+                          id="agora_connector_menu_sale_item0"
+                          action="action_product_to_agora"
+                          sequence="15" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group"/>
+                        <!--Menu Item Sales in Agora-->
+                <menuitem name="Sales"
+                          id="agora_connector_menu_sale_item1"
+                          action="action_so_from_agora"
+                          sequence="16" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group"/>
+                        <!--Menu Item Preparation Order in Agora-->
+                <menuitem id="preparation_order_menu"
+                          action="preparation_order_action"
+                          sequence="18" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group"/>
+                        <!--Menu Item Preparation type in Agora-->
+                <menuitem id="preparation_type_menu"
+                          action="preparation_type_action"
+                          sequence="19" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group"/>
+                        <!--Menu Item Agora Tax in Agora-->
+                <menuitem id="agora_tax_menu"
+                          action="agora_tax_action"
+                          sequence="20" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group"/>
+                        <!--Menu Item Pricelist in Agora-->
+                <menuitem id="product_category_agora_menu"
+                          action="product.product_category_action_form"
+                          sequence="22" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group"/>
+                        <!--Menu Item Sale Center in Agora-->
+                <menuitem id="sale_center_agora_menu"
+                          action="account_sale_center_action"
+                          sequence="20" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group"/>
+                        <!--Menu Item Work Center in Agora-->
+                <menuitem id="work_center_agora_menu"
+                          action="work_place_center_action"
+                          sequence="20" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group"/>
+                        <!--Menu Item Pricelist in Agora-->
+                <menuitem id="pricelist_agora_menu"
+                          action="product.product_pricelist_action2"
+                          sequence="21" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group"/>
+            </menuitem>
+            <menuitem name="Logs" id="logs_agora" sequence="20" groups="rap_connector_agora.agora_manager_group">
+                <menuitem name="Tickets from Agora" id="agora_api_sales_downloads" action="sale_api_downloads_action"
+                          sequence="20" groups="rap_connector_agora.agora_manager_group"/>
+            </menuitem>
+            <menuitem name="Import Data" id="import_data_main" action="import_agora_data_action"
+                      sequence="25" groups="rap_connector_agora.agora_manager_group"/>
+            <menuitem name="Settings" id="agora_connector_menu_item_last" sequence="30"
+                      groups="rap_connector_agora.agora_manager_group">
+                <menuitem name="API Connection" id="agora_connector_menu_item1" action="action_api_connection"
+                          sequence="10" groups="rap_connector_agora.agora_manager_group"/>
+                <menuitem name="Accounting Config" id="accounting_config_menu_item2" action="account_mapping_action"
+                          sequence="20" groups="rap_connector_agora.agora_manager_group"/>
+                <menuitem name="Agora Report Config" id="agora_report_config_menu_item3" action="agora_report_config_action"
+                          sequence="30" groups="rap_connector_agora.agora_manager_group"/>
             </menuitem>
         </menuitem>
 
-        <!--Menu Item Agora , Agora/Product, Agora/Sales-->
-        <menuitem name="Agora"
-                  id="agora_connector_menu_sale_first"
-                  parent="rap_connector_agora.rap_connector_menu_principal"
-                  sequence="1" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group">
-            <menuitem name="Products"
-                      id="agora_connector_menu_sale_item0"
-                      action="action_product_to_agora"
-                      sequence="15" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group"/>
-            <menuitem name="Sales"
-                      id="agora_connector_menu_sale_item1"
-                      action="action_so_from_agora"
-                      sequence="16" groups="rap_connector_agora.agora_manager_group,rap_connector_agora.agora_user_group"/>
-        </menuitem>
 
         <!--Menu Item Sale Center in Accounting/Configuration/Analytic Accounting-->
         <menuitem id="sale_center_menu"
@@ -31,45 +71,15 @@
                   action="account_sale_center_action"
                   sequence="20"/>
 
-        <!--Menu Item Sale Center in Agora-->
-        <menuitem id="sale_center_agora_menu"
-                  parent="agora_connector_menu_sale_first"
-                  action="account_sale_center_action"
-                  sequence="20"/>
-
-        <!--Menu Item Pricelist in Agora-->
-        <menuitem id="pricelist_agora_menu"
-                  parent="agora_connector_menu_sale_first"
-                  action="product.product_pricelist_action2"
-                  sequence="21"/>
-
-        <!--Menu Item Pricelist in Agora-->
-        <menuitem id="product_category_agora_menu"
-                  parent="agora_connector_menu_sale_first"
-                  action="product.product_category_action_form"
-                  sequence="22"/>
-
-        <!--Menu Item Preparation Order in Agora-->
-        <menuitem id="preparation_order_menu"
-                  parent="agora_connector_menu_sale_first"
-                  action="preparation_order_action"
-                  sequence="18"/>
-
-        <!--Menu Item Agora Tax in Agora-->
-        <menuitem id="agora_tax_menu"
-                  parent="agora_connector_menu_sale_first"
-                  action="agora_tax_action"
-                  sequence="20"/>
-
-        <!--Menu Item Preparation type in Agora-->
-        <menuitem id="preparation_type_menu"
-                  parent="agora_connector_menu_sale_first"
-                  action="preparation_type_action"
-                  sequence="19"/>
-
         <!--Menu Item Sale/Product Formats-->
         <menuitem id="agora_product_variants_menu"
                   parent="sale.product_menu_catalog"
+                  action="action_product_template_variants_agora"
+                  sequence="1"/>
+
+        <!--Menu Item Stock/Product Formats-->
+        <menuitem id="agora_product_format_menu"
+                  parent="stock.menu_stock_inventory_control"
                   action="action_product_template_variants_agora"
                   sequence="1"/>
 

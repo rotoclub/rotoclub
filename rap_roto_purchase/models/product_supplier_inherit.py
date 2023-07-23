@@ -8,15 +8,18 @@ class ProductSupplierinfo(models.Model):
     _inherit = 'product.supplierinfo'
 
     supplier_qty = fields.Float(
-        string='Supplier Qty'
+        string='Supplier Qty',
+        required=True,
+        default="1"
     )
     supplier_uom = fields.Many2one(
         string='Supplier Uom',
         comodel_name='uom.uom',
     )
-    price_per_unit = fields.Float(
-        string='Price/Unit',
-        compute='_compute_price_per_unit'
+    supplier_price = fields.Float(
+        string='Supplier Price',
+        required=True,
+        default=1
     )
 
     @api.onchange('product_uom')
@@ -25,20 +28,11 @@ class ProductSupplierinfo(models.Model):
         if uom_ids:
             return {'domain': {'supplier_uom': [('id', 'in', uom_ids.ids)]}}
 
-    @api.onchange('supplier_uom', 'supplier_qty', 'product_uom')
+    @api.onchange('supplier_uom', 'supplier_qty', 'product_uom', 'supplier_price')
     def _onchange_supplier_qty(self):
         # Convert from supplier unit of messure to product unit of messure
         if self.supplier_uom and self.product_uom:
             qty = self.supplier_uom._compute_quantity(self.supplier_qty, self.product_uom, rounding_method='HALF-UP')
+            price = self.supplier_uom._compute_price(self.supplier_price, self.product_uom)
             self.min_qty = qty
-
-    @api.depends('price', 'min_qty')
-    def _compute_price_per_unit(self):
-        for rec in self:
-            price = 0.0
-            if rec.min_qty:
-                price = rec.price / rec.min_qty
-            rec.price_per_unit = price
-
-
-
+            self.price = price

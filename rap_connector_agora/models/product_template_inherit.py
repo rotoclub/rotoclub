@@ -262,6 +262,7 @@ class ProductTemplate(models.Model):
     def fields_validation(self):
         is_first_charge = self.env.context.get('first_charge')
         if not is_first_charge:
+            # TODO ilike its not ok, because consider the product even if not match the whole product name
             # During the first charge any of these validations will be considering
             repeated = self.search([('name', 'ilike', self.name),
                                    ('company_id', '=', self.company_id.id),

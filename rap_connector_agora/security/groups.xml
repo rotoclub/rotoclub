@@ -8,8 +8,6 @@
                 <field name="name">User Agora</field>
         </record>
 
-<!--        TODO: After first import descomment this rules -->
-
         <!-- Global rule for Api.connection in active company-->
         <record model="ir.rule" id="api_connection_rule_multi">
             <field name="name">Api Connection Multicompany</field>
@@ -52,10 +50,74 @@
             <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
         </record>
 
-            <!-- Rule to filter only -->
+                <!-- Rule to filter only -->
         <record model="ir.rule" id="product_template_agora_rule">
             <field name="name">Product Template Agora Rule</field>
             <field name="model_id" ref="model_agora_tax"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+        </record>
+
+                <!-- Global rule for Preparation Order in active company-->
+        <record model="ir.rule" id="invoice_type_journal_rule_multi">
+            <field name="name">Invoice Type Journal Multicompany</field>
+            <field name="model_id" ref="model_invoice_type_journal"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <!-- Global rule for Preparation Order in active company-->
+        <record model="ir.rule" id="account_mapping_rule_multi">
+            <field name="name">Account Mapping Multicompany</field>
+            <field name="model_id" ref="model_account_mapping"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <!-- Global rule for Preparation Order in active company-->
+        <record model="ir.rule" id="center_account_mapping_rule_multi">
+            <field name="name">Center Account Mapping Multicompany</field>
+            <field name="model_id" ref="model_sale_center_account"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <!-- Global rule for Work Place in active company-->
+        <record model="ir.rule" id="work_place_rule_multi">
+            <field name="name">Work Place Multicompany</field>
+            <field name="model_id" ref="model_work_place"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <!-- Global rule for Tips Config in active company-->
+        <record model="ir.rule" id="tips_config_rule_multi">
+            <field name="name">Tips Config Multicompany</field>
+            <field name="model_id" ref="model_tips_config"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <!-- Global rule for Agora Payment Method in active company-->
+        <record model="ir.rule" id="agora_payment_method_rule_multi">
+            <field name="name">Agora Payment Methods Multicompany</field>
+            <field name="model_id" ref="model_agora_payment_method"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <!-- Global rule for Agora Report Config in active company-->
+        <record model="ir.rule" id="agora_reports_config_rule_multi">
+            <field name="name">Agora Reports Config Multicompany</field>
+            <field name="model_id" ref="model_agora_reports_config"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <!-- Global rule for Sales Api Logs company-->
+        <record model="ir.rule" id="sales_api_rule_multi">
+            <field name="name">Sales Api Rule Multicompany</field>
+            <field name="model_id" ref="model_sale_api"/>
+            <field eval="True" name="global"/>
             <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
         </record>
     </data>

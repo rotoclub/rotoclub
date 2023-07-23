@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <!-- Work Place Form View-->
+        <record id="work_place_form_view" model="ir.ui.view">
+            <field name="name">work.place.form.view</field>
+            <field name="model">work.place</field>
+            <field name="arch" type="xml">
+                <form string="Work Place">
+                    <sheet>
+                        <group>
+                            <group string="Agora fields">
+                                <field name="agora_id"/>
+                                <field name="name"/>
+                                <field name="analytic_group_id"/>
+                                <field name="company_id"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Work Place Tree View-->
+        <record id="work_place_tree_view" model="ir.ui.view">
+            <field name="name">work.place.tree.view</field>
+            <field name="model">work.place</field>
+            <field name="arch" type="xml">
+                <tree string="Sale Center" create="0" delete="0" duplicate="0">
+                    <field name="agora_id"/>
+                    <field name="name"/>
+                    <field name="analytic_group_id"/>
+                    <field name="company_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <!--Action for Work Place Model-->
+        <record id="work_place_center_action" model="ir.actions.act_window">
+            <field name="name">Work Place</field>
+            <field name="res_model">work.place</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

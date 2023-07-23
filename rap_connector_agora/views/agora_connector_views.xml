@@ -13,34 +13,30 @@
                 </header>
                 <field name="check_message" invisible="1"/>
                 <div class="alert alert-warning" role="alert" attrs="{'invisible': [('check_message', '!=', True)]}">
-                  It has not been possible to establish the connection with the Agora server. <span class="o_vat_label"> Contact an Administrator</span>.
+                  It has not been possible to establish the connection with the Agora server. <span class="o_vat_label"> Contact with the Administrator</span>.
                 </div>
                 <sheet>
-                    <div class="oe_button_box" name="button_box">
-                        <button type="object" class="oe_stat_button" icon="fa-file-text-o" name="action_view_server">
-                            <field name="count_api" widget="statinfo" string="API"/>
-                        </button>
-                    </div>
                     <div class="oe_title">
-                        <h1><field name="name" readonly="1" required="True"/></h1>
+                        <h1><field name="name" required="True"/></h1>
                     </div>
                     <group>
                         <group name="first_group" string="Server Config">
                             <field name="sale_flow"/>
                             <field name="is_date_from_invoice" attrs="{'invisible': [('sale_flow','!=', 'payment')]}"/>
                             <field name="company_id" required="True" options="{'no_create': True, 'no_open': True}"/>
-                            <field name="last_product_id"/>
-                            <field name="last_format_id"/>
                         </group>
                         <group name="second_group" string="API Data">
                             <field name="url_server" placeholder="Ex. https//Agora.com/api"/>
-                            <field name="server_api_key"/>
+                            <field name="server_api_key" password="True" />
                             <field name="last_connection" readonly="True"/>
                         </group>
                     </group>
                     <notebook>
-                        <page name="resources" string="Resources">
-
+                        <page name="agora_info" string="Technical Info">
+                            <group>
+                                <field name="last_product_id" string="Last Agora Product ID"/>
+                                <field name="last_format_id" string="Last Agora Format ID"/>
+                            </group>
                         </page>
                     </notebook>
                 </sheet>
@@ -83,18 +79,18 @@
                     <field name="state" widget="statusbar" statusbar_visible="open,closed" required="True"/>
                 </header>
                 <sheet>
-                    <div class="oe_button_box" name="button_box">
-                        <button type="object" class="oe_stat_button" icon="fa-cog" name="action_view_api">
-                            <field name="sale_api_count" widget="statinfo" string="Sale Api"/>
-                        </button>
-                    </div>
                     <div class="oe_title">
                         <h1 class="o_row"><field name="name" class="field_name" readonly="True"/></h1>
                     </div>
                     <group>
                         <group name="first_group">
                             <field name="title" placeholder="Ex. TPV No.1"/>
-                            <field name="analytic_account_id" context="{'default_name':title}" force_save="1" options="{'no_create': True}" required="True" groups="analytic.group_analytic_accounting"/>
+                            <field name="analytic_account_id"
+                                   context="{'default_name':title}"
+                                   force_save="1"
+                                   options="{'no_create': True}"
+                                   required="True"
+                                   groups="analytic.group_analytic_accounting"/>
                             <field name="sale_flow" required="1"/>
                             <field name="agora_id" required="1" options="{'no_create': True, 'no_open': True}"/>
                         </group>

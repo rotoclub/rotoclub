@@ -6,13 +6,21 @@
             <field name="model">product.supplierinfo</field>
             <field name="inherit_id" ref="product.product_supplierinfo_tree_view"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='product_uom']" position="after">
+                <xpath expr="//field[@name='price']" position="after">
                     <field name="supplier_qty"/>
-                    <field name="supplier_uom"/>
-                    <field name="price_per_unit"/>
+                    <field name="supplier_uom" domain="[('category_id','=','product_uom.category_id')]"/>
+                    <field name="supplier_price"/>
+                </xpath>
+                <xpath expr="//field[@name='price']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                    <attribute name="force_save">1</attribute>
                 </xpath>
                 <xpath expr="//tree" position="attributes">
-                    <attribute name="default_order">price_per_unit</attribute>
+                    <attribute name="default_order">price</attribute>
+                </xpath>
+                <xpath expr="//field[@name='min_qty']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                    <attribute name="force_save">1</attribute>
                 </xpath>
             </field>
         </record>

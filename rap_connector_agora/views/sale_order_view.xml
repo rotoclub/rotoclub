@@ -27,14 +27,41 @@
         <field name="type">form</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="tip_move_id" invisible="1"/>
+            </xpath>
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                <button class="oe_stat_button"
+                        type="object"
+                        attrs="{'invisible': [('tip_move_id','=',False)]}"
+                        name="action_tips_moves"
+                        icon="fa-bars">
+                    <div class="o_field_widget o_stat_info">
+                        <div class="oe_inline">
+                            <span class="o_stat_text">Tips Move</span>
+                        </div>
+                    </div>
+                </button>
+            </xpath>
             <xpath expr="//field[@name='order_line']//tree//field[@name='company_id']" position="after">
                 <field name="is_addins" readonly="1"/>
                 <field name="is_invitation" readonly="1"/>
+                <field name="agora_loss_id" readonly="1" optional="hide"/>
             </xpath>
             <xpath expr="//field[@name='order_line']//tree" position="attributes">
                 <attribute name="decoration-bf">is_addins</attribute>
                 <attribute name="decoration-warning">is_invitation</attribute>
                 <attribute name="decoration-success">is_addins</attribute>
+            </xpath>
+            <xpath expr="//field[@name='validity_date']" position="before">
+                <field name="serie" readonly="1"/>
+                <field name="number" readonly="1"/>
+                <field name="work_place_id" readonly="0" domain="[('company_id','=',company_id)]"/>
+                <field name="business_date" readonly="1"/>
+                <field name="sale_center_id" readonly="0"/>
+            </xpath>
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="tips_amount" readonly="1"/>
             </xpath>
         </field>
     </record>

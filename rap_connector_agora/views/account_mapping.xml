@@ -1,0 +1,77 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <!-- Accounting Map Form View-->
+        <record id="account_mapping_form_view" model="ir.ui.view">
+            <field name="name">accounting.mapping.view</field>
+            <field name="model">account.mapping</field>
+            <field name="arch" type="xml">
+                <form string="Accounting Mapping">
+                    <sheet>
+                        <group>
+                            <field name="instance_id"/>
+                            <field name="company_id"/>
+                            <field name="inbound_payment_method_id" required="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Journal/Invoice Type">
+                                <field name="invoice_journal_ids">
+                                    <tree editable="bottom">
+                                        <field name="invoice_type"/>
+                                        <field name="journal_id" domain="[('type', '=', 'sale')]"/>
+                                    </tree>
+                                </field>
+                            </page>
+                             <page string="Sale Center/Accounts">
+                                <field name="center_account_ids">
+                                    <tree editable="bottom">
+                                        <field name="sale_center_id"/>
+                                        <field name="account_id"/>
+                                        <field name="counterpart_account_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Tips Setting">
+                                <group>
+                                    <group>
+                                        <field name="tip_journal_id"/>
+                                    </group>
+                                </group>
+                                <field name="tips_config_ids">
+                                    <tree editable="bottom">
+                                        <field name="account_id"/>
+                                        <field name="counterpart_account_id"/>
+                                        <field name="company_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Account Mapping Tree View-->
+        <record id="account_mapping_tree_view" model="ir.ui.view">
+            <field name="name">account.mapping.tree.view</field>
+            <field name="model">account.mapping</field>
+            <field name="arch" type="xml">
+                <tree string="Account mapping">
+                    <field name="instance_id"/>
+                    <field name="company_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <!--Action for Account mapping Model-->
+        <record id="account_mapping_action" model="ir.actions.act_window">
+            <field name="name">Account Mapping</field>
+            <field name="res_model">account.mapping</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('account_mapping_tree_view')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('account_mapping_form_view')})]"/>
+        </record>
+
+    </data>
+</odoo>

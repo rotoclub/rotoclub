@@ -13,6 +13,6 @@ from . import product_template_inherit
 from . import product_pricelist_inherit
 from . import server_config
 from . import work_place
-
-
-
+from . import agora_reports_config
+from . import payments_method
+from . import account_mapping
