@@ -38,12 +38,3 @@ class ProductSupplierinfo(models.Model):
             price = self.supplier_uom._compute_price(self.supplier_price, self.product_uom)
             self.min_qty = qty
             self.price = price
-
-    def _action_recalculate_prices(self):
-        """
-        Method that re-calculate product supplier prices
-        """
-        products = self.search([])
-        for product in products:
-            _logger.info('Will update Product {}--{}'.format(product.product_name, product.id))
-            product._onchange_supplier_qty()
