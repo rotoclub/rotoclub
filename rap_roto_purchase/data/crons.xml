@@ -12,4 +12,16 @@
         <field name="state">code</field>
     </record>
 
+    <!-- Temporary Cron to change the prices -->
+    <record id="ir_cron_change_prices_in_supplier" model="ir.cron">
+        <field name="name">Change prices in supplier</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model_id" ref="product.model_product_supplierinfo"/>
+        <field name="code">model._action_recalculate_prices()</field>
+        <field name="state">code</field>
+    </record>
+
 </odoo>
