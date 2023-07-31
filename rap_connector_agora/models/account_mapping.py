@@ -136,6 +136,11 @@ class TipsConfig(models.Model):
     _name = 'tips.config'
     _description = 'Configurations needed for tips'
 
+    sale_center_id = fields.Many2one(
+        string='Sale Center',
+        comodel_name='sale.center',
+        required=True
+    )
     account_id = fields.Many2one(
         string='Account',
         comodel_name='account.account',
@@ -155,5 +160,5 @@ class TipsConfig(models.Model):
         store=True
     )
 
-    _sql_constraints = [('unique_company', 'unique(company_id)',
-                         "Already exist a configuration for this company! Only one its allowed")]
+    _sql_constraints = [('unique_company', 'unique(company_id,sale_center_id)',
+                         "Already exist a configuration for this company and Sale Center! Only one its allowed")]
