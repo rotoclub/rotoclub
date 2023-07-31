@@ -80,7 +80,11 @@
             <field name="inherit_id" ref="analytic.account_analytic_group_form_view"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='parent_id']" position="after">
-                    <field name="picking_type_id" force_save="1" options="{'no_create': True}"/>
+                    <field name="picking_type_id"
+                           force_save="1"
+                           required="1"
+                           options="{'no_create': True}"
+                           domain="[('code','=','incoming')]"/>
                 </xpath>
             </field>
         </record>

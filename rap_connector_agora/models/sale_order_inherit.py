@@ -37,7 +37,8 @@ class SaleOrder(models.Model):
         """
         # search the journal for sales
         journal_id = self.env['account.mapping'].search([('company_id', '=', self.company_id.id)], limit=1).tip_journal_id
-        accounts = self.env['tips.config'].search([('company_id', '=', self.company_id.id)], limit=1)
+        accounts = self.env['tips.config'].search([('company_id', '=', self.company_id.id),
+                                                   ('sale_center_id', '=', self.sale_center_id.id)], limit=1)
         lines_type = ['debit', 'credit']
         # prepare the value dictionary to create the movement
         vals = {
