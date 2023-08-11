@@ -144,5 +144,16 @@
             </field>
         </record>
 
+        <!-- Account.asset form view inherit -->
+        <record id="view_account_asset_form_inherit" model="ir.ui.view">
+            <field name="name">account.asset.form.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_invoice_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="create_date"/>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>
