@@ -35,7 +35,7 @@
             </field>
         </record>
 
-                <!-- Purchase Order Tree Standard view inherit-->
+        <!-- Purchase Order Tree Standard view inherit-->
         <record id="view_purchase_order_tree_roto_inherit" model="ir.ui.view">
             <field name="name">purchase.order.tree.roto.inherit</field>
             <field name="model">purchase.order</field>
@@ -151,6 +151,42 @@
             <field name="inherit_id" ref="account.view_invoice_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="after">
+                    <field name="create_date"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Account move line tree view inherit -->
+        <record id="view_account_move_line_tree_inherit" model="ir.ui.view">
+            <field name="name">account.move.line.tree.inherit</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_move_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date']" position="after">
+                    <field name="create_date"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_move_line_tree_grouped_misc_inherit" model="ir.ui.view">
+            <field name="name">	account.move.line.tree.grouped.misc.inherit</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_move_line_tree_grouped_general"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date']" position="after">
+                    <field name="create_date"/>
+                    <field name="create_uid"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!--Account move tree view inherit-->
+        <record id="view_account_move_tree_inherit" model="ir.ui.view">
+            <field name="name">account.move.tree.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date']" position="after">
                     <field name="create_date"/>
                 </xpath>
             </field>
