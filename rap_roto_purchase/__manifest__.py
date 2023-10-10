@@ -9,7 +9,7 @@
     'category': 'Uncategorized',
     'license': 'LGPL-3',
 
-    'version': '15.0.1.2.3',
+    'version': '15.0.1.2.4',
 
     'depends': [
         'base',
