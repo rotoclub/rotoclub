@@ -15,7 +15,11 @@
     'depends': [
         'base',
         'mail',
-        'contacts'
+        'contacts',
+        'base_vat'
+    ],
+    'data': [
+        'views/res_country_view.xml',
     ],
     'application': False,
 }
