@@ -10,12 +10,16 @@
     'author': "Rapsodoo Iberia",
     'website': "https://www.rapsodoo.com/es/",
 
-    'version': '15.0.1.0.0',
+    'version': '15.0.1.0.1',
 
     'depends': [
         'base',
         'mail',
-        'contacts'
+        'contacts',
+        'base_vat'
+    ],
+    'data': [
+        'views/res_country_view.xml',
     ],
     'application': False,
 }
