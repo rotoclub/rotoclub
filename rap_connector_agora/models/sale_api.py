@@ -97,6 +97,13 @@ class SaleApis(models.Model):
             record.done_state_count = len(lines.filtered(lambda x: x.state == "done"))
             record.fail_state_count = len(lines.filtered(lambda x: x.state == "failed"))
 
+    def get_order_from_agora(self):
+        self.env['api.connection'].download_by_date(self.data_date, self.company_id)
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'reload',
+        }
+
 
 class SaleApiLine(models.Model):
     _name = 'sale.api.line'

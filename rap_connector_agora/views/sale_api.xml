@@ -6,6 +6,13 @@
             <field name="model">sale.api</field>
             <field name="arch" type="xml">
                 <form string="Sale API">
+                    <header>
+                        <button name="get_order_from_agora"
+                                string="Process Order"
+                                type="object"
+                                attrs="{'always_visible': True}"
+                                class="btn-secondary"/>
+                    </header>
                     <sheet>
                         <div class="alert alert-warning  text-center info_icon"
                              role="alert"
