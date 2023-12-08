@@ -1,0 +1,2022 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* rap_connector_agora
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0-20220523\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-11-08 09:42+0000\n"
+"PO-Revision-Date: 2023-11-08 09:42+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: rap_connector_agora
+#: code:addons/rap_connector_agora/models/agora_connector.py:0
+#, python-format
+msgid ""
+" Agora system detected the following exception:\n"
+"%s"
+msgstr ""
+"El sistema de Ágora ha detectado la siguiente excepción:\n"
+"%s"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.view_order_form_agora_inherit
+msgid "<span class=\"o_stat_text\">Tips Move</span>"
+msgstr "<span class=\"o_stat_text\">Asiento de Propinas</span>"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_product_product__type
+#: model:ir.model.fields,help:rap_connector_agora.field_product_template__type
+msgid ""
+"A storable product is a product for which you manage stock. The Inventory app has to be installed.\n"
+"A consumable product is a product for which stock is not managed.\n"
+"A service is a non-material product you provide."
+msgstr ""
+"Un producto almacenable es un producto para el que gestiona stock. La aplicación de inventario debe estar instalada.\n"
+"Un producto consumible es un producto para el que no se gestionan las existencias.\n"
+"Un servicio es un producto no material."
+
+#. module: rap_connector_agora
+#: model:ir.actions.act_window,name:rap_connector_agora.action_api_connection
+#: model:ir.model,name:rap_connector_agora.model_api_connection
+#: model:ir.model.fields,field_description:rap_connector_agora.field_server_config__agora_id
+#: model:ir.ui.menu,name:rap_connector_agora.agora_connector_menu_item1
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.api_connection_form
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.api_connection_tree
+msgid "API Connection"
+msgstr "Conexión API"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.api_connection_form
+msgid "API Data"
+msgstr "Información API"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__api_line_ids
+msgid "API lines"
+msgstr "Líneas API"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center_account__account_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_tips_config__account_id
+msgid "Account"
+msgstr "Cuenta"
+
+#. module: rap_connector_agora
+#: model:ir.actions.act_window,name:rap_connector_agora.account_mapping_action
+#: model:ir.model.fields,field_description:rap_connector_agora.field_invoice_type_journal__account_mapping_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center_account__account_mapping_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_tips_config__account_mapping_id
+msgid "Account Mapping"
+msgstr "Mapeo de Cuentas"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.account_mapping_tree_view
+msgid "Account mapping"
+msgstr "Mapeo de Cuentas"
+
+#. module: rap_connector_agora
+#: model:ir.ui.menu,name:rap_connector_agora.accounting_config_menu_item2
+msgid "Accounting Config"
+msgstr "Configuración Contable"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.account_mapping_form_view
+msgid "Accounting Mapping"
+msgstr "Mapeo Contable"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.sale_center_form_view
+msgid "Accounting fields"
+msgstr "Campos Contables"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__message_needaction
+msgid "Action Needed"
+msgstr "Acción necesaria"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__activity_ids
+msgid "Activities"
+msgstr "Actividades"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.product_template_bimani_form_view
+msgid "Add Format"
+msgstr "Adicionar Formato"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_pricelist_item__addin_price
+msgid "Addin Price"
+msgstr "Precio de Añadido"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__product_addins_ids
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__product_addins_ids
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.product_template_bimani_form_view
+msgid "Addins"
+msgstr "Añadidos"
+
+#. module: rap_connector_agora
+#: model:res.groups,name:rap_connector_agora.agora_manager_group
+msgid "Administrator Agora"
+msgstr "Administrador Ágora"
+
+#. module: rap_connector_agora
+#: model:ir.ui.menu,name:rap_connector_agora.agora_connector_menu_sale_first
+#: model:ir.ui.menu,name:rap_connector_agora.rap_connector_menu_principal
+msgid "Agora"
+msgstr "Ágora"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__agora_color
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__agora_color
+msgid "Agora Color"
+msgstr "Color Ágora"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_tax__agora_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_preparation_order__agora_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_preparation_type__agora_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_category__agora_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_pricelist__agora_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__agora_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__agora_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_res_partner__agora_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_res_users__agora_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center__agora_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_work_place__agora_id
+msgid "Agora ID"
+msgstr "ID Ágora"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.product_template_bimani_form_view
+msgid "Agora Info"
+msgstr "Información Ágora"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_mapping__instance_id
+msgid "Agora Instance"
+msgstr "Instancia Ágora"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order_line__agora_loss_id
+msgid "Agora Loss"
+msgstr "Merma Ágora"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_payment__agora_payment_id
+msgid "Agora Payment"
+msgstr "Pago Ágora"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center_account__payment_method_id
+msgid "Agora Payment Method"
+msgstr "Método de Pago Ágora"
+
+#. module: rap_connector_agora
+#: model:ir.actions.act_window,name:rap_connector_agora.agora_report_config_action
+#: model:ir.ui.menu,name:rap_connector_agora.agora_report_config_menu_item3
+msgid "Agora Report Config"
+msgstr "Configuración Reportes Ágora"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.agora_tax_form_view
+msgid "Agora Tax"
+msgstr "Impuesto Ágora"
+
+#. module: rap_connector_agora
+#: model:ir.actions.act_window,name:rap_connector_agora.agora_tax_action
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__tax_agora_ids
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__tax_agora_ids
+#: model:ir.ui.menu,name:rap_connector_agora.agora_tax_menu
+msgid "Agora Taxes"
+msgstr "Impuestos Ágora"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_agora_tax
+msgid "Agora Taxes to match records with odoo"
+msgstr "Impuestos de Ágora para mapear con impuestos de Odoo"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.sale_center_form_view
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.work_place_form_view
+msgid "Agora fields"
+msgstr "Campos Ágora"
+
+#. module: rap_connector_agora
+#: code:addons/rap_connector_agora/models/product_template_inherit.py:0
+#, python-format
+msgid "All Formats should have Ratio bigger than zero"
+msgstr "Todos los formatos deben tener un ratio mayor que cero"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_product_product__is_saleable_as_adding
+#: model:ir.model.fields,help:rap_connector_agora.field_product_template__is_saleable_as_adding
+msgid "Allow Sale as adding product of other product."
+msgstr "Permitir la venta como producto agregado de otro producto."
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_product_product__is_saleable_as_main
+#: model:ir.model.fields,help:rap_connector_agora.field_product_template__is_saleable_as_main
+msgid "Allow Sale as main product."
+msgstr "Permitir venta como producto principal."
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_product_product__is_sold_by_weight
+#: model:ir.model.fields,help:rap_connector_agora.field_product_template__is_sold_by_weight
+msgid "Allow sold the product by Weight."
+msgstr "Permitir vender el producto por peso."
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_product_product__send_to_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_product_template__send_to_agora
+msgid "Allow to send the product to Agora."
+msgstr "Permitir enviar el product a Ágora."
+
+#. module: rap_connector_agora
+#: model:ir.model.constraint,message:rap_connector_agora.constraint_tips_config_unique_company
+msgid ""
+"Already exist a configuration for this company and Sale Center! Only one its"
+" allowed"
+msgstr ""
+"¡Ya existe una configuración para esta empresa y Centro de Venta! Solo está "
+"permitida una configuración."
+
+#. module: rap_connector_agora
+#: model:ir.model.constraint,message:rap_connector_agora.constraint_api_connection_unique_name
+msgid ""
+"Already exist an Instance with the same Name, to avoid confusions please "
+"select a New Name"
+msgstr ""
+"Ya existe una instancia con el mismo nombre, para evitar confusión "
+"seleccione un nuevo nombre."
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center__analytic_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_server_config__analytic_account_id
+msgid "Analytic Account"
+msgstr "Cuenta analítica"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_account_analytic_group
+msgid "Analytic Categories"
+msgstr "Categorías analíticas"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.sale_center_form_view
+msgid "Analytic Entry"
+msgstr "Entrada analítica"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center__analytic_group_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_work_place__analytic_group_id
+msgid "Analytic Group"
+msgstr "Grupo analítico"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_api_connection__server_api_key
+msgid "Api Pass"
+msgstr "Contraseña API"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_product_product__ask_for_addings
+#: model:ir.model.fields,help:rap_connector_agora.field_product_template__ask_for_addings
+msgid "Ask automatically for addings"
+msgstr "Preguntar automáticamente por añadidos"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_product_product__ask_preparation_notes
+#: model:ir.model.fields,help:rap_connector_agora.field_product_template__ask_preparation_notes
+msgid "Ask automatically for preparation notes"
+msgstr "Preguntar automáticamente por notas de preparación"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__message_attachment_count
+msgid "Attachment Count"
+msgstr "Contador de adjuntos"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__base_format_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__base_format_id
+msgid "Base Sale Format"
+msgstr "Formato de venta base"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__invoice_type_journal__invoice_type__basic
+msgid "Basic"
+msgstr "Básico"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__account_move__document_type__basicinvoice
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__sale_order__document_type__basicinvoice
+msgid "Basic Invoice"
+msgstr "Factura básica"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__account_move__document_type__basicrefund
+msgid "Basic Refund"
+msgstr "Factura rectificativa básica"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_bank_statement_line__analytic_group_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_move__analytic_group_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_payment__analytic_group_id
+msgid "Business Center"
+msgstr "Centro de Negocio"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order__business_date
+msgid "Business Day"
+msgstr "Fecha de venta"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__button_text
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__button_text
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center__button_text
+msgid "Button Text"
+msgstr "Nombre Ágora"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.order_downloaded_wizard
+msgid "CANCEL"
+msgstr "Cancelar"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.import_data_form_view
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__import_agora_data__data_model__category
+msgid "Categories"
+msgstr "Categorías"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_tax__charge_rate
+msgid "Charge Rate"
+msgstr "Tasa de carga"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__server_config__state__closed
+msgid "Closed"
+msgstr "Cerrado"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_payment_method__code
+msgid "Code"
+msgstr "Código"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_category__color
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center__color
+msgid "Color"
+msgstr ""
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_res_company
+msgid "Companies"
+msgstr "Compañías"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_mapping__company_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_payment_method__company_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_reports_config__company_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_tax__company_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_api_connection__company_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_import_agora_data__company_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_invoice_type_journal__company_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_order_download_date__company_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_preparation_order__company_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_preparation_type__company_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_category__company_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__company_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__company_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__company_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api_line__company_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center__company_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center_account__company_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_location__company_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_server_config__company_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_tips_config__company_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_work_place__company_id
+msgid "Company"
+msgstr "Compañía"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__product_pricelist__sync_status__done
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__product_template__sync_status__done
+msgid "Completed"
+msgstr "Completado"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_agora_reports_config
+msgid ""
+"Configuration for Custom reports in Agora. The Reports should be created in "
+"Agora, in Odoo anly will be consumed"
+msgstr ""
+"Configuración de reportes personalizados en Ágora. Los reportes deben ser "
+"creados en Ágora, y solo se consumirán en Odoo."
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_account_mapping
+msgid "Configuration to mapp account and journals"
+msgstr "Configuración para mapear cuentas y asientos"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_tips_config
+msgid "Configurations needed for tips"
+msgstr "Configuraciones necesarias para propinas."
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__server_config__sale_flow__confirmed
+msgid "Confirmed Order"
+msgstr "Pedidos Confirmados"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.api_connection_form
+msgid "Connect server"
+msgstr "Conectar servidor"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__api_connection__state__connect
+msgid "Connected"
+msgstr "Conectado"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_res_partner
+msgid "Contact"
+msgstr "Contacto"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_stock_picking__validation_counter
+msgid "Counter"
+msgstr "Contador"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center_account__counterpart_account_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_tips_config__counterpart_account_id
+msgid "Counterpart Account"
+msgstr "Cuenta de contrapartida"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_mapping__create_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_payment_method__create_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_reports_config__create_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_tax__create_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_api_connection__create_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_import_agora_data__create_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_invoice_type_journal__create_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_order_download_date__create_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_preparation_order__create_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_preparation_type__create_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__create_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api_line__create_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center__create_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center_account__create_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_location__create_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_server_config__create_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_tips_config__create_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_work_place__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_mapping__create_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_payment_method__create_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_reports_config__create_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_tax__create_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_api_connection__create_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_import_agora_data__create_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_invoice_type_journal__create_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_order_download_date__create_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_preparation_order__create_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_preparation_type__create_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__create_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api_line__create_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center__create_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center_account__create_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_location__create_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_server_config__create_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_tips_config__create_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_work_place__create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api_line__order_customer
+msgid "Customer"
+msgstr "Cliente"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__data_date
+msgid "Data Date"
+msgstr ""
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_order_download_date__tikect_date
+msgid "Date"
+msgstr "Fecha"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_api_connection__is_date_from_invoice
+msgid "Date from Invoice"
+msgstr "Fecha de la Factura"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_mapping__inbound_payment_method_id
+msgid "Debit Method"
+msgstr "Método Débito"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_invoice_type_journal
+msgid "Depending the Agora Invoice Type will have a journal associated"
+msgstr ""
+"En dependencia del tipo de factura de Ágora tendrá un asiento asociado"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_payment_method__description
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_reports_config__description
+msgid "Description"
+msgstr "Descripción"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.api_connection_form
+msgid "Disconnect"
+msgstr "Desconectar"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_analytic_group__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_mapping__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_move__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_payment__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_payment_method__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_reports_config__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_tax__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_api_connection__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_import_agora_data__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_invoice_type_journal__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_order_download_date__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_preparation_order__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_preparation_type__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_category__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_pricelist__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_pricelist_item__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_res_company__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_res_partner__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api_line__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center_account__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_location__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order_line__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_server_config__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_stock_picking__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_tips_config__display_name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_work_place__display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_product_product__print_zero
+#: model:ir.model.fields,help:rap_connector_agora.field_product_template__print_zero
+msgid "Do not print the ticket when price is equal zero"
+msgstr "No imprimir el ticket cuando el precio sea igual a cero"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api_line__document_type
+msgid "Document Type"
+msgstr "Tipo de documento"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_bank_statement_line__document_type
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_move__document_type
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_payment__document_type
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order__document_type
+msgid "Document type"
+msgstr "Tipo de documento"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__sale_api__state__done
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__sale_api_line__state__done
+msgid "Done"
+msgstr "Hecho"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__done_state_count
+msgid "Done count"
+msgstr "Cantidad hecha"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.order_downloaded_wizard
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.view_order_tree_agora_inherit
+msgid "Download Orders"
+msgstr "Descargar Pedidos"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__sale_api__state__draft
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__sale_api_line__state__draft
+msgid "Draft"
+msgstr "Borrador"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__api_connection__sale_flow__draft_invoice
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__server_config__sale_flow__draft_invoice
+msgid "Draft Invoice"
+msgstr "Factura en borrador"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__draft_state_count
+msgid "Draft count"
+msgstr "Cantidad borrador"
+
+#. module: rap_connector_agora
+#: code:addons/rap_connector_agora/models/agora_connector.py:0
+#, python-format
+msgid ""
+"ERROR RESPONSE:\n"
+" %s"
+msgstr ""
+"RESPUESTA ERROR:\n"
+" %s"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__product_pricelist__sync_status__error
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__product_template__sync_status__error
+msgid "Error"
+msgstr ""
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api_line__message
+msgid "Error Message"
+msgstr "Mensaje de error"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.server_config_form
+msgid "Ex. TPV No.1"
+msgstr ""
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.api_connection_form
+msgid "Ex. https//Agora.com/api"
+msgstr ""
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__executed_by
+msgid "Executed by"
+msgstr "Ejecutado por"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__sale_api__state__fail
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__sale_api_line__state__fail
+msgid "Failed"
+msgstr "Fallado"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__fail_state_count
+msgid "Failed count"
+msgstr "Cantidad fallada"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__aux_category
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__aux_category
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.product_template_bimani_form_view
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.product_template_rap_tree_view
+msgid "Family"
+msgstr "Familia"
+
+#. module: rap_connector_agora
+#: model:ir.actions.server,name:rap_connector_agora.ir_cron_first_sinc_charge_masters_in_odoo_ir_actions_server
+#: model:ir.cron,cron_name:rap_connector_agora.ir_cron_first_sinc_charge_masters_in_odoo
+#: model:ir.cron,name:rap_connector_agora.ir_cron_first_sinc_charge_masters_in_odoo
+msgid "First Charge from Agora (Only One execution)"
+msgstr "Primera carga desde Ágora (Solo una ejecución)"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__message_follower_ids
+msgid "Followers"
+msgstr "Seguidores"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__message_channel_ids
+msgid "Followers (Channels)"
+msgstr "Seguidores (Canales)"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Seguidores (Contactos)"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_sale_api__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__product_formats_ids
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__product_formats_ids
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.product_template_bimani_form_view
+msgid "Formats"
+msgstr "Formatos"
+
+#. module: rap_connector_agora
+#: model:ir.actions.server,name:rap_connector_agora.ir_cron_get_loss_products_ir_actions_server
+#: model:ir.cron,cron_name:rap_connector_agora.ir_cron_get_loss_products
+#: model:ir.cron,name:rap_connector_agora.ir_cron_get_loss_products
+msgid "Get Loss Products from Agora"
+msgstr "Obtener productos de merma desde Ágora"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.order_downloaded_wizard
+msgid "Get Orders"
+msgstr "Obtener Pedidos"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_reports_config__guid
+msgid "Guid"
+msgstr "Identificador"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_api_connection__url_server
+msgid "Host"
+msgstr "Servidor"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_analytic_group__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_mapping__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_move__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_payment__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_payment_method__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_reports_config__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_tax__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_api_connection__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_import_agora_data__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_invoice_type_journal__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_order_download_date__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_preparation_order__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_preparation_type__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_category__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_pricelist__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_pricelist_item__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_res_company__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_res_partner__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api_line__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center_account__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_location__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order_line__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_server_config__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_stock_picking__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_tips_config__id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_work_place__id
+msgid "ID"
+msgstr "Identificación"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__activity_exception_icon
+msgid "Icon"
+msgstr "Ícono"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_sale_api__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Ícono para indicar una actividad de excepción."
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__server_config__search_product_by__id
+msgid "Id"
+msgstr ""
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_sale_api__message_needaction
+#: model:ir.model.fields,help:rap_connector_agora.field_sale_api__message_unread
+msgid "If checked, new messages require your attention."
+msgstr "Si está marcado, los mensajes nuevos requieren su atención."
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_sale_api__message_has_error
+#: model:ir.model.fields,help:rap_connector_agora.field_sale_api__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Si está marcado, algunos mensajes tienen un error de entrega."
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_sale_order__standard_invoice
+msgid ""
+"If there is a value means an Standard Invoice have been generated and this "
+"is the ID"
+msgstr ""
+"Si hay un valor significa que se ha generado una Factura Estándar y este es "
+"el ID"
+
+#. module: rap_connector_agora
+#: model:ir.actions.act_window,name:rap_connector_agora.import_agora_data_action
+msgid "Import Agora Data"
+msgstr "Importar Datos de Ágora"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_import_agora_data__data_model
+#: model:ir.ui.menu,name:rap_connector_agora.import_data_main
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.import_data_form_view
+msgid "Import Data"
+msgstr "Importar Datos"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order_line__index
+msgid "Index"
+msgstr ""
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.import_data_form_view
+msgid "Info :"
+msgstr "Información: "
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_import_agora_data__instance_id
+msgid "Instance"
+msgstr "Instancia"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order_line__is_invitation
+msgid "Invitation"
+msgstr "Invitación"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__api_connection__sale_flow__invoice
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__server_config__sale_flow__invoice
+msgid "Invoice"
+msgstr "Factura"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_invoice_type_journal__invoice_type
+msgid "Invoice type"
+msgstr "Tipo de Factura"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order_line__is_addins
+msgid "Is Addins"
+msgstr "Es Añadido"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__is_product_discount
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__is_product_discount
+msgid "Is Discount Product"
+msgstr "Es Producto Descuento"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__message_is_follower
+msgid "Is Follower"
+msgstr "Es Seguidor"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__is_product_menu
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__is_product_menu
+msgid "Is Menu Product"
+msgstr "Es Producto Menú"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__is_sold_by_weight
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__is_sold_by_weight
+msgid "Is Sold by Weight"
+msgstr "Es Vendido por Peso"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__is_completed
+msgid "Is completed"
+msgstr "Está completado"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_res_partner__is_generic
+#: model:ir.model.fields,field_description:rap_connector_agora.field_res_users__is_generic
+msgid "Is generic Client"
+msgstr "Es Cliente Genérico"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order__is_incomplete
+msgid "Is not complete"
+msgstr "No está completo"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.api_connection_form
+msgid ""
+"It has not been possible to establish the connection with the Agora server. "
+"<span class=\"o_vat_label\"> Contact with the Administrator</span>."
+msgstr ""
+"No ha sido posible establecer una conexión con el servidor de Ágora. <span "
+"class=\"o_vat_label\"> Contacta con el Administrador</span>."
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_analytic_group__journal_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_invoice_type_journal__journal_id
+msgid "Journal"
+msgstr "Diario"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_account_move
+msgid "Journal Entry"
+msgstr "Asiento contable"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_mapping__invoice_journal_ids
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.account_mapping_form_view
+msgid "Journal/Invoice Type"
+msgstr "Diario/Tipo de Factura"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.api_connection_form
+msgid "Last Agora Format ID"
+msgstr "Último ID Formato Ágora"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.api_connection_form
+msgid "Last Agora Product ID"
+msgstr "Último ID Producto Ágora"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_api_connection__last_connection
+msgid "Last Connection"
+msgstr "Última Conexión"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_api_connection__last_format_id
+msgid "Last Format ID"
+msgstr "Última Conexión"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__agora_reports_config__report_type__last_ids
+msgid "Last Ids report"
+msgstr "Reporte Últimos Ids"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_analytic_group____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_mapping____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_move____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_payment____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_payment_method____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_reports_config____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_tax____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_api_connection____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_import_agora_data____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_invoice_type_journal____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_order_download_date____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_preparation_order____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_preparation_type____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_category____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_pricelist____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_pricelist_item____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_res_company____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_res_partner____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api_line____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center_account____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_location____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order_line____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_server_config____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_stock_picking____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_tips_config____last_update
+#: model:ir.model.fields,field_description:rap_connector_agora.field_work_place____last_update
+msgid "Last Modified on"
+msgstr "Última modificación el"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_api_connection__last_product_id
+msgid "Last Product ID"
+msgstr "Último ID Producto"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_reports_config__last_update
+msgid "Last Update"
+msgstr "Última Actualización"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_mapping__write_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_payment_method__write_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_reports_config__write_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_tax__write_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_api_connection__write_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_import_agora_data__write_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_invoice_type_journal__write_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_order_download_date__write_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_preparation_order__write_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_preparation_type__write_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__write_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api_line__write_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center__write_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center_account__write_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_location__write_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_server_config__write_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_tips_config__write_uid
+#: model:ir.model.fields,field_description:rap_connector_agora.field_work_place__write_uid
+msgid "Last Updated by"
+msgstr "Última Actualización por"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_mapping__write_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_payment_method__write_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_reports_config__write_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_tax__write_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_api_connection__write_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_import_agora_data__write_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_invoice_type_journal__write_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_order_download_date__write_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_preparation_order__write_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_preparation_type__write_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__write_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api_line__write_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center__write_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center_account__write_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_location__write_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_server_config__write_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_tips_config__write_date
+#: model:ir.model.fields,field_description:rap_connector_agora.field_work_place__write_date
+msgid "Last Updated on"
+msgstr "Última Actualización en"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_sale_location
+msgid "Locations for a Sale Center"
+msgstr "Ubicaciones para Centros de Venta"
+
+#. module: rap_connector_agora
+#: model:ir.ui.menu,name:rap_connector_agora.logs_agora
+msgid "Logs"
+msgstr ""
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__message_main_attachment_id
+msgid "Main Attachment"
+msgstr "Adjunto Principal"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__max_addings
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__max_addings
+msgid "Maximum"
+msgstr "Máximo"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_account_mapping__inbound_payment_method_id
+msgid ""
+"Means of payment for collecting money. Odoo modules offer variouspayments "
+"handling facilities, but you can always use the 'Manual'payment method in "
+"order to manage payments outside of thesoftware."
+msgstr ""
+"Medios de pago para la recogida de dinero. Los módulos de Odoo ofrecen "
+"varias funciones de manejo de pagos, pero siempre puedes usar el método de "
+"pago Manual' para administrar pagos fuera del software."
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_pricelist_item__menuitem_price
+msgid "Menu Item Price"
+msgstr "Menú Precio Artículo"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__message_has_error
+msgid "Message Delivery error"
+msgstr "Mensaje de Error de Entrega"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_api_connection__check_message
+msgid "Message?"
+msgstr "Mensaje?"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__message_ids
+msgid "Messages"
+msgstr "Mensajes"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__min_addings
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__min_addings
+msgid "Minimum"
+msgstr "Mínimo"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__product_pricelist__sync_status__modified
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__product_template__sync_status__modified
+msgid "Modified"
+msgstr "Modificado"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "Fecha Límite de mi Actividad"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_payment_method__name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_reports_config__name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_api_connection__name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_preparation_order__name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center__name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_location__name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_server_config__name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_work_place__name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__ask_for_addings
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__ask_for_addings
+msgid "Need Addings"
+msgstr "Necesita Añadidos"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__ask_preparation_notes
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__ask_preparation_notes
+msgid "Need Preparation Note"
+msgstr "Necesita Nota de Preparación"
+
+#. module: rap_connector_agora
+#: code:addons/rap_connector_agora/models/server_config.py:0
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__product_pricelist__sync_status__new
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__product_template__sync_status__new
+#, python-format
+msgid "New"
+msgstr "Nuevo"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "Fecha Límite de Próxima Actividad"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__activity_summary
+msgid "Next Activity Summary"
+msgstr "Resumen de la próxima actividad"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__activity_type_id
+msgid "Next Activity Type"
+msgstr "Tipo de la próxima actividad"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__api_connection__state__no_connect
+msgid "Not connected"
+msgstr "No conectado"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_bank_statement_line__number
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_move__number
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_payment__number
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order__number
+msgid "Number"
+msgstr "Número"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Número de Acciones"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__message_has_error_counter
+msgid "Number of errors"
+msgstr "Número de errores"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_sale_api__message_needaction_counter
+msgid "Number of messages which requires an action"
+msgstr "Número de mensajes que requieren una acción"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_sale_api__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Número de mensajes con error de entrega"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_sale_order_line__index
+msgid "Number of the line coming from Agora to be identify"
+msgstr "Número de línea procedente de Ágora a identificar"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_sale_api__message_unread_counter
+msgid "Number of unread messages"
+msgstr "Número de mensajes sin leer"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__server_config__state__open
+msgid "Open"
+msgstr "Abierto"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api_line__order_data
+msgid "Order Data"
+msgstr "Datos del Pedido"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__product_sku
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__product_sku
+msgid "PLU code"
+msgstr "Código PLU"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__parent_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__parent_id
+msgid "Parent Product"
+msgstr "Producto Padre"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__api_connection__sale_flow__payment
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__server_config__sale_flow__payment
+msgid "Payment"
+msgstr "Pago"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order__payment_method
+msgid "Payment Method"
+msgstr "Método de Pago"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_account_payment
+msgid "Payments"
+msgstr "Pagos"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_agora_payment_method
+msgid "Payments coming from Agora"
+msgstr "Pagos desde Ágora"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__server_config__sale_flow__picking
+msgid "Picking"
+msgstr "Albarán"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.product_template_bimani_form_view
+msgid ""
+"Please Verify the Family, should be selected a Family related with Agora "
+"instance."
+msgstr ""
+"Por favor, verifique la Familia, debe seleccionar una familia relacionada "
+"con la instancia de Ágora."
+
+#. module: rap_connector_agora
+#: code:addons/rap_connector_agora/models/agora_connector.py:0
+#, python-format
+msgid "Please select only one company to make this operation."
+msgstr "Por favor, seleccione solo una compañía para realizar esta operación."
+
+#. module: rap_connector_agora
+#: code:addons/rap_connector_agora/models/product_template_inherit.py:0
+#, python-format
+msgid ""
+"Please select products from the same company at time to avoid Error "
+"Connection"
+msgstr ""
+"Por favor, seleccione productos de la misma compañía a la vez para evitar "
+"errores de conexión."
+
+#. module: rap_connector_agora
+#: code:addons/rap_connector_agora/models/product_template_inherit.py:0
+#, python-format
+msgid ""
+"Please verify PLU value, exist already other product with the same value"
+msgstr ""
+"Por favor, verifique el valor PLU, ya existe otro producto con el mismo "
+"valor."
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_preparation_order
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__preparation_order_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__preparation_order_id
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.import_data_form_view
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.preparation_order_form_view
+msgid "Preparation Order"
+msgstr "Orden de Preparación"
+
+#. module: rap_connector_agora
+#: model:ir.actions.act_window,name:rap_connector_agora.preparation_order_action
+#: model:ir.ui.menu,name:rap_connector_agora.preparation_order_menu
+msgid "Preparation Orders"
+msgstr "Órdenes de Preparación"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_preparation_type__name
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__preparation_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__preparation_id
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.preparation_type_form_view
+msgid "Preparation Type"
+msgstr "Tipo de Preparación"
+
+#. module: rap_connector_agora
+#: model:ir.actions.act_window,name:rap_connector_agora.preparation_type_action
+#: model:ir.ui.menu,name:rap_connector_agora.preparation_type_menu
+msgid "Preparation Types"
+msgstr "Tipos de Preparación"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_preparation_type
+msgid "Preparations Type"
+msgstr "Tipos de Preparaciones"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__import_agora_data__data_model__price
+msgid "PriceLists"
+msgstr "Tarifas"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_product_pricelist
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center__pricelist_id
+msgid "Pricelist"
+msgstr "Tarifa"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_product_pricelist_item
+msgid "Pricelist Rule"
+msgstr "Regla de Tarifa"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__product_pricelist_ids
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__product_pricelist_ids
+#: model:ir.ui.menu,name:rap_connector_agora.pricelist_agora_menu
+msgid "Pricelists"
+msgstr "Tarifas"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__print_zero
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__print_zero
+msgid "Print Price Zero"
+msgstr "Imprimir Precio Cero"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_preparation_order__priority
+msgid "Priority"
+msgstr "Prioridad"
+
+#. module: rap_connector_agora
+#: model:ir.ui.menu,name:rap_connector_agora.product_category_agora_menu
+msgid "Product Categories"
+msgstr "Categorías de Productos"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_product_category
+msgid "Product Category"
+msgstr "Categoría de producto"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_pricelist_item__product_company
+msgid "Product Company"
+msgstr "Compañía del Producto"
+
+#. module: rap_connector_agora
+#: model:ir.actions.act_window,name:rap_connector_agora.action_product_template_variants_agora
+#: model:ir.ui.menu,name:rap_connector_agora.agora_product_format_menu
+#: model:ir.ui.menu,name:rap_connector_agora.agora_product_variants_menu
+msgid "Product Formats"
+msgstr "Formatos del Producto"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.product_template_bimani_form_view
+msgid "Product Info"
+msgstr "Información del Producto"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__agora_reports_config__report_type__loss
+msgid "Product Loss report"
+msgstr "Reporte Merma de Productos"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_product_template
+msgid "Product Template"
+msgstr "Plantilla de producto"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__type
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__type
+msgid "Product Type"
+msgstr "Tipo de producto"
+
+#. module: rap_connector_agora
+#: model:ir.actions.act_window,name:rap_connector_agora.action_product_to_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__import_agora_data__data_model__product
+#: model:ir.ui.menu,name:rap_connector_agora.agora_connector_menu_sale_item0
+msgid "Products"
+msgstr "Productos"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api_line__product_with_error
+msgid "Products with error"
+msgstr "Productos con errores"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__server_config__sale_flow__quotation
+msgid "Quotation"
+msgstr "Presupuesto"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__ratio
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__ratio
+msgid "Ratio"
+msgstr ""
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__server_config__search_product_by__reference
+msgid "Reference"
+msgstr "Rferencia"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_sale_center_account
+msgid "Relation of Sale Center with Accounts"
+msgstr "Relación de Centro de Venta con Cuentas"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_reports_config__report_type
+msgid "Report Type"
+msgstr "Tipo de Reporte"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__activity_user_id
+msgid "Responsible User"
+msgstr "Usuario Responsable"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.agora_reports_config_form_view
+msgid "Resports config"
+msgstr "Configurción de Reportes"
+
+#. module: rap_connector_agora
+#: code:addons/rap_connector_agora/models/agora_connector.py:0
+#, python-format
+msgid "Reversal of: {}"
+msgstr "Reversión de:"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__server_config__search_product_by__sku
+msgid "SKU"
+msgstr ""
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Error de entrega de SMS"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__api_connection__sale_flow__sale
+msgid "Sale"
+msgstr "Venta"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api_line__sale_api_id
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.agora_sale_api_form_view
+msgid "Sale API"
+msgstr "Venta API"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.agora_sale_api_line_form_view
+msgid "Sale API Lines"
+msgstr "Líneas de Ventas API"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_sale_api
+msgid "Sale Api"
+msgstr "Venta API"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_sale_api_line
+msgid "Sale Api lines"
+msgstr "Líneas de Ventas API"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_bank_statement_line__sale_center_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_move__sale_center_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_payment__sale_center_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_pricelist__sale_center_ids
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center_account__sale_center_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_location__center_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order__sale_center_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_tips_config__sale_center_id
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.sale_center_form_view
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.sale_center_tree_view
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.work_place_tree_view
+msgid "Sale Center"
+msgstr "Centro de Venta"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_mapping__center_account_ids
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.account_mapping_form_view
+msgid "Sale Center/Accounts"
+msgstr "Centro de Venta/Cuentas"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__import_agora_data__data_model__salecenter
+msgid "Sale Centers"
+msgstr "Centros de Ventas"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_api_connection__sale_flow
+#: model:ir.model.fields,field_description:rap_connector_agora.field_server_config__sale_flow
+msgid "Sale Flow"
+msgstr "Flujo de Venta"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__sale_format
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__sale_format
+msgid "Sale Format"
+msgstr "Formato de Venta"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center__location_ids
+msgid "Sale Locations"
+msgstr "Ubicaciones de Ventas"
+
+#. module: rap_connector_agora
+#: model:ir.actions.act_window,name:rap_connector_agora.action_so_from_agora
+msgid "Sale Orders"
+msgstr "Pedidos de Ventas"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__is_saleable_as_adding
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__is_saleable_as_adding
+msgid "Saleable as Adding"
+msgstr "Vendible como Añadido"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__is_saleable_as_main
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__is_saleable_as_main
+msgid "Saleable as Main"
+msgstr "Vendible como Principal"
+
+#. module: rap_connector_agora
+#: model:ir.ui.menu,name:rap_connector_agora.agora_connector_menu_sale_item1
+msgid "Sales"
+msgstr "Ventas"
+
+#. module: rap_connector_agora
+#: model:ir.actions.act_window,name:rap_connector_agora.sale_api_downloads_action
+msgid "Sales API Downloaded"
+msgstr "Ventas API Descargadas"
+
+#. module: rap_connector_agora
+#: model:ir.actions.act_window,name:rap_connector_agora.account_sale_center_action
+#: model:ir.ui.menu,name:rap_connector_agora.sale_center_agora_menu
+#: model:ir.ui.menu,name:rap_connector_agora.sale_center_menu
+msgid "Sales Centers"
+msgstr "Centros de Venta"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_sale_order
+msgid "Sales Order"
+msgstr "Pedido de venta"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Línea de pedido de venta"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_server_config__user_id
+msgid "Sales Person"
+msgstr "Comercial"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_sale_center
+msgid "Sales Zones for each CECO"
+msgstr "Zonas de Ventas para cada CECO"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_server_config__search_product_by
+msgid "Search Product By"
+msgstr "Buscar Producto por"
+
+#. module: rap_connector_agora
+#: model:ir.actions.server,name:rap_connector_agora.action_product_temp_sent_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__send_to_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__send_to_agora
+msgid "Send to Agora"
+msgstr "Enviar a Ágora"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_bank_statement_line__serie
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_move__serie
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_payment__serie
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order__serie
+msgid "Serie"
+msgstr ""
+
+#. module: rap_connector_agora
+#: model:ir.actions.act_window,name:rap_connector_agora.action_server_config
+#: model:ir.model,name:rap_connector_agora.model_server_config
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.api_connection_form
+msgid "Server Config"
+msgstr "Configuración del Servidor"
+
+#. module: rap_connector_agora
+#: model:ir.ui.menu,name:rap_connector_agora.agora_connector_menu_item_last
+msgid "Settings"
+msgstr "Configuraciones"
+
+#. module: rap_connector_agora
+#: code:addons/rap_connector_agora/models/models_inherits.py:0
+#, python-format
+msgid ""
+"Sorry a Generic record can not be deleted. ({}) Its used for sync purposes"
+msgstr ""
+"Lo sentimos, no se puede eliminar un registro genérico. ({}) Se utiliza para"
+" fines de sincronización."
+
+#. module: rap_connector_agora
+#: code:addons/rap_connector_agora/wizards/order_download_date.py:0
+#, python-format
+msgid "Sorry a future date can not be select"
+msgstr "Lo sentimos, no puede seleccionar una fecha futura."
+
+#. module: rap_connector_agora
+#: code:addons/rap_connector_agora/models/product_pricelist_inherit.py:0
+#, python-format
+msgid ""
+"Sorry can not be more than one record with the same Pricelist associated"
+msgstr ""
+"Lo sentimos, no puede haber más de un registro con la misma Lista de Precios"
+" asociada."
+
+#. module: rap_connector_agora
+#: code:addons/rap_connector_agora/models/product_template_inherit.py:0
+#, python-format
+msgid ""
+"Sorry this action should be executed from the Parent product and not from "
+"the format"
+msgstr ""
+"Lo sentimos, esta acción debe ejecutarse desde el producto principal y no "
+"desde el formato."
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.agora_sale_api_form_view
+msgid ""
+"Sorry!! All the Orders couldn't be proccess. Only 100 Orders will be downloaded in just one try.\n"
+"                            Please: Execute the function in Agora/Sales \"Download Order\" Again"
+msgstr ""
+"¡Lo sentimos! No se pudieron procesar todos los pedidos. Solo se descargarán 100 pedidos en un solo intento.\n"
+"                            Por favor: Ejecute la función Agora/Ventas \"Descargar Pedidos\" otra vez."
+
+#. module: rap_connector_agora
+#: code:addons/rap_connector_agora/models/agora_connector.py:0
+#, python-format
+msgid ""
+"Sorry!! Exist another API connection for the same company already connected"
+msgstr ""
+"Lo sentimos! Existe otra conexión API para la misma empresa ya conectada."
+
+#. module: rap_connector_agora
+#: code:addons/rap_connector_agora/models/product_template_inherit.py:0
+#, python-format
+msgid "Sorry!! Only one Tax can be set"
+msgstr "Lo sentimos! Solo se puede configurar un Impuesto."
+
+#. module: rap_connector_agora
+#: code:addons/rap_connector_agora/models/agora_connector.py:0
+#, python-format
+msgid ""
+"Sorry!! The connection couldnt be completed. Probably the Agora server it's "
+"not available. Please try again in a few minutes."
+msgstr ""
+"¡Lo sentimos! No se pudo completar la conexión. Probablemente el servidor "
+"Agora no esté disponible. Inténtelo de nuevo en unos minutos."
+
+#. module: rap_connector_agora
+#: code:addons/rap_connector_agora/models/agora_connector.py:0
+#, python-format
+msgid "Sorry!! There was an error in the connection"
+msgstr "Lo sentimos! Hubo un error en la conexión."
+
+#. module: rap_connector_agora
+#: code:addons/rap_connector_agora/models/product_template_inherit.py:0
+#, python-format
+msgid ""
+"Sorry!! This product cant be deleted because its already synchronize with "
+"Agora. Should be Archive instead"
+msgstr ""
+"Lo sentimos! Este producto no se puede eliminar porque ya está sincronizado "
+"con Agora. Debería ser Archivar en su lugar"
+
+#. module: rap_connector_agora
+#: code:addons/rap_connector_agora/models/product_template_inherit.py:0
+#: code:addons/rap_connector_agora/models/product_template_inherit.py:0
+#, python-format
+msgid ""
+"Sorry!! This product cant be deleted because its used for discount by the "
+"system"
+msgstr ""
+"Lo sentimos! Este producto no se puede eliminar porque el sistema lo utiliza"
+" para obtener descuentos."
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__invoice_type_journal__invoice_type__standard
+msgid "Standard"
+msgstr "Estándar"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order__standard_invoice
+msgid "Standard Inv"
+msgstr "Factura Estándar"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__account_move__document_type__standardinvoice
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__sale_order__document_type__standardinvoice
+msgid "Standard Invoice"
+msgstr "Factura Estándar"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__account_move__document_type__standardrefund
+msgid "Standard Refund"
+msgstr "Factura Rectificativa Estándar"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__state
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api_line__state
+msgid "State"
+msgstr "Estado"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_api_connection__state
+#: model:ir.model.fields,field_description:rap_connector_agora.field_server_config__state
+msgid "Status"
+msgstr "Estado"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_sale_api__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"Estado basado en actividades\n"
+"Vencida: la fecha de vencimiento ya ha pasado\n"
+"Hoy: la fecha de la actividad es hoy\n"
+"Planificado: Actividades futuras."
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.product_template_bimani_form_view
+msgid "Style"
+msgstr "Estilo"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_pricelist__sync_status
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__sync_status
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__sync_status
+msgid "Sync Status"
+msgstr "Estado de Sincronización"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_tax__account_tax_id
+msgid "Tax"
+msgstr "Impuesto"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_center__tax_included
+msgid "Tax Included"
+msgstr "Impuesto Incluido"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_agora_tax__name
+msgid "Tax Name"
+msgstr "Nombre de Impuesto"
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.api_connection_form
+msgid "Technical Info"
+msgstr "Información Técnica"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_server_config__analytic_account_id
+msgid "The analytic account related to a Agora API."
+msgstr "La cuenta analítica relacionada con una API de Ágora."
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.import_data_form_view
+msgid ""
+"The changes in Agora records will not be updated in Odoo, only the newones."
+msgstr ""
+"Los cambios en los registros de Ágora no se actualizarán en Odoo, sólo los "
+"nuevos."
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.import_data_form_view
+msgid "The new records created in Agora will be generated in Odoo"
+msgstr "Los nuevos registros creados en Ágora se generarán en Odoo"
+
+#. module: rap_connector_agora
+#: code:addons/rap_connector_agora/models/account_mapping.py:0
+#, python-format
+msgid "There is a duplicity of Sale Center Configuration"
+msgstr "Existe una duplicidad en la configuración del Centro de Ventas"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_account_analytic_group__journal_id
+msgid ""
+"This field is will be use to assign the journal in the payments related with"
+" this analytic group"
+msgstr ""
+"Este campo se utilizará para asignar el diario en los pagos relacionados con"
+" este grupo analítico."
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_account_analytic_group__work_place_id
+msgid ""
+"This field will be use to define the Group related with the SO. Work place "
+"always will come in the order data from Agora"
+msgstr ""
+"Este campo se utilizará para definir el grupo relacionado con la SO. El "
+"lugar de trabajo siempre vendrá en los datos del pedido de Ágora."
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_account_analytic_group__warehouse_id
+msgid ""
+"This field will be use to define the Warehouse in the SO. Work place always "
+"will come in the order data from Agora"
+msgstr ""
+"Este campo se utilizará para definir el almacén en la SO. El local siempre "
+"vendrá en los datos del pedido de Ágora."
+
+#. module: rap_connector_agora
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.agora_sale_api_form_view
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.agora_sale_api_line_form_view
+msgid "Ticket Data"
+msgstr "Datos del Ticket"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api_line__ticket_number
+msgid "Ticket Number"
+msgstr "Número de Ticket"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api_line__ticket_serial
+msgid "Ticket Serial"
+msgstr "Serie del Ticket"
+
+#. module: rap_connector_agora
+#: model:ir.ui.menu,name:rap_connector_agora.agora_api_sales_downloads
+msgid "Tickets from Agora"
+msgstr "Tickets desde Ágora"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order__tip_move_id
+msgid "Tip Move"
+msgstr "Asiento Propina"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_mapping__tip_journal_id
+msgid "Tips Journal"
+msgstr "Diario de Propinas"
+
+#. module: rap_connector_agora
+#: code:addons/rap_connector_agora/models/sale_order_inherit.py:0
+#, python-format
+msgid "Tips Move"
+msgstr "Asiento Propinas"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_mapping__tips_config_ids
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.account_mapping_form_view
+msgid "Tips Setting"
+msgstr "Configuración de Propinas"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order__tips_amount
+msgid "Tips amount"
+msgstr "Monto de Propinas"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_server_config__title
+msgid "Title"
+msgstr "Nombre"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_stock_picking
+msgid "Transfer"
+msgstr "Albarán"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_sale_api__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "Tipo de actividad de excepción registrada."
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__message_unread
+msgid "Unread Messages"
+msgstr "Mensajes sin leer"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__message_unread_counter
+msgid "Unread Messages Counter"
+msgstr "Contador de mensajes sin leer"
+
+#. module: rap_connector_agora
+#: model:ir.actions.server,name:rap_connector_agora.ir_cron_update_invoices_in_odoo_ir_actions_server
+#: model:ir.cron,cron_name:rap_connector_agora.ir_cron_update_invoices_in_odoo
+#: model:ir.cron,name:rap_connector_agora.ir_cron_update_invoices_in_odoo
+msgid "Update Odoo Invoices from Agora"
+msgstr "Actualizar Facturas en Odoo desde Ágora"
+
+#. module: rap_connector_agora
+#: model:ir.actions.server,name:rap_connector_agora.ir_cron_update_products_in_agora_ir_actions_server
+#: model:ir.cron,cron_name:rap_connector_agora.ir_cron_update_products_in_agora
+#: model:ir.cron,name:rap_connector_agora.ir_cron_update_products_in_agora
+msgid "Update Products in Agora"
+msgstr "Actualizar Productos en Ágora"
+
+#. module: rap_connector_agora
+#: model:ir.actions.server,name:rap_connector_agora.ir_cron_update_masters_in_odoo_ir_actions_server
+#: model:ir.cron,cron_name:rap_connector_agora.ir_cron_update_masters_in_odoo
+#: model:ir.cron,name:rap_connector_agora.ir_cron_update_masters_in_odoo
+msgid "Update masters from Agora"
+msgstr "Actualizar maestros desde Ágora"
+
+#. module: rap_connector_agora
+#: model:res.groups,name:rap_connector_agora.agora_user_group
+msgid "User Agora"
+msgstr "Usuario Ágora"
+
+#. module: rap_connector_agora
+#: model:ir.actions.server,name:rap_connector_agora.ir_cron_validate_pickings_not_done_ir_actions_server
+#: model:ir.cron,cron_name:rap_connector_agora.ir_cron_validate_pickings_not_done
+#: model:ir.cron,name:rap_connector_agora.ir_cron_validate_pickings_not_done
+msgid "Validate Pickings not Done"
+msgstr "Validar albaranes no hechos"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order__waiter
+msgid "Waiter"
+msgstr "Mesero"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_analytic_group__warehouse_id
+msgid "Warehouse"
+msgstr "Almacén"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api__website_message_ids
+msgid "Website Messages"
+msgstr "Mensajes Sitio Web"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,help:rap_connector_agora.field_sale_api__website_message_ids
+msgid "Website communication history"
+msgstr "Historial de comunicación del sitio web"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_import_agora_data
+msgid "Wizard to select Info we need to update from Agora"
+msgstr ""
+"Wizard para seleccionar la información que se necesita actualizar desde "
+"Ágora"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_order_download_date
+msgid "Wizard to select the date to be downloaded from Agora"
+msgstr "Wizard para seleccionar la fecha para descargar pedidos desde Ágora"
+
+#. module: rap_connector_agora
+#: model:ir.model,name:rap_connector_agora.model_work_place
+#: model:ir.model.fields,field_description:rap_connector_agora.field_account_analytic_group__work_place_id
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_order__work_place_id
+#: model_terms:ir.ui.view,arch_db:rap_connector_agora.work_place_form_view
+msgid "Work Place"
+msgstr "Local"
+
+#. module: rap_connector_agora
+#: model:ir.actions.act_window,name:rap_connector_agora.work_place_center_action
+#: model:ir.model.fields.selection,name:rap_connector_agora.selection__import_agora_data__data_model__workplace
+#: model:ir.ui.menu,name:rap_connector_agora.work_center_agora_menu
+msgid "Work Places"
+msgstr "Locales"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_product__is_wrong_categ
+#: model:ir.model.fields,field_description:rap_connector_agora.field_product_template__is_wrong_categ
+msgid "Wrong Family"
+msgstr "Familia errónea"
+
+#. module: rap_connector_agora
+#: model:ir.model.fields,field_description:rap_connector_agora.field_sale_api_line__name
+msgid "name"
+msgstr "Nombre"

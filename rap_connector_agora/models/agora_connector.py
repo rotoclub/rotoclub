@@ -94,6 +94,20 @@ class APIConnection(models.Model):
             if rec.state == 'connect':
                 rec.test_connection()
 
+    @api.model
+    def search(self, args, offset=0, limit=None, order=None, count=False):
+        """
+        Inherit the function to show only api.connection related to the environment company.
+        """
+        default_domain = self.env.context.get('default_domain')
+        if default_domain:
+            company = self.env.company.id
+            domain = [
+                ('company_id', '=', company)
+            ]
+            args += domain
+        return super(APIConnection, self).search(args, offset=offset, limit=limit, order=order, count=count)
+
 # -----------------------------------------------------------------------------------------------------
 # ----------------------------------------- MAIN REQUESTS ---------------------------------------------
 # -----------------------------------------------------------------------------------------------------
@@ -282,17 +296,17 @@ class APIConnection(models.Model):
             'agora_id':  record.get('Id') if not ('sale_format' in values_dict) else '',
             'sale_format': record.get('Id') if ('sale_format' in values_dict) else '',
             'base_format_id': record.get('BaseSaleFormatId'),
-            'color': record.get('Color'),
+            'agora_color': record.get('Color'),
             'standard_price': record.get('CostPrice'),
             'list_price': 0.0,
             'sync_status': 'done',
             'ratio': record.get('Ratio'),
             'button_text': record.get('ButtonText'),
-            'detailed_type': values_dict.get('detailed_type') if 'detailed_type' in values_dict else 'product',
+            'type': values_dict.get('type') if 'type' in values_dict else 'product',
             'preparation_id': values_dict.get('preparation_id') if 'preparation_id' in values_dict else prep_type_id.id,
             'preparation_order_id': values_dict.get('preparation_order_id')
                                     if 'preparation_order_id' in values_dict else prep_order_id.id,
-            'taxes_id': [(6, 0, taxes_id)],
+            'agora_taxes_id': [(6, 0, taxes_id)],
             'is_saleable_as_main': record.get('SaleableAsMain'),
             'is_saleable_as_adding': record.get('SaleableAsAddin'),
             'is_sold_by_weight': record.get('IsSoldByWeight'),
@@ -320,12 +334,12 @@ class APIConnection(models.Model):
         for format in record.get('AdditionalSaleFormats'):
             values = {
                 'parent_id': product.id,
-                'detailed_type': 'consu',
+                'type': 'consu',
                 'sale_format': True,
                 'purchase_ok': False,
                 'preparation_id': product.preparation_id.id,
                 'categ_id': product.categ_id.id,
-                'taxes_id': product.taxes_id.ids,
+                'agora_taxes_id': product.agora_taxes_id.ids,
                 'preparation_order_id': product.preparation_order_id.id
             }
             if format.get('DeletionDate'):
@@ -550,10 +564,12 @@ class APIConnection(models.Model):
         Function to get the right connection for a record
         The objective of this function is to be sure the data is going to the rigth Agora Instance
         """
-        connection = False
-        if record.company_id:
-            company = record.company_id
-            connection = self.env['api.connection'].search([('company_id', '=', company.id), ('state', '=', 'connect')])
+        # connection = False
+        # if record.company_id:
+        # The product may not have the company set. In that case, we have to get the environment company.
+        company = record.company_id if record.company_id else self.env.company
+        connection = self.env['api.connection'].search([('company_id', '=', company.id), ('state', '=', 'connect')])
+        # connection = self.env['api.connection'].search([('state', '=', 'connect')])
         return connection
 
     def verify_active_companies(self):
@@ -594,12 +610,18 @@ class APIConnection(models.Model):
             List of dictionaries, considering the rigth estructure to be send it to Agora
         """
         formats = []
+        # Add the agora_instances condition to get only the product formats that should be sent to this instance
         all_formats = self.env['product.template'].search([('parent_id', '=', parent_product.id),
                                                            ('company_id', '=', parent_product.company_id.id),
+                                                           ('agora_instances', 'in', connection.id),
                                                            ('active', 'in', [True, False])])
         for product in all_formats:
-            format_id = product.sale_format
-            if product.sale_format == 0:
+            agora_format = self.env['agora.product'].search([('product_tmpl_id', '=', product.id),
+                                                            ('instance_id', '=', connection.id)], limit=1)
+            # format_id = product.sale_format
+            format_id = agora_format.sale_format
+            # if product.sale_format == 0:
+            if agora_format.sale_format == 0:
                 format_id = connection.last_format_id + 1
                 connection.last_format_id = format_id
             prices = self.get_post_prices(product)
@@ -608,7 +630,7 @@ class APIConnection(models.Model):
                 "Name": product.name,
                 "Ratio": product.ratio,
                 "ButtonText": product.button_text,
-                "Color": product.color or "#BACDE2",
+                "Color": product.agora_color or "#BACDE2",
                 "SaleableAsMain": product.is_saleable_as_main,
                 "SaleableAsAddin": product.is_saleable_as_adding,
                 "AskForAddins": product.ask_for_addings,
@@ -619,7 +641,9 @@ class APIConnection(models.Model):
             if product.product_addins_ids:
                 addins = []
                 for add in product.product_addins_ids:
-                    base_format = add.sale_format if add.parent_id else add.base_format_id
+                    agora_prod = add.agora_product_ids.filtered(lambda l: l.instance_id == connection.id)
+                    base_format = agora_prod.sale_format if add.parent_id else agora_prod.base_format_id
+                    # base_format = add.sale_format if add.parent_id else add.base_format_id
                     addins.append({"SaleFormatId": base_format})
                 product_data.update({'MinAddins': product.min_addings,
                                      'MaxAddins': product.max_addings,
@@ -651,10 +675,20 @@ class APIConnection(models.Model):
         Return:
             Dictionary with product data and Sale Formats associated
         """
-        tax = self.env['agora.tax'].search([('account_tax_id', '=', product.taxes_id[0].id),
+        tax = self.env['agora.tax'].search([('account_tax_id', '=', product.agora_taxes_id[0].id),
                                             ('company_id', '=', connection.company_id.id)])
-        product_id = product.agora_id
-        base_format_id = product.base_format_id
+
+        # ADICIONADO
+        agora_family = self.env['agora.category'].search([('product_categ_id', '=', product.categ_id.id),
+                                                          ('instance_id', '=', connection.id)], limit=1)
+        agora_product = self.env['agora.product'].search([('product_tmpl_id', '=', product.id),
+                                                          ('instance_id', '=', connection.id)], limit=1)
+        # product_id = product.agora_id
+        # base_format_id = product.base_format_id
+
+        # get the product_id and the base_format_id from agora.product relation
+        product_id = agora_product.agora_id if agora_product else 0
+        base_format_id = agora_product.base_format_id if agora_product else 0
         if is_new:
             product_id = connection.last_product_id + 1
             connection.last_product_id = product_id
@@ -667,9 +701,10 @@ class APIConnection(models.Model):
                     "Name": product.name,
                     "BaseSaleFormatId": base_format_id,
                     "ButtonText": product.button_text,
-                    "Color": product.color or "#BACDE2",
+                    "Color": product.agora_color or "#BACDE2",
                     "PLU": product.product_sku if product.product_sku != 0 else "",
-                    "FamilyId": product.categ_id.agora_id if product.categ_id.name != 'All' else None,
+                    # "FamilyId": product.categ_id.agora_id if product.categ_id.name != 'All' else None,
+                    "FamilyId": agora_family.agora_id if agora_family and product.categ_id.name != 'All' else None,
                     "VatId": tax.agora_id,
                     "UseAsDirectSale": False,
                     "SaleableAsMain": product.is_saleable_as_main,
@@ -691,7 +726,9 @@ class APIConnection(models.Model):
         if product.product_addins_ids:
             addins = []
             for add in product.product_addins_ids:
-                base_format = add.sale_format if add.parent_id else add.base_format_id
+                agora_prod = add.agora_product_ids.filtered(lambda l: l.instance_id == connection)
+                base_format = agora_prod.sale_format if add.parent_id else agora_prod.base_format_id
+                # base_format = add.sale_format if add.parent_id else add.base_format_id
                 addins.append({"SaleFormatId": base_format})
             data['Products'][0].update({'MinAddins': product.min_addings,
                                         'MaxAddins': product.max_addings,
@@ -706,12 +743,24 @@ class APIConnection(models.Model):
         Function to send to Agora all products provided in the params
         """
         product_env = self.env['product.template']
+        agora_product_env = self.env['agora.product']
+        product_sync_env = self.env['product.instance.sync']
         self._get_last_ids()
         for product in products:
             connection = self.get_related_connection(product)
             if connection:
+                all_formats = self.env['product.template'].search([('parent_id', '=', product.id),
+                                                                   ('company_id', '=', product.company_id.id),
+                                                                   ('agora_instances', 'in', connection.id),
+                                                                   ('active', 'in', [True, False])])
+                # get the product status for this instance in product.instance.sync model
+                product_to_sync = product_sync_env.search([('product_templ_id', '=', product.id),
+                                                           ('instance_id', '=', connection.id)], limit=1)
+                formats_to_sync = product_sync_env.search([('product_templ_id', 'in', all_formats.ids),
+                                                           ('instance_id', '=', connection.id)])
                 is_new = False
-                if product.sync_status == 'new':
+                # if product.sync_status == 'new':
+                if product_to_sync and product_to_sync.sync_status == 'new':
                     is_new = True
                 data = self.product_data(product, is_new, connection)
                 try:
@@ -720,23 +769,41 @@ class APIConnection(models.Model):
                         # If the execution went OK
                         # Instantly should be updated the product status, because even if there is block in the function
                         # because another error this changes are already updated in Agora
-                        # self.update_sync_status(product)
-                        product.sync_status = 'done'
-                        product.product_formats_ids.sync_status = 'done'
+                        product_to_sync.sync_status = 'done'
+                        # Update formats sync status
+                        formats_to_sync.write({'sync_status': 'done'})
                         # Execute commit() to be sure the product status its updated
                         # even if the script fail in other products sync
                         self._cr.commit()
                         if is_new:
-                            agora_id = data.get('Products')[0].get('Id')
-                            base_format_id = data.get('Products')[0].get('BaseSaleFormatId')
-                            product.update({'agora_id': agora_id, 'base_format_id': base_format_id})
+                            vals = {
+                                'instance_id': connection.id,
+                                'agora_id': data.get('Products')[0].get('Id'),
+                                'base_format_id': data.get('Products')[0].get('BaseSaleFormatId'),
+                                'product_tmpl_id': product.id
+                            }
+                            # Create the agora_id and the base_format_id relate to this instance in the product
+                            agora_product_env.create(vals)
+                            # agora_id = data.get('Products')[0].get('Id')
+                            # base_format_id = data.get('Products')[0].get('BaseSaleFormatId')
+                            # product.update({'agora_id': agora_id, 'base_format_id': base_format_id})
                         for rec in data.get('Products')[0].get('AdditionalSaleFormats'):
                             current_format = product_env.search([('name', '=', rec.get('Name')),
                                                                  ('parent_id', '=', product.id)])
-                            if current_format.sale_format == 0:
-                                current_format.sale_format = rec.get('Id')
+                            agora_format = agora_product_env.search([('product_tmpl_id', '=', current_format.id),
+                                                                     ('instance_id', '=', connection.id)])
+                            # if current_format.sale_format == 0:
+                            if agora_format.sale_format == 0:
+                                format_vals = {
+                                    'instance_id': connection.id,
+                                    'product_tmpl_id': current_format.id,
+                                    'sale_format': rec.get('Id')
+                                }
+                                # Create the sale_format related to this instance in the product format
+                                agora_product_env.create(format_vals)
+                                # current_format.sale_format = rec.get('Id')
                     else:
-                        raise ValidationError(_(" Agora system detected the following exception:\n%s") % message.decode())
+                        raise ValidationError(_("Agora system detected the following exception:\n%s") % message.decode())
                 except Exception as e:
                     _logger.error(e)
                     raise ValidationError(_("ERROR RESPONSE:\n %s") % e)
@@ -1212,10 +1279,15 @@ class APIConnection(models.Model):
             product = prod_prod_env.search([('is_product_menu', '=', True),
                                             ('product_tmpl_id.company_id', '=', self.company_id.id)], limit=1)
         else:
-            product = prod_prod_env.search(['|',
-                                            ('product_tmpl_id.base_format_id', '=', format_id),
-                                            ('product_tmpl_id.sale_format', '=', format_id),
-                                            ('product_tmpl_id.company_id', '=', self.company_id.id)], limit=1)
+            agora_prod = self.env['agora.product'].search(['|', ('base_format_id', '=', format_id),
+                                                           ('sale_format', '=', format_id),
+                                                           ('instance_id', '=', self.id)], limit=1)
+            prod_templ_id = agora_prod.product_tmpl_id.id if agora_prod else False
+            product = prod_prod_env.search([('product_tmpl_id', '=', prod_templ_id)], limit=1)
+            # product = prod_prod_env.search(['|',
+            #                                 ('product_tmpl_id.base_format_id', '=', format_id),
+            #                                 ('product_tmpl_id.sale_format', '=', format_id),
+            #                                 ('product_tmpl_id.company_id', '=', self.company_id.id)], limit=1)
         return product
 
     def get_partner(self, record):
@@ -1357,7 +1429,8 @@ class APIConnection(models.Model):
         for connec in conections:
             product_to_send = product_env.search([('company_id', '=', connec.company_id.id),
                                                   ('sync_status', 'in', ['new', 'modified']),
-                                                  ('active', 'in', [True, False])])
+                                                  ('active', 'in', [True, False]),
+                                                  ('send_to_agora', '=', True)])
             if product_to_send:
                 self.post_products(product_to_send)
 

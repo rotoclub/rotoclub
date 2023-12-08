@@ -16,3 +16,5 @@ from . import work_place
 from . import agora_reports_config
 from . import payments_method
 from . import account_mapping
+from . import agora_product
+from . import agora_category

@@ -3,7 +3,7 @@
 
 {
     'name': 'Agora connector',
-    'version': '15.0.1.4.4',
+    'version': '14.0.1.0.2',
     'category': 'Extra Tools',
     'summary': """Agora connector: Sales in Odoo""",
     'description': """Agora connector: Sales, Customer, Invoice address, Products in Odoo""",
@@ -18,7 +18,7 @@
         'sale_management',
         'stock',
         'account',
-        'account_accountant',
+        'mrp',
         'analytic',
         'web_tree_header_buttons_always_visible'
     ],

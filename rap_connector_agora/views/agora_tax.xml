@@ -39,7 +39,7 @@
 
         <!--Action for Agora Tax Model-->
         <record id="agora_tax_action" model="ir.actions.act_window">
-            <field name="name">Agora Tax</field>
+            <field name="name">Agora Taxes</field>
             <field name="res_model">agora.tax</field>
             <field name="view_mode">tree,form</field>
         </record>

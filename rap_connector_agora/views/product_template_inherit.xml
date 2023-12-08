@@ -6,7 +6,7 @@
             <field name="model">product.template</field>
             <field name="inherit_id" ref="product.product_template_only_form_view"/>
             <field name="arch" type="xml">
-                <xpath expr="//div[hasclass('oe_button_box')]" position="after">
+                <xpath expr="//header" position="after" >
                     <field name="is_wrong_categ" invisible="1"/>
                     <div class="alert alert-warning  text-center info_icon"
                          role="alert"
@@ -14,7 +14,7 @@
                         Please Verify the Family, should be selected a Family related with Agora instance.
                     </div>
                  </xpath>
-                <xpath expr="//field[@name='detailed_type']" position="before">
+                <xpath expr="//field[@name='type']" position="before">
                     <field name="parent_id"
                            domain="[('company_id','=',company_id)]"
                            attrs="{'invisible': [('parent_id', '=', False)],'readonly':[('parent_id', '!=', False)]}"/>
@@ -22,31 +22,27 @@
                 <xpath expr="//field[@name='taxes_id']" position="after">
                     <field name="tax_agora_ids" invisible="1"/>
                 </xpath>
-                <xpath expr="//field[@name='taxes_id']" position="attributes">
-                    <attribute name="required">1</attribute>
-                    <attribute name="domain">[('company_id','=',company_id),('id','in',tax_agora_ids)]</attribute>
+                <xpath expr="//field[@name='taxes_id']" position="before">
+                    <field name="agora_taxes_id" required="1"
+                           domain="[('id','in',tax_agora_ids)]"
+                           widget="many2many_tags"/>
                 </xpath>
                 <xpath expr="//field[@name='company_id']" position="attributes">
-                    <attribute name="required">1</attribute>
+<!--                    <attribute name="required">1</attribute>-->
+<!--                    <attribute name="attrs">{'readonly': ['|', ('agora_id','!=',0),('parent_id', '!=', False)], 'required': [('send_to_agora', '=', True)]}</attribute>-->
                     <attribute name="attrs">{'readonly': ['|', ('agora_id','!=',0),('parent_id', '!=', False)]}</attribute>
                 </xpath>
-                <xpath expr="//field[@name='list_price']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//div[@name='pricing']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//field[@name='detailed_type']" position="attributes">
+                <xpath expr="//field[@name='type']" position="attributes">
                     <attribute name="attrs">{'readonly': [('parent_id', '!=', False)]}</attribute>
                 </xpath>
-                <xpath expr="//field[@name='detailed_type']" position="after">
+                <xpath expr="//field[@name='type']" position="after">
                     <field name="is_product_discount" invisible="1"/>
                     <field name="is_product_menu" invisible="1"/>
                 </xpath>
                 <xpath expr="//field[@name='categ_id']" position="attributes">
                     <attribute name="string">Family</attribute>
-                    <attribute name="domain">[('agora_id','!=', False),('company_id','=',company_id)]</attribute>
                     <attribute name="attrs">{'readonly': [('parent_id', '!=', False)]}</attribute>
+                    <attribute name="domain">[('id', 'in', category_domain)]</attribute>
                 </xpath>
                 <xpath expr="//field[@name='uom_id']" position="attributes">
                     <attribute name="attrs">{'readonly': [('parent_id', '!=', False)]}</attribute>
@@ -54,13 +50,31 @@
                 <xpath expr="//field[@name='uom_po_id']" position="attributes">
                     <attribute name="attrs">{'readonly': [('parent_id', '!=', False)]}</attribute>
                 </xpath>
+                <xpath expr="//field[@name='categ_id']" position="before">
+                    <field name="send_to_agora"/>
+                    <field name="instances_domain" invisible="1"/>
+                    <field name="category_domain" invisible="1"/>
+                    <field name="agora_instances" attrs="{'invisible': [('send_to_agora', '=', False)]}"
+                           widget="many2many_tags" domain="[('id','in', instances_domain)]"/>
+                </xpath>
                 <xpath expr="//page[@name='invoicing']" position="after">
-                    <page name="agora_info" string="Agora Info">
+                    <page name="agora_info" string="Agora Info" attrs="{'invisible': [('send_to_agora', '=', False)]}">
+                        <field name="agora_product_ids" readonly="1">
+                            <tree editable="bottom">
+                                <field name="instance_id" options='{"no_create": 1}' required="1"/>
+                                <field name="agora_id"
+                                       attrs="{'column_invisible': [('parent.parent_id', '!=', False)]}"/>
+                                <field name="base_format_id"
+                                       attrs="{'column_invisible': [('parent.parent_id', '!=', False)]}"/>
+                                <field name="sale_format"
+                                       attrs="{'column_invisible': [('parent.parent_id', '=', False)]}"/>
+                            </tree>
+                        </field>
                         <group col="2">
                             <group string="Product Info">
-                                <field name="agora_id" attrs="{'invisible':[('sale_format', '!=', 0)]}" readonly="1"/>
-                                <field name="base_format_id" readonly="1" attrs="{'invisible':[('parent_id', '!=', False)]}"/>
-                                <field name="sale_format" readonly="1" attrs="{'invisible':[('parent_id', '=', False)]}"/>
+                                <field name="agora_id" invisible="1"/>
+<!--                                <field name="base_format_id" readonly="1" attrs="{'invisible':[('parent_id', '!=', False)]}"/>-->
+<!--                                <field name="sale_format" readonly="1" attrs="{'invisible':[('parent_id', '=', False)]}"/>-->
                                 <field name="ratio" attrs="{'invisible':[('parent_id', '=', False)]}"/>
                                 <field name="product_sku"/>
                                 <field name="preparation_id"
@@ -71,8 +85,8 @@
                                        domain="[('agora_id','!=', False),('company_id','=',company_id)]"/>
                             </group>
                             <group string="Style">
-                                <field name="button_text" required="1"/>
-                                <field name="color" widget="color"/>
+                                <field name="button_text" attrs="{'required': [('send_to_agora', '=', True)]}"/>
+                                <field name="agora_color" widget="color"/>
                             </group>
                         </group>
                         <group col="2">
@@ -88,7 +102,7 @@
                     </page>
                     <page name="product_format"
                           string="Formats"
-                          attrs="{'invisible': [('parent_id', '!=', False)]}">
+                          attrs="{'invisible': ['|', ('parent_id', '!=', False), ('send_to_agora', '=', False)]}">
                         <group>
                             <group>
                                 <button name="action_add_format" string="Add Format" type="object" class="oe_highlight"/>
@@ -101,11 +115,12 @@
                                     <field name="list_price"/>
                                     <field name="standard_price"/>
                                     <field name="uom_id"/>
+                                    <field name="agora_instances" widget="many2many_tags"/>
                                 </tree>
                             </field>
                         </group>
                     </page>
-                    <page name="product_addings" string="Addins">
+                    <page name="product_addings" string="Addins" attrs="{'invisible': [('send_to_agora', '=', False)]}">
                         <group col="4">
                             <group>
                                 <field name="min_addings"/>
@@ -118,31 +133,10 @@
                         <group>
                             <field name="product_addins_ids"
                                    widget="many2many_tags"
-                                   domain="[('is_saleable_as_adding','=',True),('company_id','=',company_id)]"
+                                   domain="[('is_saleable_as_adding','=',True)]"
                                    create="0"/>
                         </group>
                     </page>
-                </xpath>
-            </field>
-        </record>
-
-        <record id="product_template_form_agora_inherit" model="ir.ui.view">
-            <field name="name">product.template.agora.inherit</field>
-            <field name="model">product.template</field>
-            <field name="inherit_id" ref="product.product_template_form_view"/>
-            <field name="arch" type="xml">
-                <xpath expr="//div[hasclass('o_field_widget')]" position="replace">
-                    <div class="o_field_widget o_stat_info">
-                        <span class="o_stat_value">
-                            <field name="pricelist_item_count"/>
-                        </span>
-                        <span attrs="{'invisible': [('pricelist_item_count', '=', 1)]}">
-                            Prices
-                        </span>
-                        <span attrs="{'invisible': [('pricelist_item_count', '!=', 1)]}">
-                            Price
-                        </span>
-                   </div>
                 </xpath>
             </field>
         </record>
@@ -180,12 +174,14 @@
                eval="[(5, 0, 0),
                       (0, 0, {'view_mode': 'tree', 'view_id': ref('product_template_rap_tree_view')}),
                       (0, 0, {'view_mode': 'form', 'view_id': ref('product.product_template_only_form_view')})]"/>
-            <field name="domain">[
-                ('sync_status', 'in', ['new', 'modified']),
-                ('parent_id', '=', False),
-                ('is_product_discount', '=', False),
-                ('active', 'in', [True, False])
-                ]</field>
+<!--            <field name="domain">[-->
+<!--                ('sync_status', 'in', ['new', 'modified']),-->
+<!--                ('parent_id', '=', False),-->
+<!--                ('is_product_discount', '=', False),-->
+<!--                ('active', 'in', [True, False]),-->
+<!--                ('send_to_agora', '=', True)-->
+<!--                ]</field>-->
+                <field name="context">{'default_domain': True}</field>
         </record>
 
         <!--New Product template Action to be used in Agora-->
@@ -203,7 +199,7 @@
         </record>
 
         <record id="action_product_temp_sent_agora" model="ir.actions.server">
-            <field name="name">Sent to Agora</field>
+            <field name="name">Send to Agora</field>
             <field name="groups_id" eval="[(4, ref('rap_connector_agora.agora_manager_group'))]"/>
             <field name="model_id" ref="product.model_product_template"/>
             <field name="binding_model_id" ref="product.model_product_template"/>

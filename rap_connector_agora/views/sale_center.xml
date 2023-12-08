@@ -45,7 +45,7 @@
 
         <!--Action for Sale Center Model-->
         <record id="account_sale_center_action" model="ir.actions.act_window">
-            <field name="name">Sale Center</field>
+            <field name="name">Sales Centers</field>
             <field name="res_model">sale.center</field>
             <field name="view_mode">tree,form</field>
             <field name="view_ids" eval="[(5, 0, 0),

@@ -76,6 +76,16 @@ class SaleOrder(models.Model):
         invoice_obj.action_post()
         self.tip_move_id = invoice_obj
 
+    def action_download_orders_wizard(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Download Orders by date',
+            'res_model': 'order.download.date',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'target': 'new'
+        }
+
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'

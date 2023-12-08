@@ -37,7 +37,7 @@
 
         <!--Action for Preparation Order Model-->
         <record id="preparation_order_action" model="ir.actions.act_window">
-            <field name="name">Preparation Order</field>
+            <field name="name">Preparation Orders</field>
             <field name="res_model">preparation.order</field>
             <field name="view_mode">tree,form</field>
         </record>

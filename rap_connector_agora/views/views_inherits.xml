@@ -60,7 +60,18 @@
             <field name="inherit_id" ref="product.product_category_form_view"/>
             <field name="arch" type="xml">
                  <xpath expr="//field[@name='parent_id']" position="after">
-                    <field name="company_id"/>
+                     <field name="company_id"/>
+<!--                    <field name="agora_id"/>-->
+                </xpath>
+                <xpath expr="//group[@name='first']" position="after">
+                    <group string="Agora Info">
+                       <field name="agora_category_ids" nolabel="1">
+                        <tree editable="bottom">
+                            <field name="instance_id" options='{"no_create": 1}' required="1"/>
+                            <field name="agora_id"/>
+                        </tree>
+                    </field>
+                     </group>
                 </xpath>
             </field>
         </record>

@@ -23,7 +23,8 @@
                         <group name="first_group" string="Server Config">
                             <field name="sale_flow"/>
                             <field name="is_date_from_invoice" attrs="{'invisible': [('sale_flow','!=', 'payment')]}"/>
-                            <field name="company_id" required="True" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="company_id" required="True" options="{'no_create': True, 'no_open': True}"
+                                   domain="[('id','=', company_id)]"/>
                         </group>
                         <group name="second_group" string="API Data">
                             <field name="url_server" placeholder="Ex. https//Agora.com/api"/>
@@ -67,6 +68,7 @@
                eval="[(5, 0, 0),
                       (0, 0, {'view_mode': 'tree', 'view_id': ref('api_connection_tree')}),
                       (0, 0, {'view_mode': 'form', 'view_id': ref('api_connection_form')})]"/>
+        <field name="context">{'default_domain': True}</field>
     </record>
 
     <!-- View Form server.config -->

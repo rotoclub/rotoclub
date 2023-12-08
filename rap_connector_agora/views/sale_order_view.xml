@@ -7,9 +7,9 @@
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="inside">
                     <header>
-                        <button name="%(rap_connector_agora.download_order_by_date_action)d"
+                        <button name="action_download_orders_wizard"
                                 string="Download Orders"
-                                type="action"
+                                type="object"
                                 attrs="{'always_visible': True}"
                                 class="btn-secondary"/>
                     </header>

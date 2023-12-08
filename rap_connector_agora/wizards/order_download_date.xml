@@ -16,18 +16,5 @@
                 </form>
             </field>
         </record>
-
-         <!-- Action order.download.date -->
-        <record model="ir.actions.act_window" id="download_order_by_date_action">
-            <field name="name">Download Orders by date</field>
-            <field name="res_model">order.download.date</field>
-            <field name="view_mode">form</field>
-            <field name="view_ids"
-                   eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('order_downloaded_wizard')}),
-                         ]"/>
-            <field name="target">new</field>
-        </record>
-
     </data>
 </odoo>

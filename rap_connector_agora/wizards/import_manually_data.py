@@ -20,7 +20,8 @@ class ImportDataManually(models.TransientModel):
     instance_id = fields.Many2one(
         string='Instance',
         required=True,
-        comodel_name='api.connection'
+        comodel_name='api.connection',
+        domain=lambda self: [('company_id', '=', self.env.company.id)],
     )
     company_id = fields.Many2one(
         related='instance_id.company_id'

@@ -19,6 +19,11 @@ class ProductCategory(models.Model):
         comodel_name='res.company',
         string='Company'
     )
+    agora_category_ids = fields.One2many(
+        string='Agora Categories',
+        comodel_name='agora.category',
+        inverse_name='product_categ_id'
+    )
 
 
 class ProductPricelist(models.Model):
@@ -158,6 +163,24 @@ class AccountMove(models.Model):
         comodel_name='sale.center'
     )
 
+    analytic_group_id = fields.Many2one(
+        comodel_name='account.analytic.group',
+        string='Business Center',
+        compute='_compute_analytic_group',
+        store=True
+    )
+
+    @api.depends('invoice_line_ids', 'invoice_line_ids.analytic_account_id')
+    def _compute_analytic_group(self):
+        for rec in self:
+            analytic_group = False
+            if rec.invoice_line_ids and rec.invoice_line_ids.analytic_account_id:
+                # Identify the Analytic group related with the invoice behind the analytic account
+                group = rec.invoice_line_ids.analytic_account_id.group_id
+                if group:
+                    analytic_group = group[0]
+            rec['analytic_group_id'] = analytic_group
+
 
 class ResCompany(models.Model):
     _inherit = 'res.company'
@@ -209,7 +232,7 @@ class AccountPayment(models.Model):
         res = super(AccountPayment, self)._get_valid_liquidity_accounts()
         center_account = self.env['sale.center.account'].search([('sale_center_id', '=', self.sale_center_id.id)], limit=1)
         if center_account:
-            res = res + center_account.account_id
+            res = res + (center_account.account_id,)
         return res
 
 

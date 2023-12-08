@@ -22,3 +22,6 @@ rap_connector_agora.report_config,access_agora_report_config_user,model_agora_re
 rap_connector_agora.tips_config,access_agora_tips_config_user,model_tips_config,,1,1,1,1
 rap_connector_agora.import_data,access_agora_import_data,model_import_agora_data,,1,1,1,1
 rap_connector_agora.agora_payment_method,access_agora_payment_method,model_agora_payment_method,,1,1,1,1
+rap_connector_agora.agora_product,access_agora_product,model_agora_product,,1,1,1,1
+rap_connector_agora.agora_category,access_agora_category,model_agora_category,,1,1,1,1
+rap_connector_agora.product_instance_sync,access_product_instance_sync,model_product_instance_sync,,1,1,1,1

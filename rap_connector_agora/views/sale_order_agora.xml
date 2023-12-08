@@ -12,6 +12,7 @@
                       (0, 0, {'view_mode': 'tree', 'view_id': ref('sale.view_order_tree')}),
                       (0, 0, {'view_mode': 'form', 'view_id': ref('sale.view_order_form')})]"/>
             <field name="context">{'group_by': 'business_date:day'}</field>
+            <field name="domain">[('number','!=', False)]</field>
         </record>
 
     </data>

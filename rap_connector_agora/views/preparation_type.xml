@@ -35,7 +35,7 @@
 
         <!--Action for Preparation Type Model-->
         <record id="preparation_type_action" model="ir.actions.act_window">
-            <field name="name">Preparation Type</field>
+            <field name="name">Preparation Types</field>
             <field name="res_model">preparation.type</field>
             <field name="view_mode">tree,form</field>
         </record>

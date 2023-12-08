@@ -37,7 +37,7 @@
 
         <!--Action for Work Place Model-->
         <record id="work_place_center_action" model="ir.actions.act_window">
-            <field name="name">Work Place</field>
+            <field name="name">Work Places</field>
             <field name="res_model">work.place</field>
             <field name="view_mode">tree,form</field>
         </record>
