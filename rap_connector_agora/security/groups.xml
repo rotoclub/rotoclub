@@ -120,5 +120,12 @@
             <field eval="True" name="global"/>
             <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
         </record>
+        <!-- Global rule for Sales Api Lines Logs company-->
+        <record model="ir.rule" id="sales_api_line_rule_multi">
+            <field name="name">Sales Api Lines Rule Multicompany</field>
+            <field name="model_id" ref="model_sale_api_line"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+        </record>
     </data>
 </odoo>

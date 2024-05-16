@@ -7,7 +7,7 @@ from odoo import models, fields, api, _
 class AgoraReportsConfig(models.Model):
     _name = 'agora.reports.config'
     _description = 'Configuration for Custom reports in Agora.' \
-                   ' The Reports should be created in Agora, in Odoo anly will be consumed'
+                   ' The Reports should be created in Agora, in Odoo only will be consumed'
 
     name = fields.Char(
         string='Name'

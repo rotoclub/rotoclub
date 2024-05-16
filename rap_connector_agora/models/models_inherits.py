@@ -97,7 +97,9 @@ class SaleOrder(models.Model):
     )
     document_type = fields.Selection(
         selection=[('BasicInvoice', 'Basic Invoice'),
-                   ('StandardInvoice', 'Standard Invoice')],
+                   ('StandardInvoice', 'Standard Invoice'),
+                   ('BasicRefund', 'Basic Refund'),
+                   ('StandardRefund', 'Standard Refund')],
         default='BasicInvoice',
         string="Document type"
     )
@@ -209,7 +211,7 @@ class AccountPayment(models.Model):
         res = super(AccountPayment, self)._get_valid_liquidity_accounts()
         center_account = self.env['sale.center.account'].search([('sale_center_id', '=', self.sale_center_id.id)], limit=1)
         if center_account:
-            res = res + center_account.account_id
+            res += tuple(center_account.account_id)
         return res
 
 
