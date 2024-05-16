@@ -215,8 +215,7 @@ class AccountPayment(models.Model):
         center_account = self.env['sale.center.account'].search([('sale_center_id', '=', self.sale_center_id.id)], limit=1)
         if center_account:
             _logger.info("Accounts append LIST: {} ------ {}".format(res, center_account.account_id.code))
-            res = res + (center_account.account_id,)
-
+            res = (*res, (center_account.account_id,))
         return res
 
 
