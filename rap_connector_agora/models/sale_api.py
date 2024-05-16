@@ -98,7 +98,7 @@ class SaleApis(models.Model):
             record.fail_state_count = len(lines.filtered(lambda x: x.state == "failed"))
 
     def get_order_from_agora(self):
-        self.env['api.connection'].download_by_date(self.data_date, self.company_id)
+        self.env['api.connection'].search([('company_id', '=', self.company_id.id)], limit=1).process_specific_queue(self.api_line_ids)
         return {
             'type': 'ir.actions.client',
             'tag': 'reload',
@@ -115,6 +115,7 @@ class SaleApiLine(models.Model):
     state = fields.Selection(
         selection=[("draft", "Draft"),
                    ("fail", "Failed"),
+                   ("pendent", "Pendent"),
                    ("done", "Done")],
         default="draft"
     )
@@ -124,6 +125,10 @@ class SaleApiLine(models.Model):
     sale_api_id = fields.Many2one(
         comodel_name='sale.api',
         string='Sale API'
+    )
+    data_date = fields.Date(
+        related='sale_api_id.data_date',
+        store=True
     )
     company_id = fields.Many2one(
         related='sale_api_id.company_id'
@@ -145,6 +150,10 @@ class SaleApiLine(models.Model):
     )
     product_with_error = fields.Char(
         string='Products with error'
+    )
+    try_counter = fields.Integer(
+        string='Count',
+        default=0
     )
 
     def update_log_message(self, value):

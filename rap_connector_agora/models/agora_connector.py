@@ -7,7 +7,7 @@ import requests
 import logging
 from odoo.exceptions import ValidationError
 from dateutil import parser
-from datetime import datetime
+from datetime import datetime, timedelta
 from itertools import groupby
 import json
 
@@ -745,15 +745,79 @@ class APIConnection(models.Model):
 # -------------------- GET REQUEST TO GENERATE SALES DATA IN ODOO -------------------------------------
 # -----------------------------------------------------------------------------------------------------
 
-    def get_invoices(self, date):
+    def process_specific_queue(self, lines):
         """"
-        Function to get Products from Agora
-        Generate Sale Order record for each Agora Invoice
-        Exist 4 type of invoices in Agora:
-            ▪ BasicInvoice: Factura simplificada
-            ▪ StandardInvoice: Factura nominal
-            ▪ BasicRefund: Devolucion de factura simplificada
-            ▪ StandardRefund: Devolucion de factura nominal
+        Process data for specific invoices
+        @params: Lines-> A list of sale.api.lines to be process geting the data saved in the record
+        """
+        # Divide Invoices and Refunds
+        basic_invoices = lines.filtered(
+            lambda l: l.state != 'done' and l.try_counter <= 50 and l.document_type in ['BasicInvoice', 'StandardInvoice'])
+        basic_refunds = lines.filtered(
+            lambda l: l.state != 'done' and l.try_counter <= 50 and l.document_type in ['BasicRefund', 'StandardRefund'])
+        # Firstable will be process the invoice, because refunds could be related with an invoice of the actual list
+        # Only 100 Invoices will be process to avoid time out in server
+        for log in basic_invoices[0:100]:
+            sos = False
+            log_data = json.loads(log.order_data)
+            try:
+                sos = self._create_sale_order(log)
+                self.generate_invoice(sos, log_data.get('DocumentType'))
+            except Exception as error:
+                if sos:
+                    sos[0].get('so').update({'has_error': True})
+                message = "Receive error while process order, Error is:  (%s)" % error
+                log.write({"state": "fail", "message": message, 'try_counter': log.try_counter + 1})
+        for refund in basic_refunds[0:100]:
+            try:
+                self.generate_credit_note(refund)
+            except Exception as error:
+                message = "Receive error while process order, Error is:  (%s)" % error
+                refund.write({"state": "fail", "message": message, 'try_counter': refund.try_counter + 1})
+
+    def process_invoices(self):
+        """"
+        Function to process queue of standard/basic invoices
+        This function its aside of the refunds because the refunds always has a dependency of standard invoice
+        """
+        log_line_obj = self.env['sale.api.line']
+        invoices_lines = log_line_obj.search([
+            ('state', '!=', 'done'), ('try_counter', '<', 50), ('company_id', '=', self.company_id.id),
+            ('document_type', 'in', ['BasicInvoice', 'StandardInvoice'])], limit=10)
+
+        for invoice in invoices_lines:
+            sos = []
+            try:
+                sos = self._create_sale_order(invoice)
+                self.generate_invoice(sos, invoice.document_type)
+            except Exception as error:
+                if sos:
+                    sos[0].get('so').update({'has_error': True})
+                message = "Receive error while process order, Error is:  (%s)" % error
+                invoice.write({"state": "fail", "message": message, 'try_counter': invoice.try_counter + 1})
+
+    def process_refunds(self):
+        """"
+        Function to process queue of standard/basic refunds
+        The 'BasicRefund', 'StandardRefund' will be ordered by date asc.
+        This function its aside of the refunds because the refunds always has a dependency with an standard invoice
+        """
+        log_line_obj = self.env['sale.api.line']
+        refund_lines = log_line_obj.search([('state', '!=', 'done'), ('try_counter', '<', 50),
+                                            ('company_id', '=', self.company_id.id),
+                                            ('document_type', 'in', ['BasicRefund', 'StandardRefund'])])
+        for refund in refund_lines:
+            try:
+                self.generate_credit_note(refund)
+            except Exception as error:
+                message = "Receive error while process order, Error is:  (%s)" % error
+                refund.write({"state": "fail", "message": message, 'try_counter': refund.try_counter + 1})
+
+    def generate_sale_api_logs(self, date):
+        """"
+        Function to generate logs with all the ticket items coming from the Agora Data
+        There is a _cr_commit to save instantly the data generated from this function.
+        Generate the invoices queque to be process after by other cron.
         endpoint example => /export/?business-day=2022-06-05&filter=Invoices
         """
         endpoint = '/export/?business-day={}'.format(date)
@@ -761,58 +825,34 @@ class APIConnection(models.Model):
             'filter': 'Invoices',
         }
         invoices = self.get_request(self.url_server, endpoint, self.server_api_key, params)
+        log = False
         if invoices and invoices.json().get('Invoices'):
             json_invoices = invoices.json().get('Invoices')
-            # Generate the Logs from the data
-            log = self.generate_sale_api_logs(json_invoices)
-            # Divide Invoices and Refunds
-            basic_invoices = log.api_line_ids.filtered(
-                lambda l: l.state != 'done' and l.document_type in ['BasicInvoice', 'StandardInvoice'])
-            basic_refunds = log.api_line_ids.filtered(
-                lambda l: l.state != 'done' and l.document_type in ['BasicRefund', 'StandardRefund'])
-            # Firstable will be process the invoice, because could be a refund related with one of this refunds
-            # Only 100 Invoices will be process to avoid time out in Odoo.sh
-            for invoice in basic_invoices[0:100]:
-                record = json.loads(invoice.order_data)
-                log_line = self.get_related_log_line(record)
-                sos = self._create_sale_order(record, log_line)
-                self.generate_invoice(sos, record.get('DocumentType'))
-            for refund in basic_refunds[0:100]:
-                record = json.loads(refund.order_data)
-                if record:
-                    log_refund = self.get_related_log_line(record)
-                    self.generate_credit_note(record, log_refund)
-
-    def generate_sale_api_logs(self, json_invoices):
-        """"
-        Function to generate logs with all the ticket items coming from the Agora Data
-        There is a _cr_commit to save instantly the data generated from this function.
-        """
-        log_obj = self.env['sale.api']
-        log_line_obj = self.env['sale.api.line']
-        if json_invoices:
-            api_line_ids = []
-            business_date = datetime.strptime(json_invoices[0].get('BusinessDay'), '%Y-%m-%d').date()
-            log = log_obj.search([('data_date', '=', business_date), ('company_id', '=', self.company_id.id)])
-            if not log:
-                log = log_obj.create({'data_date': business_date, 'executed_by': self._uid,
-                                      'company_id': self.company_id.id})
-            for record in json_invoices:
-                existing_line = log_line_obj.search([('ticket_number', '=', record.get('Number')),
-                                                     ('ticket_serial', '=', record.get('Serie')),
-                                                     ('sale_api_id.company_id', '=', self.company_id.id)])
-                if not existing_line:
-                    json_record = json.dumps(record)
-                    line = log_line_obj.create({
-                        'order_data': json_record,
-                        'order_customer': record.get('Customer').get('FiscalName') if record.get('Customer') else 'Generic',
-                        'ticket_number': record.get('Number'),
-                        'ticket_serial': record.get('Serie'),
-                        'document_type': record.get('DocumentType')
-                    })
-                    api_line_ids.append(line)
-            log.api_line_ids = [(4, x.id) for x in api_line_ids]
-            self._cr.commit()
+            log_obj = self.env['sale.api']
+            log_line_obj = self.env['sale.api.line']
+            if json_invoices:
+                api_line_ids = []
+                log = log_obj.search([('data_date', '=', date), ('company_id', '=', self.company_id.id)])
+                if not log:
+                    log = log_obj.create({'data_date': date, 'executed_by': self._uid,
+                                          'company_id': self.company_id.id})
+                for record in json_invoices:
+                    existing_line = log_line_obj.search([('ticket_number', '=', record.get('Number')),
+                                                         ('ticket_serial', '=', record.get('Serie')),
+                                                         ('sale_api_id.company_id', '=', self.company_id.id)])
+                    if not existing_line:
+                        json_record = json.dumps(record)
+                        line = log_line_obj.create({
+                            'order_data': json_record,
+                            'data_date': date,
+                            'order_customer': record.get('Customer').get('FiscalName') if record.get('Customer') else 'Generic',
+                            'ticket_number': record.get('Number'),
+                            'ticket_serial': record.get('Serie'),
+                            'document_type': record.get('DocumentType')
+                        })
+                        api_line_ids.append(line)
+                log.api_line_ids = [(4, x.id) for x in api_line_ids]
+                self._cr.commit()
         return log
 
     @staticmethod
@@ -1013,10 +1053,11 @@ class APIConnection(models.Model):
             else:
                 picking.validation_counter += 1
 
-    def generate_credit_note(self, refund, log_refund):
+    def generate_credit_note(self, log_refund):
         """This function will generate a credit note in Odoo when a refund come from Agora.
             :param refund: Record of refund coming from Agora.
         """
+        refund = json.loads(log_refund.order_data)
         if self.sale_flow == 'payment':
             order = self.env['sale.order'].search([('number', '=', refund['RelatedInvoice'].get('Number')),
                                                    ('company_id', '=', self.company_id.id),
@@ -1048,7 +1089,10 @@ class APIConnection(models.Model):
                 self.paid_invoice(revert, refund)
                 order.picking_ids.write({'state': 'cancel'})
                 log_refund.update({'state': 'done'})
+                _logger.info("POSTED REFUND : {} - {}".format(order.number, order.name))
                 return True
+            elif not order:
+                log_refund.update({'state': 'pendent', 'message': 'Main order its not in the system', 'try_counter': log_refund.try_counter + 1})
 
     def get_related_log_line(self, data):
         log_line_obj = self.env['sale.api.line']
@@ -1070,11 +1114,12 @@ class APIConnection(models.Model):
                 total_tip += pay.get('tip')
         return total_tip
 
-    def _create_sale_order(self, record, log_line):
+    def _create_sale_order(self, log_line):
         """"
         Function to create Sale Order from Agora Data
         Return a List of dictionary with the following structure
         """
+        record = json.loads(log_line.order_data)
         work_place_env = self.env['work.place']
         so_line_env = self.env['sale.order.line']
         so_env = self.env['sale.order']
@@ -1219,8 +1264,10 @@ class APIConnection(models.Model):
         return product
 
     def get_partner(self, record):
-        partner = self.env['res.partner'].search([('name', 'like', 'Generic Client'),
+        partner = self.env['res.partner'].search([('is_generic', '=', True),
                                                   ('company_id', '=', self.company_id.id)])
+        if not partner:
+            partner = self.create_generic_partner()
         if record.get('Customer'):
             agora_id = record.get('Customer').get('Id')
             exist = self.env['res.partner'].search([('agora_id', '=', agora_id),
@@ -1240,6 +1287,14 @@ class APIConnection(models.Model):
                 })
             else:
                 partner = exist
+        return partner
+
+    def create_generic_partner(self):
+        partner = self.env['res.partner'].create({
+            'name': 'Generic Client {}'.format(self.name),
+            'company_id': self.company_id.id,
+            'is_generic': True
+        })
         return partner
 
     def _get_loss_products_from_agora(self, start_date, end_date):
@@ -1361,15 +1416,42 @@ class APIConnection(models.Model):
             if product_to_send:
                 self.post_products(product_to_send)
 
-    def _update_sales_from_agora(self, date=False):
+    def _process_sales_queue(self):
         """"
-        Action to get invoices from Agora
+            Function to process the logs queue related with standard/basic tickets.
+            Previously the log lines was created by _download_today_orders
+        """
+        conections = self.search([('state', '=', 'connect')])
+        for connec in conections:
+            connec.process_invoices()
+
+    def _process_refunds_queue(self):
+        """"
+            Function to process the queue for refunds.
+            Previously the log lines was created by _download_today_orders
+        """
+        conections = self.search([('state', '=', 'connect')])
+        for connec in conections:
+            connec.process_refunds()
+
+    def _download_previous_day_orders(self, date=False):
+        """"
+        Action to generate log lines in Queue from yesterday tickets
         """
         conections = self.search([('state', '=', 'connect')])
         if not date:
-            date = fields.Date.today()
+            yesterday = fields.Date.today() - timedelta(days=1)
         for connec in conections:
-            connec.get_invoices(date)
+            connec.generate_sale_api_logs(yesterday)
+
+    def _download_today_orders(self):
+        """"
+        Action to get previous day orders from Agora
+        Only generate log lines in Queue from yesterday tickets. There is other cron to process the lines
+        """
+        conections = self.search([('state', '=', 'connect')])
+        for connec in conections:
+            connec.generate_sale_api_logs(fields.Date.today())
 
     def download_by_date(self, date, company):
         """"
@@ -1378,7 +1460,8 @@ class APIConnection(models.Model):
         """
         conection = self.search([('state', '=', 'connect'), ('company_id', '=', company.id)], limit=1)
         if conection:
-            conection.get_invoices(date)
+            log = conection.generate_sale_api_logs(date)
+            conection.process_specific_queue(log.api_line_ids)
 
     def _update_loss_products(self):
         """"

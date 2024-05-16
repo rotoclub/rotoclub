@@ -37,15 +37,52 @@
             <field name="state">code</field>
         </record>
 
-        <!--Cron to update Invoices from Agora-->
-        <record id="ir_cron_update_invoices_in_odoo" model="ir.cron">
-            <field name="name">Update Odoo Invoices from Agora</field>
+        <!--Cron to process Refunds Queue from Agora-->
+        <record id="ir_cron_process_refunds_queue" model="ir.cron">
+            <field name="name">Process Refunds Queue</field>
             <field name="interval_number">1</field>
             <field name="interval_type">days</field>
             <field name="numbercall">-1</field>
             <field name="doall" eval="False"/>
             <field name="model_id" ref="model_api_connection"/>
-            <field name="code">model._update_sales_from_agora()</field>
+            <field name="code">model._process_refunds_queue()</field>
+            <field name="state">code</field>
+        </record>
+
+        <!--Cron to update Invoices from Agora-->
+        <record id="ir_cron_process_sales_queue" model="ir.cron">
+            <field name="name">Process Sales Queue</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model_id" ref="model_api_connection"/>
+            <field name="code">model._process_sales_queue()</field>
+            <field name="state">code</field>
+        </record>
+
+        <!--Cron to download Today's Agora orders-->
+        <record id="ir_cron_download_today_order" model="ir.cron">
+            <field name="name">Download Today's orders from Agora</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model_id" ref="model_api_connection"/>
+            <field name="code">model._download_today_orders()</field>
+            <field name="state">code</field>
+        </record>
+
+        <!--Cron to download Agora orders from the previous day-->
+        <!--To cover the margin of time not covered day by day-->
+        <record id="ir_cron_download_order_from_previous_day" model="ir.cron">
+            <field name="name">Download previous day orders from Agora</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model_id" ref="model_api_connection"/>
+            <field name="code">model._download_previous_day_orders()</field>
             <field name="state">code</field>
         </record>
 

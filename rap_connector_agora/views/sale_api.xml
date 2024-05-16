@@ -74,7 +74,7 @@
                     <field name="name"/>
                     <field name="data_date"/>
                     <field name="state" widget="badge" decoration-info="state == 'draft'"
-                           decoration-warning="state == 'fail'" decoration-success="state == 'done'"/>
+                           decoration-warning="state == 'fail'" decoration-success="state == 'done'" decoration-bf="state == 'pendent'"/>
                     <field name="executed_by"/>
                     <field name="company_id"/>
                 </tree>
