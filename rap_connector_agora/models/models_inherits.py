@@ -3,6 +3,9 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class ProductCategory(models.Model):
@@ -211,7 +214,9 @@ class AccountPayment(models.Model):
         res = super(AccountPayment, self)._get_valid_liquidity_accounts()
         center_account = self.env['sale.center.account'].search([('sale_center_id', '=', self.sale_center_id.id)], limit=1)
         if center_account:
+            _logger.info("Accounts append LIST: {} ------ {}".format(res, center_account.account_id.code))
             res = res + (center_account.account_id,)
+
         return res
 
 
