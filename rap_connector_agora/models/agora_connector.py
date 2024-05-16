@@ -767,13 +767,13 @@ class APIConnection(models.Model):
                 if sos:
                     sos[0].get('so').update({'has_error': True})
                 message = "Receive error while process order, Error is:  (%s)" % error
-                log.write({"state": "fail", "message": message, 'try_counter': log.count + 1})
+                log.write({"state": "fail", "message": message, 'try_counter': log.try_counter + 1})
         for refund in basic_refunds[0:100]:
             try:
                 self.generate_credit_note(refund)
             except Exception as error:
                 message = "Receive error while process order, Error is:  (%s)" % error
-                refund.write({"state": "fail", "message": message, 'try_counter': refund.count + 1})
+                refund.write({"state": "fail", "message": message, 'try_counter': refund.try_counter + 1})
 
     def process_invoices(self):
         """"
@@ -811,7 +811,7 @@ class APIConnection(models.Model):
                 self.generate_credit_note(refund)
             except Exception as error:
                 message = "Receive error while process order, Error is:  (%s)" % error
-                refund.write({"state": "fail", "message": message, 'try_counter': refund.count + 1})
+                refund.write({"state": "fail", "message": message, 'try_counter': refund.try_counter + 1})
 
     def generate_sale_api_logs(self, date):
         """"
