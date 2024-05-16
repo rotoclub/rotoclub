@@ -2,6 +2,7 @@
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
 
 from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 
 
 class SaleOrder(models.Model):
@@ -10,6 +11,9 @@ class SaleOrder(models.Model):
     tip_move_id = fields.Many2one(
         string='Tip Move',
         comodel_name='account.move'
+    )
+    has_error = fields.Boolean(
+        string='Has Error'
     )
 
     def action_tips_moves(self):
@@ -39,6 +43,8 @@ class SaleOrder(models.Model):
         journal_id = self.env['account.mapping'].search([('company_id', '=', self.company_id.id)], limit=1).tip_journal_id
         accounts = self.env['tips.config'].search([('company_id', '=', self.company_id.id),
                                                    ('sale_center_id', '=', self.sale_center_id.id)], limit=1)
+        if not journal_id or not accounts:
+            raise ValidationError(_("Verify the Journal and Account mapped for tips related with %s") % self.sale_center_id.name)
         lines_type = ['debit', 'credit']
         # prepare the value dictionary to create the movement
         vals = {
