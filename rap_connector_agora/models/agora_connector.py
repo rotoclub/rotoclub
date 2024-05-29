@@ -783,7 +783,7 @@ class APIConnection(models.Model):
         log_line_obj = self.env['sale.api.line']
         invoices_lines = log_line_obj.search([
             ('state', '!=', 'done'), ('try_counter', '<', 50), ('company_id', '=', self.company_id.id),
-            ('document_type', 'in', ['BasicInvoice', 'StandardInvoice'])], limit=10)
+            ('document_type', 'in', ['BasicInvoice', 'StandardInvoice'])], order='id desc', limit=30)
 
         for invoice in invoices_lines:
             sos = []
@@ -805,7 +805,7 @@ class APIConnection(models.Model):
         log_line_obj = self.env['sale.api.line']
         refund_lines = log_line_obj.search([('state', '!=', 'done'), ('try_counter', '<', 50),
                                             ('company_id', '=', self.company_id.id),
-                                            ('document_type', 'in', ['BasicRefund', 'StandardRefund'])])
+                                            ('document_type', 'in', ['BasicRefund', 'StandardRefund'])], order='id desc', limit=50)
         for refund in refund_lines:
             try:
                 self.generate_credit_note(refund)
@@ -920,6 +920,8 @@ class APIConnection(models.Model):
             invoice.invoice_line_ids.account_id = center_account.account_id
             counterpart = invoice.line_ids.filtered(lambda l: l.debit > 0)
             counterpart.account_id = center_account.counterpart_account_id
+        else:
+            raise ValidationError(_("Please verify the Sale Centers list it's updated"))
 
     def update_account_and_journal(self, invoice, doc_type):
         # Assign the journal depending the invoice type (Standard or basic)
@@ -1416,7 +1418,17 @@ class APIConnection(models.Model):
             if product_to_send:
                 self.post_products(product_to_send)
 
-    def _process_sales_queue(self):
+    def download_and_process_today_orders(self):
+        """"
+        Action to get invoices from Agora and then process the log
+        But just Today's orders
+        """
+        conections = self.search([('state', '=', 'connect')])
+        for connec in conections:
+            log = connec.generate_sale_api_logs(fields.Date.today())
+            connec.process_specific_queue(log.api_line_ids)
+
+    def _process_sales_logs_queue(self):
         """"
             Function to process the logs queue related with standard/basic tickets.
             Previously the log lines was created by _download_today_orders
@@ -1425,7 +1437,7 @@ class APIConnection(models.Model):
         for connec in conections:
             connec.process_invoices()
 
-    def _process_refunds_queue(self):
+    def _process_refunds_logs_queue(self):
         """"
             Function to process the queue for refunds.
             Previously the log lines was created by _download_today_orders
@@ -1446,7 +1458,7 @@ class APIConnection(models.Model):
 
     def _download_today_orders(self):
         """"
-        Action to get previous day orders from Agora
+        Action to today orders from Agora
         Only generate log lines in Queue from yesterday tickets. There is other cron to process the lines
         """
         conections = self.search([('state', '=', 'connect')])
