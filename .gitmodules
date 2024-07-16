@@ -26,3 +26,7 @@
 	path = OCA/bank-payment
 	url = https://github.com/OCA/bank-payment.git
 	branch = 15.0
+[submodule "OCA/web"]
+	path = OCA/web
+	url = https://github.com/OCA/web.git
+	branch = 15.0
