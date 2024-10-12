@@ -12,7 +12,7 @@ def migrate(cr, version):
     Migration to update some configs
     """
     env = api.Environment(cr, SUPERUSER_ID, {})
-     _logger.info("*****************entre en el post migration")
+    _logger.info("*****************entre en el post migration")
     update_price_include(env)
 
 
