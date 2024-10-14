@@ -8,10 +8,6 @@ from odoo.exceptions import UserError
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
-    def _check_tax_lock_date(self):
-        for line in self.filtered(lambda l: l.move_id.state == 'posted'):
-            move = line.move_id
-
     def _check_balanced(self):
         ''' Assert the move is fully balanced debit = credit.
         An error is raised if it's not the case.
@@ -39,13 +35,17 @@ class AccountMove(models.Model):
 
         query_res = self._cr.fetchall()
 
+
+class AccountMoveLine(models.Model):
+    _inherit = 'account.move.line'
+
     def _check_reconciliation(self):
-        for line in self:
-            if line.matched_debit_ids or line.matched_credit_ids:
-                raise UserError(_("Tatiana message.com"
-                                  "You can just change some non legal fields or you must unreconcile first.\n"
-                                  "Journal Entry (id): %s (%s)") % (line.move_id.name, line.move_id.id))
+        pass
 
     @api.ondelete(at_uninstall=False)
     def _unlink_except_posted(self):
         pass
+    
+    def _check_tax_lock_date(self):
+        for line in self.filtered(lambda l: l.move_id.state == 'posted'):
+            move = line.move_id
