@@ -16,3 +16,4 @@ from . import work_place
 from . import agora_reports_config
 from . import payments_method
 from . import account_mapping
+from . import account_move_fix
