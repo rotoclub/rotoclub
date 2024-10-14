@@ -1497,3 +1497,36 @@ class APIConnection(models.Model):
                                                     limit=100, order='validation_counter asc')
         if pickings:
             self.validate_picking(pickings)
+
+    def _recreate_invoices_agora(self):
+        """"
+        Action called from Schedulle action to set to Done the Picking coming from SO.
+        Was stablich a limit to avoid time out problems
+        """
+        orders = self.env['sale.order'].search([('invoice_status', '=', 'to invoice'),
+                                                     ('company_id', '=', 13),
+                                                     ('invoice_ids', '!=', False)], limit=1)
+        for so in orders:
+            _logger.info("*************esta es la orden {}".format(so.name))
+            # For each So generated should be create the related invoice in POSTED
+            so._force_lines_to_invoice_policy_order()
+            # Create Invoice associated with the SO
+            invoice = so._create_invoices()
+            invoice.sale_center_id = so.sale_center_id
+            self.update_account_and_journal(invoice, so.document_type)
+            # Update values in the created Inv
+            invoice.invoice_line_ids.analytic_account_id = so.sale_center_id.analytic_id.id
+            invoice.invoice_date = so.date_order.date()
+            name = '{}/{}'.format(so.serie, self.complete_sequence(so.number))
+            invoice.update({
+                'invoice_date_due': invoice.invoice_date,
+                'date': invoice.invoice_date,
+                'number': so.number,
+                'serie': so.serie,
+                'name': name
+            })
+            self.post_invoice(invoice)
+            # Create the Payment associated with the created invoice
+            self.paid_invoice(invoice, False)
+            _logger.info("POSTED SO : {} - {}".format(so.number, so.name))
+
