@@ -39,7 +39,12 @@ class AccountMove(models.Model):
         query_res = self._cr.fetchall()
 
     def _check_reconciliation(self):
-        pass
+        for line in self:
+            if line.matched_debit_ids or line.matched_credit_ids:
+                pass
+                # raise UserError(_("You cannot do this modification on a reconciled journal entry. "
+                #                   "You can just change some non legal fields or you must unreconcile first.\n"
+                #                   "Journal Entry (id): %s (%s)") % (line.move_id.name, line.move_id.id))
 
     @api.ondelete(at_uninstall=False)
     def _unlink_except_posted(self):
