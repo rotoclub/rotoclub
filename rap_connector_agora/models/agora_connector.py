@@ -1504,37 +1504,39 @@ class APIConnection(models.Model):
         Was stablich a limit to avoid time out problems
         """
         orders = self.env['sale.order'].search([('invoice_status', '=', 'to invoice'),
+                                                ('company_id', '=', 13),
                                                 ('invoice_ids', '=', False)], limit=500)
         for so in orders:
-            _logger.info("************* esta es la orden {}".format(so.name))
-            _logger.info("************* esta es el id {}".format(so.id))
+            if so.document_type in ['BasicInvoice', 'StandardInvoice']:
+                _logger.info("************* esta es la orden {}".format(so.name))
+                _logger.info("************* esta es el id {}".format(so.id))
 
-            related_data = self.env['sale.api.line'].search([('ticket_number', '=', so.number),
-                                                             ('sale_api_id.company_id', '=', so.company_id.id)])
-            order_data = json.loads(related_data.order_data)
-            # For each So generated should be create the related invoice in POSTED
-            so._force_lines_to_invoice_policy_order()
-            # Create Invoice associated with the SO
-            invoice = so._create_invoices()
-            invoice.sale_center_id = so.sale_center_id
-            self.update_account_and_journal_from_cron(invoice, so.document_type)
-            # Update values in the created Inv
-            invoice.invoice_line_ids.analytic_account_id = so.sale_center_id.analytic_id.id
-            invoice.invoice_date = so.date_order.date()
-            name = '{}/{}'.format(so.serie, self.complete_sequence(so.number))
-            invoice.update({
-                'invoice_date_due': invoice.invoice_date,
-                'date': invoice.invoice_date,
-                'number': so.number,
-                'serie': so.serie,
-                'name': name
-            })
-            self.post_invoice_from_cron(invoice)
-            # Create the Payment associated with the created invoice
-            self.paid_invoice_from_cron(invoice, order_data)
-            if so.tips_amount > 0:
-                so.generate_tip_account()
-            _logger.info("POSTED SO : {} - {}".format(so.number, so.name))
+                related_data = self.env['sale.api.line'].search([('ticket_number', '=', so.number),
+                                                                 ('sale_api_id.company_id', '=', so.company_id.id)], limit=1)
+                order_data = json.loads(related_data.order_data)
+                # For each So generated should be create the related invoice in POSTED
+                so._force_lines_to_invoice_policy_order()
+                # Create Invoice associated with the SO
+                invoice = so._create_invoices()
+                invoice.sale_center_id = so.sale_center_id
+                self.update_account_and_journal_from_cron(invoice, so.document_type)
+                # Update values in the created Inv
+                invoice.invoice_line_ids.analytic_account_id = so.sale_center_id.analytic_id.id
+                invoice.invoice_date = so.date_order.date()
+                name = '{}/{}'.format(so.serie, self.complete_sequence(so.number))
+                invoice.update({
+                    'invoice_date_due': invoice.invoice_date,
+                    'date': invoice.invoice_date,
+                    'number': so.number,
+                    'serie': so.serie,
+                    'name': name
+                })
+                self.post_invoice_from_cron(invoice)
+                # Create the Payment associated with the created invoice
+                self.paid_invoice_from_cron(invoice, order_data)
+                if so.tips_amount > 0:
+                    so.generate_tip_account()
+                _logger.info("POSTED SO : {} - {}".format(so.number, so.name))
 
     def update_account_and_journal_from_cron(self, invoice, doc_type):
         # Assign the journal depending the invoice type (Standard or basic)
