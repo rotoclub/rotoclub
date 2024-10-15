@@ -1504,29 +1504,126 @@ class APIConnection(models.Model):
         Was stablich a limit to avoid time out problems
         """
         orders = self.env['sale.order'].search([('invoice_status', '=', 'to invoice'),
-                                                     ('company_id', '=', 13),
-                                                     ('invoice_ids', '!=', False)], limit=1)
+                                                ('company_id', '=', 13),
+                                                ('invoice_ids', '=', False)], limit=100)
         for so in orders:
-            _logger.info("*************esta es la orden {}".format(so.name))
-            # For each So generated should be create the related invoice in POSTED
-            so._force_lines_to_invoice_policy_order()
-            # Create Invoice associated with the SO
-            invoice = so._create_invoices()
-            invoice.sale_center_id = so.sale_center_id
-            self.update_account_and_journal(invoice, so.document_type)
-            # Update values in the created Inv
-            invoice.invoice_line_ids.analytic_account_id = so.sale_center_id.analytic_id.id
-            invoice.invoice_date = so.date_order.date()
-            name = '{}/{}'.format(so.serie, self.complete_sequence(so.number))
-            invoice.update({
-                'invoice_date_due': invoice.invoice_date,
-                'date': invoice.invoice_date,
-                'number': so.number,
-                'serie': so.serie,
-                'name': name
-            })
-            self.post_invoice(invoice)
-            # Create the Payment associated with the created invoice
-            self.paid_invoice(invoice, False)
-            _logger.info("POSTED SO : {} - {}".format(so.number, so.name))
+            if so.document_type in ['BasicInvoice', 'StandardInvoice']:
+                _logger.info("************* esta es la orden {}".format(so.name))
+                _logger.info("************* esta es el id {}".format(so.id))
 
+                related_data = self.env['sale.api.line'].search([('ticket_number', '=', so.number),
+                                                                 ('sale_api_id.company_id', '=', so.company_id.id)], limit=1)
+                order_data = json.loads(related_data.order_data)
+                # For each So generated should be create the related invoice in POSTED
+                so._force_lines_to_invoice_policy_order()
+                # Create Invoice associated with the SO
+                invoice = so._create_invoices()
+                invoice.sale_center_id = so.sale_center_id
+                self.update_account_and_journal_from_cron(invoice, so.document_type)
+                # Update values in the created Inv
+                invoice.invoice_line_ids.analytic_account_id = so.sale_center_id.analytic_id.id
+                invoice.invoice_date = so.date_order.date()
+                name = '{}/{}'.format(so.serie, self.complete_sequence(so.number))
+                invoice.update({
+                    'invoice_date_due': invoice.invoice_date,
+                    'date': invoice.invoice_date,
+                    'number': so.number,
+                    'serie': so.serie,
+                    'name': name
+                })
+                self.post_invoice_from_cron(invoice)
+                # Create the Payment associated with the created invoice
+                self.paid_invoice_from_cron(invoice, order_data)
+                if so.tips_amount > 0:
+                    so.generate_tip_account()
+                _logger.info("POSTED SO : {} - {}".format(so.number, so.name))
+
+    def update_account_and_journal_from_cron(self, invoice, doc_type):
+        # Assign the journal depending the invoice type (Standard or basic)
+        invoice.document_type = doc_type
+        journal = self.get_custom_journal_from_cron(doc_type, invoice)
+        if journal:
+            invoice.update({'journal_id': journal.journal_id.id})
+        self.update_custom_mapping_accounts(invoice)
+
+    def get_custom_journal_from_cron(self, doc_type, invoice):
+        """"
+        Function to get the rigth journal in case its mapped in configuration.
+        Mapped is get it from Agora/Settings/Accounting config/Journal-Invoice
+        @Return the journal related with the document type coming in the Agora ticket
+        """
+        journal = False
+        if doc_type == 'BasicInvoice':
+            journal = self.env['invoice.type.journal'].search([('invoice_type', '=', 'basic'),
+                                                               ('company_id', '=', invoice.company_id.id)])
+        if doc_type == 'StandardInvoice':
+            journal = self.env['invoice.type.journal'].search([('invoice_type', '=', 'standard'),
+                                                               ('company_id', '=', invoice.company_id.id)])
+        return journal
+
+    def post_invoice_from_cron(self, invoices):
+        connection = self.env['api.connection'].search([('company_id', '=', invoices.company_id.id), ('state', '=', 'connect')])
+        if connection.sale_flow in ['invoice', 'payment']:
+            for inv in invoices:
+                # Post invoices
+                inv.action_post()
+
+    def paid_invoice_from_cron(self, invoices, order_data=False):
+        """
+         This method create the payment for invoice automatically
+        """
+        connection = self.env['api.connection'].search(
+            [('company_id', '=', invoices.company_id.id), ('state', '=', 'connect')])
+        account_payment_env = self.env['account.payment']
+        center_account = self.env['sale.center.account'].search([('sale_center_id', '=', invoices.sale_center_id.id)], limit=1)
+        if connection.sale_flow == 'payment':
+            for invoice in invoices:
+                if invoice.amount_residual:
+                    payments = self.prepare_payment_data(invoice, order_data)
+                    for payment in payments:
+                        payment_id = account_payment_env.create(payment)
+                        # Update the account in case a configuration exist
+                        if center_account:
+                            # Change the accounts in the payment lines before posted
+                            # Filter Counterpart lines
+                            if payment_id.payment_type == 'inbound':
+                                counterpart_account = payment_id.line_ids.filtered(lambda l: l.credit > 0)
+                                counterpart_account.account_id = center_account.counterpart_account_id
+                            elif payment_id.payment_type == 'outbound':
+                                account_id = payment_id.line_ids.filtered(lambda l: l.credit > 0)
+                                account_id.account_id = center_account.account_id
+                                counterpart_account = payment_id.line_ids.filtered(lambda l: l.credit == 0)
+                                counterpart_account.account_id = center_account.counterpart_account_id
+                        payment_id.action_post()
+                        self.reconcile_payment(payment_id, invoice)
+            return True
+
+    def prepare_payment_data_from_cron(self, invoice, order_data):
+        """
+        This method use to prepare a vals dictionary for payment
+        """
+        payment_list = []
+        date = invoice.date
+        mapping = self.env['account.mapping'].search([('company_id', '=', self.company_id.id)])
+        if self.is_date_from_invoice:
+            date = invoice.invoice_date
+        payments = self.get_payments_group_by_method(order_data)
+        for method in payments:
+            journal = invoice.analytic_group_id.journal_id
+            payment_type = 'inbound'
+            if method.get('qty') < 0:
+                payment_type = 'outbound'
+            payment_list.append({
+                'journal_id': journal.id,
+                'ref': invoice.ref,
+                'currency_id': invoice.currency_id.id,
+                'payment_type': payment_type,
+                'date': date,
+                'agora_payment_id': method.get('method').id,
+                'partner_id': invoice.commercial_partner_id.id,
+                'amount': abs(method.get('qty')),
+                'partner_type': 'customer',
+                'sale_center_id': invoice.sale_center_id.id,
+                'analytic_group_id': invoice.analytic_group_id.id
+            })
+        return payment_list
