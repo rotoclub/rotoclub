@@ -1505,7 +1505,7 @@ class APIConnection(models.Model):
         """
         orders = self.env['sale.order'].search([('invoice_status', '=', 'to invoice'),
                                                 ('company_id', '=', 13),
-                                                ('invoice_ids', '=', False)], limit=500)
+                                                ('invoice_ids', '=', False)], limit=100)
         for so in orders:
             if so.document_type in ['BasicInvoice', 'StandardInvoice']:
                 _logger.info("************* esta es la orden {}".format(so.name))
