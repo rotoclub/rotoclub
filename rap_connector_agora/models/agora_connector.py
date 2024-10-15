@@ -1504,8 +1504,7 @@ class APIConnection(models.Model):
         Was stablich a limit to avoid time out problems
         """
         orders = self.env['sale.order'].search([('invoice_status', '=', 'to invoice'),
-                                                ('company_id', '=', 13),
-                                                ('invoice_ids', '=', False)], limit=5)
+                                                ('invoice_ids', '=', False)], limit=500)
         for so in orders:
             _logger.info("************* esta es la orden {}".format(so.name))
             _logger.info("************* esta es el id {}".format(so.id))

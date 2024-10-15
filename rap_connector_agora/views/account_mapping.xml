@@ -34,7 +34,7 @@
                             <page string="Tips Setting">
                                 <group>
                                     <group>
-                                        <field name="tip_journal_id"/>
+                                        <field name="tip_journal_id" required="1"/>
                                     </group>
                                 </group>
                                 <field name="tips_config_ids">
