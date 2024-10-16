@@ -1,4 +1,4 @@
-### Hi there 👋 rebuild force
+### Hi there 👋 rebuild force rebuild after error
 
 <!--
 **rotoclub/rotoclub** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
