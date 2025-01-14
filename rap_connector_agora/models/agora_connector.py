@@ -11,7 +11,13 @@ from datetime import datetime, timedelta
 from itertools import groupby
 import json
 
-requests.packages.urllib3.util.connection.HAS_IPV6 = False
+try:
+    # Intenta el método antiguo
+    requests.packages.urllib3.util.connection.HAS_IPV6 = False
+except AttributeError:
+    # Si falla, usa el nuevo método
+    import urllib3
+    urllib3.util.connection.HAS_IPV6 = False
 
 
 _logger = logging.getLogger(__name__)
