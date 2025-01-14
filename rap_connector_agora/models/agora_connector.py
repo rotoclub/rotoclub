@@ -1479,7 +1479,8 @@ class APIConnection(models.Model):
         conection = self.search([('state', '=', 'connect'), ('company_id', '=', company.id)], limit=1)
         if conection:
             log = conection.generate_sale_api_logs(date)
-            conection.process_specific_queue(log.api_line_ids)
+            if log:
+                conection.process_specific_queue(log.api_line_ids)
 
     def _update_loss_products(self):
         """"
