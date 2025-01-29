@@ -11,7 +11,13 @@ from datetime import datetime, timedelta
 from itertools import groupby
 import json
 
-requests.packages.urllib3.util.connection.HAS_IPV6 = False
+try:
+    # Intenta el método antiguo
+    requests.packages.urllib3.util.connection.HAS_IPV6 = False
+except AttributeError:
+    # Si falla, usa el nuevo método
+    import urllib3
+    urllib3.util.connection.HAS_IPV6 = False
 
 
 _logger = logging.getLogger(__name__)
@@ -1473,7 +1479,8 @@ class APIConnection(models.Model):
         conection = self.search([('state', '=', 'connect'), ('company_id', '=', company.id)], limit=1)
         if conection:
             log = conection.generate_sale_api_logs(date)
-            conection.process_specific_queue(log.api_line_ids)
+            if log:
+                conection.process_specific_queue(log.api_line_ids)
 
     def _update_loss_products(self):
         """"
