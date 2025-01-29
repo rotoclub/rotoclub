@@ -1399,7 +1399,7 @@ class APIConnection(models.Model):
             record.get_master_products()
             _logger.info("***Finish a company connection**")
 
-    def ir_cron_delete_invoice_formentera(self):
+    def _delete_invoice_formentera(self):
         """"
         Main Function to make the call to all the functions need it to complete the sync
         """
