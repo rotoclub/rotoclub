@@ -1403,8 +1403,9 @@ class APIConnection(models.Model):
         """"
         Main Function to make the call to all the functions need it to complete the sync
         """
-        moves = self.env('account.move').search([('to_check', '=', True)], limit=200)
+        moves = self.env['account.move'].search([('to_check', '=', True)], limit=200)
         for rec in moves:
+            _logger.info("Delete Product ==> {}".format(rec.id))
             rec.unlink()
 
     def _update_masters_from_agora(self):
