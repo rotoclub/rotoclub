@@ -1399,6 +1399,14 @@ class APIConnection(models.Model):
             record.get_master_products()
             _logger.info("***Finish a company connection**")
 
+    def _delete_invoice_formentera(self):
+        """"
+        Main Function to make the call to all the functions need it to complete the sync
+        """
+        moves = self.env('account.move').search([('to_check', '=', True)], limit=200)
+        for rec in moves:
+            rec.unlink()
+
     def _update_masters_from_agora(self):
         """"
         Action to keep updated the Masters in Odoo
