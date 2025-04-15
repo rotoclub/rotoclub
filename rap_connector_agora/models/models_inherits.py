@@ -162,6 +162,13 @@ class AccountMove(models.Model):
         string='Sale Center',
         comodel_name='sale.center'
     )
+    work_place_id = fields.Many2one(
+        string='Work Place',
+        comodel_name='work.place'
+    )
+    business_date = fields.Date(
+        string='Business Day'
+    )
 
 
 class ResCompany(models.Model):

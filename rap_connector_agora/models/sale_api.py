@@ -110,7 +110,9 @@ class SaleApiLine(models.Model):
     _description = 'Sale Api lines'
 
     name = fields.Char(
-        string='name'
+        string='name',
+        compute='_compute_name',
+        store=True
     )
     state = fields.Selection(
         selection=[("draft", "Draft"),
@@ -125,6 +127,12 @@ class SaleApiLine(models.Model):
     sale_api_id = fields.Many2one(
         comodel_name='sale.api',
         string='Sale API'
+    )
+    sale_order_id = fields.Many2one(
+        comodel_name='sale.order',
+        string='Sale Order',
+        copy=False,
+        readonly=True
     )
     data_date = fields.Date(
         related='sale_api_id.data_date',
@@ -155,6 +163,11 @@ class SaleApiLine(models.Model):
         string='Count',
         default=0
     )
+
+    @api.depends('ticket_serial', 'ticket_number')
+    def _compute_name(self):
+        for rec in self:
+            rec.name = f"{rec.ticket_serial}-{rec.ticket_number}"
 
     def update_log_message(self, value):
         message = ''
