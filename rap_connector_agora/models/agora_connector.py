@@ -768,7 +768,8 @@ class APIConnection(models.Model):
             log_data = json.loads(log.order_data)
             try:
                 sos = self._create_sale_order(log)
-                self.generate_invoice(sos, log_data.get('DocumentType'))
+                if sos:
+                    self.generate_invoice(sos, log_data.get('DocumentType'))
             except Exception as error:
                 if sos:
                     sos[0].get('so').update({'has_error': True})
@@ -795,7 +796,8 @@ class APIConnection(models.Model):
             sos = []
             try:
                 sos = self._create_sale_order(invoice)
-                self.generate_invoice(sos, invoice.document_type)
+                if sos:
+                    self.generate_invoice(sos, invoice.document_type)
             except Exception as error:
                 if sos:
                     sos[0].get('so').update({'has_error': True})
@@ -892,7 +894,9 @@ class APIConnection(models.Model):
                         'date': invoice.invoice_date,
                         'number': so.number,
                         'serie': so.serie,
-                        'name': name
+                        'name': name,
+                        'business_date': so.business_date,
+                        'work_place_id': so.work_place_id.id
                     })
                     self.post_invoice(invoice)
                     # Create the Payment associated with the created invoice
@@ -1158,6 +1162,7 @@ class APIConnection(models.Model):
                         'partner_id': partner.id,
                         'company_id': self.company_id.id,
                         'number': record.get('Number'),
+                        'sale_api_line_id': log_line.id,
                         'tips_amount': card_tips,
                         'document_type': record.get('DocumentType'),
                         'waiter': record.get('User').get('Name') if record.get('User') else 'Generic Waiter',
@@ -1167,13 +1172,20 @@ class APIConnection(models.Model):
                     if record.get('Workplace'):
                         wp = work_place_env.search([('agora_id', '=', record['Workplace'].get('Id')),
                                                     ('company_id', '=', self.company_id.id)], limit=1)
+                        if not wp:
+                            log_line.update({'message': 'There is no Work place configured. ', 'state': 'draft'})
+                            return
                         so_data.update({'work_place_id': wp.id, 'warehouse_id': wp.analytic_group_id.warehouse_id.id})
                     if item.get('SaleCenter'):
                         sc = sale_center_env.search([('agora_id', '=', item['SaleCenter'].get('Id')),
                                                     ('company_id', '=', self.company_id.id)], limit=1)
-                        so_data.update({'sale_center_id': sc.id, 'analytic_account_id': sc.analytic_id.id})
+                        if not sc:
+                            log_line.update({'message': 'There is no Sale center configured. ', 'state': 'draft'})
+                            return
+                    so_data.update({'sale_center_id': sc.id, 'analytic_account_id': sc.analytic_id.id})
                     so = so_env.create(so_data)
                     if so:
+                        log_line.sale_order_id = so.id
                         generated_sos.append({'so': so, 'data': record})
                         global_discount = 0.0
                         if item['Discounts'].get('DiscountRate'):
@@ -1324,8 +1336,8 @@ class APIConnection(models.Model):
                 }
             }
             loss_products = self.post_request(self.url_server, '/custom-query', self.server_api_key, params)
-            if loss_products and loss_products.status_code and loss_products.status_code == 200:
-                products = loss_products.json()
+            if loss_products and loss_products[0].status_code and loss_products[0].status_code == 200:
+                products = loss_products[0].json()
                 for product in products:
                     exist = order_line_env.search([('agora_loss_id', '=', product.get('StockChangeId')),
                                                    ('product_id.product_tmpl_id.agora_id', '=', product.get('ProductId'))])

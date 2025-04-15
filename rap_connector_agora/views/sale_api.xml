@@ -51,6 +51,7 @@
                                 <field name="ticket_number" readonly="1"/>
                                 <field name="ticket_serial" readonly="1"/>
                                 <field name="document_type" readonly="1"/>
+                                <field name="sale_order_id" readonly="1"/>
                             </group>
                             <field name="message" readonly="1"/>
                             <field name="product_with_error" readonly="1"/>

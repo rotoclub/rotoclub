@@ -15,6 +15,12 @@ class SaleOrder(models.Model):
     has_error = fields.Boolean(
         string='Has Error'
     )
+    sale_api_line_id = fields.Many2one(
+        comodel_name='sale.api.line',
+        string='Sale Api Line',
+        ondelete='restrict',
+        tracking=1
+    )
 
     def action_tips_moves(self):
         """ Redirect the user move related with Tips.
@@ -81,6 +87,29 @@ class SaleOrder(models.Model):
         # validate the new move
         invoice_obj.action_post()
         self.tip_move_id = invoice_obj
+
+    @staticmethod
+    def complete_sequence(number):
+        length = 6
+        return str(number).zfill(length)
+
+    def _create_invoices(self, grouped=False, final=False, date=None):
+        res = super(SaleOrder, self)._create_invoices(grouped=False, final=False, date=None)
+        for rec in self:
+            name = '{}/{}'.format(rec.serie, self.complete_sequence(rec.number))
+            res.sale_center_id = rec.sale_center_id
+            res.invoice_line_ids.analytic_account_id = rec.sale_center_id.analytic_id.id
+            res.invoice_date = rec.date_order.date()
+            res.update({
+                'invoice_date_due': res.invoice_date,
+                'date': res.invoice_date,
+                'number': rec.number,
+                'serie': rec.serie,
+                'name': name,
+                'business_date': rec.business_date,
+                'work_place_id': rec.work_place_id.id
+            })
+        return res
 
 
 class SaleOrderLine(models.Model):
