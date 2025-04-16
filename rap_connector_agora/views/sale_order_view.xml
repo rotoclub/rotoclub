@@ -59,6 +59,7 @@
                 <field name="work_place_id" readonly="0" domain="[('company_id','=',company_id)]"/>
                 <field name="business_date" readonly="1"/>
                 <field name="sale_center_id" readonly="0"/>
+                <field name="sale_api_line_id" readonly="1"/>
             </xpath>
             <xpath expr="//field[@name='tag_ids']" position="after">
                 <field name="tips_amount" readonly="1"/>
