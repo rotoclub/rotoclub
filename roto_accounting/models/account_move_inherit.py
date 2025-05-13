@@ -13,6 +13,20 @@ class AccountMove(models.Model):
         compute='_compute_analytic_group',
         store=True
     )
+    partner_embargado = fields.Boolean(
+        string='Partner Embargado',
+        related='partner_id.es_embargado',
+        store=True
+    )
+    estado_embargo = fields.Char(
+        string='Estado Embargo',
+        compute='_compute_estado_embargo',
+    )
+
+    @api.depends('partner_embargado')
+    def _compute_estado_embargo(self):
+        for record in self:
+            record.estado_embargo = 'EMBARGADO' if record.partner_embargado else False
 
     @api.depends('invoice_line_ids', 'invoice_line_ids.analytic_account_id')
     def _compute_analytic_group(self):

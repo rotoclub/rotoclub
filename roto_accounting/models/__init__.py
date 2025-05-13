@@ -5,5 +5,4 @@ from . import analytic_group_inherit
 from . import purchase_inherit
 from . import account_move_inherit
 from . import account_asset_inherit
-
-
+from . import partner_inherit
