@@ -21,7 +21,6 @@ class AccountMove(models.Model):
     estado_embargo = fields.Char(
         string='Estado Embargo',
         compute='_compute_estado_embargo',
-        store=True
     )
 
     @api.depends('partner_embargado')
