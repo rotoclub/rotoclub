@@ -116,15 +116,6 @@
                 <xpath expr="//field[@name='ref']" position="after">
                     <field name="analytic_group_id"/>
                 </xpath>
-                 <xpath expr="//tree" position="attributes">
-                    <attribute name="decoration-warning">partner_embargado==True</attribute>
-                </xpath>
-                <xpath expr="//field[@name='partner_id']" position="after">
-                    <field name="partner_embargado" invisible="1"/>
-                    <field name="estado_embargo" widget="badge"
-                           decoration-danger="estado_embargo=='EMBARGADO'"
-                           decoration-warning="estado_embargo=='EMBARGADO'"/>
-                </xpath>
             </field>
         </record>
 
@@ -179,6 +170,15 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="after">
                     <field name="create_date"/>
+                </xpath>
+                 <xpath expr="//tree" position="attributes">
+                    <attribute name="decoration-warning">partner_embargado==True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="partner_embargado" invisible="1"/>
+                    <field name="estado_embargo" widget="badge"
+                           decoration-danger="estado_embargo=='EMBARGADO'"
+                           decoration-warning="estado_embargo=='EMBARGADO'"/>
                 </xpath>
             </field>
         </record>
