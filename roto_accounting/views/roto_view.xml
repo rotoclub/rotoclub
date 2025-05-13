@@ -89,6 +89,21 @@
             </field>
         </record>
 
+        <!-- Partner form inherit-->
+        <record id="form_res_partner_roto" model="ir.ui.view">
+            <field name="name">roto.res_partner.formr</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('mb24')]" position="after">
+                    <span class="o_form_label o_td_label" name="embargo">
+                        <b>Embargado   </b>
+                        <field name="es_embargado" widget="boolean_toggle"/>
+                    </span>
+                </xpath>
+            </field>
+        </record>
+
         <!-- Account Move Tree inherit-->
         <record id="view_in_invoice_bill_tree_roto_inherit" model="ir.ui.view">
             <field name="name">account.out.invoice.bill.tree.roto</field>
@@ -97,6 +112,15 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='ref']" position="after">
                     <field name="analytic_group_id"/>
+                </xpath>
+                 <xpath expr="//tree" position="attributes">
+                    <attribute name="decoration-warning">partner_embargado==True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="partner_embargado" invisible="1"/>
+                    <field name="estado_embargo" widget="badge"
+                           decoration-danger="estado_embargo=='EMBARGADO'"
+                           decoration-warning="estado_embargo=='EMBARGADO'"/>
                 </xpath>
             </field>
         </record>

@@ -9,7 +9,7 @@
     'category': 'Accounting/Accounting',
     'license': 'LGPL-3',
 
-    'version': '15.0.1.0.9',
+    'version': '15.0.1.0.10',
 
     'depends': [
         'base',
