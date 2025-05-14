@@ -93,13 +93,31 @@ class SaleOrder(models.Model):
         length = 6
         return str(number).zfill(length)
 
-    def _create_invoices(self, grouped=False, final=False, date=None):
+    def update_custom_mapping_accounts(self, invoice):
+        """"
+        Function to get the rigth journal in case its mapped in configuration.
+        Mapped is get it from Agora/Settings/Accounting config/Sale Center-Accounts
+        @Return the Accounts related with the Sale Center coming from Agora ticket
+        """
+        center_account = self.env['sale.center.account'].search([('sale_center_id', '=', invoice.sale_center_id.id)], limit=1)
+        if center_account:
+            invoice.invoice_line_ids.account_id = center_account.account_id
+            counterpart = invoice.line_ids.filtered(lambda l: l.debit > 0)
+            counterpart.account_id = center_account.counterpart_account_id
+        else:
+            raise ValidationError(_("Please verify the Sale Centers list it's updated"))
+
+    def _create_invoices(self, grouped=False, final=False, date=None, journal=False):
         res = super(SaleOrder, self)._create_invoices(grouped=False, final=False, date=None)
         for rec in self:
             name = '{}/{}'.format(rec.serie, self.complete_sequence(rec.number))
             res.sale_center_id = rec.sale_center_id
             res.invoice_line_ids.analytic_account_id = rec.sale_center_id.analytic_id.id
             res.invoice_date = rec.date_order.date()
+            res.update({
+                'journal_id': journal
+            })
+            self.update_custom_mapping_accounts(res)
             res.update({
                 'invoice_date_due': res.invoice_date,
                 'date': res.invoice_date,
