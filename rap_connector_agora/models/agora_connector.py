@@ -881,9 +881,10 @@ class APIConnection(models.Model):
                     # For each So generated should be create the related invoice in POSTED
                     so._force_lines_to_invoice_policy_order()
                     # Create Invoice associated with the SO
-                    invoice = so._create_invoices()
+                    journal = self.update_account_and_journal(doc_type)
+                    invoice = so._create_invoices(journal=journal)
                     invoice.sale_center_id = so.sale_center_id
-                    self.update_account_and_journal(invoice, doc_type)
+                    # self.update_account_and_journal(invoice, doc_type)
                     invoices.append(invoice)
                     # Update values in the created Inv
                     invoice.invoice_line_ids.analytic_account_id = so.sale_center_id.analytic_id.id
@@ -919,27 +920,35 @@ class APIConnection(models.Model):
                                                                ('company_id', '=', self.company_id.id)])
         return journal
 
-    def update_custom_mapping_accounts(self, invoice):
-        """"
-        Function to get the rigth journal in case its mapped in configuration.
-        Mapped is get it from Agora/Settings/Accounting config/Sale Center-Accounts
-        @Return the Accounts related with the Sale Center coming from Agora ticket
-        """
-        center_account = self.env['sale.center.account'].search([('sale_center_id', '=', invoice.sale_center_id.id)], limit=1)
-        if center_account:
-            invoice.invoice_line_ids.account_id = center_account.account_id
-            counterpart = invoice.line_ids.filtered(lambda l: l.debit > 0)
-            counterpart.account_id = center_account.counterpart_account_id
-        else:
-            raise ValidationError(_("Please verify the Sale Centers list it's updated"))
+    # def update_custom_mapping_accounts(self, invoice):
+    #     """"
+    #     Function to get the rigth journal in case its mapped in configuration.
+    #     Mapped is get it from Agora/Settings/Accounting config/Sale Center-Accounts
+    #     @Return the Accounts related with the Sale Center coming from Agora ticket
+    #     """
+    #     center_account = self.env['sale.center.account'].search([('sale_center_id', '=', invoice.sale_center_id.id)], limit=1)
+    #     if center_account:
+    #         invoice.invoice_line_ids.account_id = center_account.account_id
+    #         counterpart = invoice.line_ids.filtered(lambda l: l.debit > 0)
+    #         counterpart.account_id = center_account.counterpart_account_id
+    #     else:
+    #         raise ValidationError(_("Please verify the Sale Centers list it's updated"))
 
-    def update_account_and_journal(self, invoice, doc_type):
+    def update_account_and_journal(self, doc_type):
         # Assign the journal depending the invoice type (Standard or basic)
-        invoice.document_type = doc_type
         journal = self.get_custom_journal(doc_type)
         if journal:
-            invoice.update({'journal_id': journal.journal_id.id})
-        self.update_custom_mapping_accounts(invoice)
+            return journal.journal_id.id
+        else:
+            return False
+
+    # def update_account_and_journal(self, invoice, doc_type):
+    #     # Assign the journal depending the invoice type (Standard or basic)
+    #     invoice.document_type = doc_type
+    #     journal = self.get_custom_journal(doc_type)
+    #     if journal:
+    #         invoice.update({'journal_id': journal.journal_id.id})
+    #     self.update_custom_mapping_accounts(invoice)
 
     def post_invoice(self, invoices):
         if self.sale_flow in ['invoice', 'payment']:
@@ -1335,19 +1344,21 @@ class APIConnection(models.Model):
                     'to': end_date.isoformat()
                 }
             }
+
             loss_products = self.post_request(self.url_server, '/custom-query', self.server_api_key, params)
             if loss_products and loss_products[0].status_code and loss_products[0].status_code == 200:
                 products = loss_products[0].json()
-                for product in products:
-                    exist = order_line_env.search([('agora_loss_id', '=', product.get('StockChangeId')),
-                                                   ('product_id.product_tmpl_id.agora_id', '=', product.get('ProductId'))])
-                    if not exist:
-                        prod_data = {
-                            'agora_loss_id': product.get('StockChangeId'),
-                            'quantity': product.get('Quantity'),
-                            'product_agora_id': product.get('ProductId')
-                        }
-                        loss_dict.append(prod_data)
+                if products:
+                    for product in products:
+                        exist = order_line_env.search([('agora_loss_id', '=', product.get('StockChangeId')),
+                                                       ('product_id.product_tmpl_id.agora_id', '=', product.get('ProductId'))])
+                        if not exist:
+                            prod_data = {
+                                'agora_loss_id': product.get('StockChangeId'),
+                                'quantity': product.get('Quantity'),
+                                'product_agora_id': product.get('ProductId')
+                            }
+                            loss_dict.append(prod_data)
         return loss_dict
 
     def _create_so_for_loss_products(self, loss_products, date):
