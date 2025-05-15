@@ -101,8 +101,9 @@ class SaleOrder(models.Model):
         """
         center_account = self.env['sale.center.account'].search([('sale_center_id', '=', invoice.sale_center_id.id)], limit=1)
         if center_account:
-            invoice.invoice_line_ids.account_id = center_account.account_id
             counterpart = invoice.line_ids.filtered(lambda l: l.debit > 0)
+            invoice_lines = invoice.line_ids.filtered(lambda l: l.credit > 0)
+            invoice_lines.account_id = center_account.account_id
             counterpart.account_id = center_account.counterpart_account_id
         else:
             raise ValidationError(_("Please verify the Sale Centers list it's updated"))
