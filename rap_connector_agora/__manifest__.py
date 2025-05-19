@@ -20,7 +20,8 @@
         'account',
         'account_accountant',
         'analytic',
-        'web_tree_header_buttons_always_visible'
+        'web_tree_header_buttons_always_visible',
+        'account_batch_payment'
     ],
     'data': [
         'security/groups.xml',
@@ -33,6 +34,7 @@
         'views/sale_order_agora.xml',
         'wizards/order_download_date.xml',
         'wizards/import_data_manually.xml',
+        'wizards/batch_payment_wizard.xml',
         'views/sale_order_view.xml',
         'views/views_inherits.xml',
         'views/sale_center.xml',
@@ -43,6 +45,8 @@
         'views/agora_reports_config.xml',
         'views/sale_api.xml',
         'views/account_mapping.xml',
+        'views/payments_method_views.xml',
+        'views/account_batch_payment_views.xml'
         'views/menus.xml'
     ],
     'post_init_hook': 'create_data',
