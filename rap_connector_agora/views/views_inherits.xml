@@ -112,9 +112,9 @@
                     <field name="document_type"/>
                 </xpath>
                 <xpath expr="//field[@name='ref']" position="after">
-                    <field name="business_date"/>
-                    <field name="sale_center_id"/>
-                    <field name="work_place_id"/>
+                    <field name="business_date" attrs="{'invisible': [('move_type', 'in', ['in_invoice','in_refund'])]}"/>
+                    <field name="sale_center_id" attrs="{'invisible': [('move_type', 'in', ['in_invoice','in_refund'])]}"/>
+                    <field name="work_place_id" attrs="{'invisible': [('move_type', 'in', ['in_invoice','in_refund'])]}"/>
                 </xpath>
             </field>
         </record>
