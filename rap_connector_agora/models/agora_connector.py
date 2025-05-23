@@ -1079,7 +1079,7 @@ class APIConnection(models.Model):
             :param refund: Record of refund coming from Agora.
         """
         refund = json.loads(log_refund.order_data)
-        if self.sale_flow == 'payment':
+        if self.sale_flow in ['payment', 'invoice']:
             order = self.env['sale.order'].search([('number', '=', refund['RelatedInvoice'].get('Number')),
                                                    ('company_id', '=', self.company_id.id),
                                                    ('serie', '=', refund['RelatedInvoice'].get('Serie'))], limit=1)
