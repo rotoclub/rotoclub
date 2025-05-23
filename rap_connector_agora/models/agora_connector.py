@@ -1038,7 +1038,8 @@ class APIConnection(models.Model):
                 'amount': abs(method.get('qty')),
                 'partner_type': 'customer',
                 'sale_center_id': invoice.sale_center_id.id,
-                'analytic_group_id': invoice.analytic_group_id.id
+                'analytic_group_id': invoice.analytic_group_id.id,
+                'business_date': invoice.business_date
             })
         return payment_list
 
@@ -1464,7 +1465,8 @@ class APIConnection(models.Model):
         conections = self.search([('state', '=', 'connect')])
         for connec in conections:
             log = connec.generate_sale_api_logs(fields.Date.today())
-            connec.process_specific_queue(log.api_line_ids)
+            if log:
+                connec.process_specific_queue(log.api_line_ids)
 
     def _process_sales_logs_queue(self):
         """"
@@ -1663,6 +1665,7 @@ class APIConnection(models.Model):
                 'amount': abs(method.get('qty')),
                 'partner_type': 'customer',
                 'sale_center_id': invoice.sale_center_id.id,
-                'analytic_group_id': invoice.analytic_group_id.id
+                'analytic_group_id': invoice.analytic_group_id.id,
+                'business_date': invoice.business_date
             })
         return payment_list
