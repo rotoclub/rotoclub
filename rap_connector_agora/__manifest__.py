@@ -46,7 +46,7 @@
         'views/sale_api.xml',
         'views/account_mapping.xml',
         'views/payments_method_views.xml',
-        'views/account_batch_payment_views.xml'
+        'views/account_batch_payment_views.xml',
         'views/menus.xml'
     ],
     'post_init_hook': 'create_data',
