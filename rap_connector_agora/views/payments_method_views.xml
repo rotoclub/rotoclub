@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <!-- Agora Payment Method Form View-->
+        <record id="agora_payment_method_form_view" model="ir.ui.view">
+            <field name="name">agora.payment.method.form.view</field>
+            <field name="model">agora.payment.method</field>
+            <field name="arch" type="xml">
+                <form string="Agora Payment Method">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="description"/>
+                                <field name="code"/>
+                                <field name="company_id"/>
+                                <field name="allow_batch_payment"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Agora Payment Method Tree View-->
+        <record id="agora_payment_method_tree_view" model="ir.ui.view">
+            <field name="name">agora.payment.method.tree.view</field>
+            <field name="model">agora.payment.method</field>
+            <field name="arch" type="xml">
+                <tree string="Agora Payment Method" create="0" delete="0" duplicate="0">
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="code"/>
+                    <field name="company_id"/>
+                    <field name="allow_batch_payment" optional="hide"/>
+                </tree>
+            </field>
+        </record>
+
+        <!--Action for Agora Payment Method Model-->
+        <record id="agora_payment_method_action" model="ir.actions.act_window">
+            <field name="name">Agora Payment Method</field>
+            <field name="res_model">agora.payment.method</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

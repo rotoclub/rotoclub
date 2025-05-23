@@ -85,6 +85,7 @@
                 <xpath expr="//field[@name='journal_id']" position="after">
                     <field name="agora_payment_id"/>
                     <field name="sale_center_id"/>
+                    <field name="business_date"/>
                 </xpath>
             </field>
         </record>
@@ -98,6 +99,26 @@
                 <xpath expr="//field[@name='name']" position="after">
                     <field name="agora_payment_id"/>
                     <field name="sale_center_id"/>
+                    <field name="business_date" optional="hide"/>
+                </xpath>
+                <xpath expr="//header" position="inside">
+                    <button name="%(rap_connector_agora.batch_payment_by_date_action)d"
+                            string="Create batch payment"
+                            type="action"
+                            attrs="{'always_visible': True}"
+                            class="btn-secondary"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit Account Payment search to add a filter-->
+        <record id="view_account_payment_agora_search" model="ir.ui.view">
+            <field name="name">view.account.payment.agora.search</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='groupby_date']" position="after">
+                    <filter string="Business Date" name="groupby_business_date" domain="[]" context="{'group_by': 'business_date'}"/>
                 </xpath>
             </field>
         </record>

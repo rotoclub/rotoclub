@@ -21,3 +21,6 @@ class AgoraPaymentMethod(models.Model):
         string='Company',
         comodel_name='res.company'
     )
+    allow_batch_payment = fields.Boolean(
+        string='Allow batch payment'
+    )
