@@ -4,3 +4,4 @@
 
 from . import order_download_date
 from . import import_manually_data
+from . import batch_payment_wizard
