@@ -1302,10 +1302,10 @@ class APIConnection(models.Model):
             agora_id = record.get('Customer').get('Id')
             exist = self.env['res.partner'].search([('agora_id', '=', agora_id),
                                                     ('company_id', '=', self.company_id.id)], limit=1)
-            if not exist and record.get('Customer'):
+            if not exist:
                 customer = record.get('Customer')
                 # Create new partner
-                self.env['res.partner'].create({
+                partner = self.env['res.partner'].create({
                     'name': customer.get('FiscalName'),
                     'company_type': 'person',
                     'agora_id': customer.get('Id'),
