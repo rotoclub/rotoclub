@@ -1089,8 +1089,7 @@ class APIConnection(models.Model):
                                                           ('company_id', '=', self.company_id.id),
                                                           ('serie', '=', refund.get('Serie'))], limit=1)
             if order and not refund_inv:
-                moves2revert = order.invoice_ids.filtered(lambda m: m.move_type == 'out_invoice' and m.payment_state in ['paid',
-                                                                                                                     'in_payment'])
+                moves2revert = order.invoice_ids.filtered(lambda m: m.move_type == 'out_invoice' and m.state in ['posted'])
                 default_values_list = []
                 for move in moves2revert:
                     serie = refund.get('Serie').replace('0', '00')
@@ -1110,8 +1109,9 @@ class APIConnection(models.Model):
                 revert.action_post()
                 self.paid_invoice(revert, refund)
                 order.picking_ids.write({'state': 'cancel'})
-                log_refund.update({'state': 'done'})
-                _logger.info("POSTED REFUND : {} - {}".format(order.number, order.name))
+                if revert:
+                    log_refund.update({'state': 'done'})
+                    _logger.info("POSTED REFUND : {} - {}".format(order.number, order.name))
                 return True
             elif not order:
                 log_refund.update({'state': 'pendent', 'message': 'Main order its not in the system', 'try_counter': log_refund.try_counter + 1})
