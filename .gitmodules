@@ -30,3 +30,7 @@
 	path = OCA/web
 	url = https://github.com/OCA/web.git
 	branch = 15.0
+[submodule "OCA/mis-builder"]
+	path = OCA/mis-builder
+	url = https://github.com/OCA/mis-builder.git
+	branch = 15.0
