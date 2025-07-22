@@ -881,10 +881,11 @@ class APIConnection(models.Model):
                     # For each So generated should be create the related invoice in POSTED
                     so._force_lines_to_invoice_policy_order()
                     # Create Invoice associated with the SO
-                    journal = self.update_account_and_journal(doc_type)
-                    invoice = so._create_invoices(journal=journal)
+                    invoice = so._create_invoices()
                     invoice.sale_center_id = so.sale_center_id
-                    # self.update_account_and_journal(invoice, doc_type)
+                    journal = self.update_account_and_journal(doc_type)
+                    if journal:
+                        invoice.journal_id = journal
                     invoices.append(invoice)
                     # Update values in the created Inv
                     invoice.invoice_line_ids.analytic_account_id = so.sale_center_id.analytic_id.id
