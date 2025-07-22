@@ -88,10 +88,10 @@ class SaleOrder(models.Model):
         invoice_obj.action_post()
         self.tip_move_id = invoice_obj
 
-    @staticmethod
-    def complete_sequence(number):
-        length = 6
-        return str(number).zfill(length)
+    # @staticmethod
+    # def complete_sequence(number):
+    #     length = 6
+    #     return str(number).zfill(length)
 
     def update_custom_mapping_accounts(self, invoice):
         """"
@@ -111,7 +111,10 @@ class SaleOrder(models.Model):
     def _create_invoices(self, grouped=False, final=False, date=None):
         res = super(SaleOrder, self)._create_invoices(grouped=False, final=False, date=None)
         for rec in self:
-            name = '{}/{}'.format(rec.serie, self.complete_sequence(rec.number))
+            # TODO almacenar en la sale.order el tipo de factura para poder buscar el diario desde aquí y actualizarlo
+            # TODO de esta forma se podría quitar el código que actualiza estos campos en la función generate_invoice
+            # TODO por eso he comentado el update del campo 'name'
+            # name = '{}/{}'.format(rec.serie, self.complete_sequence(rec.number))
             res.sale_center_id = rec.sale_center_id
             res.invoice_line_ids.analytic_account_id = rec.sale_center_id.analytic_id.id
             res.invoice_date = rec.date_order.date()
@@ -121,7 +124,7 @@ class SaleOrder(models.Model):
                 'date': res.invoice_date,
                 'number': rec.number,
                 'serie': rec.serie,
-                'name': name,
+                # 'name': name,
                 'business_date': rec.business_date,
                 'work_place_id': rec.work_place_id.id
             })
