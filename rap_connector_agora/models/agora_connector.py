@@ -1114,6 +1114,17 @@ class APIConnection(models.Model):
                 total_tip += pay.get('tip')
         return total_tip
 
+    def get_discount_tax(self, record):
+        """"
+        Function to obtain the tax to be applied to the discount line.
+        If no tax is included in the total, it is deducted from the first line of the invoice.
+        """
+        if record.get('Totals').get('Taxes'):
+            tax = record.get('Totals').get('Taxes')[0].get('VatRate') * 100
+        else:
+            tax = record.get('InvoiceItems')[0].get('Lines')[0].get('VatRate') * 100
+        return tax
+
     def _create_sale_order(self, log_line):
         """"
         Function to create Sale Order from Agora Data
@@ -1129,7 +1140,7 @@ class APIConnection(models.Model):
         generated_sos = []
         log_line.message = ''
         serie = record.get('Serie').replace('0', '00') if record.get('Serie').count('0') == 1 else record.get('Serie')
-        tax = record.get('Totals').get('Taxes')[0].get('VatRate') * 100
+        tax = self.get_discount_tax(record)
         for item in record.get('InvoiceItems'):
             exist_so = so_env.search([('number', '=', record.get('Number')),
                                       ('serie', '=', serie),
