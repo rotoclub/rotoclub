@@ -1151,6 +1151,7 @@ class APIConnection(models.Model):
         generated_sos = []
         log_line.message = ''
         serie = record.get('Serie').replace('0', '00') if record.get('Serie').count('0') == 1 else record.get('Serie')
+        tax = record.get('Totals').get('Taxes')[0].get('VatRate') * 100
         for item in record.get('InvoiceItems'):
             exist_so = so_env.search([('number', '=', record.get('Number')),
                                       ('serie', '=', serie),
@@ -1216,7 +1217,7 @@ class APIConnection(models.Model):
                                         so_line_env.create(add_data)
                         if item['Discounts'].get('CashDiscount'):
                             amount = item['Discounts'].get('CashDiscount')
-                            discount_line = self.get_discount_line(so, amount)
+                            discount_line = self.get_discount_line(so, amount, tax)
                             so_line_env.create(discount_line)
                         if not so.is_incomplete:
                             so.action_confirm()
@@ -1229,14 +1230,16 @@ class APIConnection(models.Model):
                             so.generate_tip_account()
         return generated_sos
 
-    def get_discount_line(self, so, amount):
+    def get_discount_line(self, so, amount, tax):
+        tax_env = self.env['agora.tax']
         discount_prod = self.env['product.product'].search([('product_tmpl_id.is_product_discount', '=', True),
                                                             ('company_id', '=', so.company_id.id)], limit=1)
+        taxes = tax_env.search([('account_tax_id.amount', '=', tax), ('company_id', '=', self.company_id.id)])
         line_data = {
             'name': discount_prod.product_tmpl_id.name,
             'product_id': discount_prod.id,
             'order_id': so.id,
-            'tax_id': [(6, 0, [])],
+            'tax_id': [(6, 0, taxes.account_tax_id.ids)],
             'price_unit': abs(amount) * -1,
             'product_uom': discount_prod.product_tmpl_id.uom_id.id,
             'company_id': self.company_id.id,
