@@ -1095,12 +1095,13 @@ class APIConnection(models.Model):
                     name = '{}/{}'.format(serie, self.complete_sequence(refund.get('Number')))
                     default_values_list.append({
                         'ref': _('Reversal of: {}'.format(move.name)),
-                        'date': move.date,
+                        'date': datetime.strptime(refund.get('BusinessDay'), '%Y-%m-%d'),
+                        'partner_id': self.get_partner(refund).id if refund.get('Customer') else move.partner_id.id,
                         'name': name,
                         'number': refund.get('Number'),
                         'document_type': refund.get('DocumentType'),
                         'serie': refund.get('Serie'),
-                        'invoice_date': move.is_invoice(include_receipts=True) and move.date,
+                        'invoice_date': datetime.strptime(refund.get('BusinessDay'), '%Y-%m-%d'),
                         'journal_id': move.journal_id.id,
                         'invoice_payment_term_id': None
                     })
