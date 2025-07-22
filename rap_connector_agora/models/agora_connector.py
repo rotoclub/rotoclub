@@ -1224,7 +1224,7 @@ class APIConnection(models.Model):
                             so.picking_ids.sale_id = so.id
                             self.validate_picking(so.picking_ids)
                             log_line.update({'state': 'done'})
-                        so.date_order = parser.parse(record.get('Date'))
+                        so.date_order = datetime.strptime(record.get('BusinessDay'), '%Y-%m-%d')
                         so.effective_date = so.expected_date
                         if so.tips_amount > 0:
                             so.generate_tip_account()
@@ -1305,7 +1305,7 @@ class APIConnection(models.Model):
             agora_id = record.get('Customer').get('Id')
             exist = self.env['res.partner'].search([('agora_id', '=', agora_id),
                                                     ('company_id', '=', self.company_id.id)], limit=1)
-            if not exist:
+            if not exist and record.get('Customer'):
                 customer = record.get('Customer')
                 # Create new partner
                 partner = self.env['res.partner'].create({
