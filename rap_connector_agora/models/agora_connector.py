@@ -976,8 +976,6 @@ class APIConnection(models.Model):
                                 counterpart_account = payment_id.line_ids.filtered(lambda l: l.credit > 0)
                                 counterpart_account.account_id = center_account.counterpart_account_id
                             elif payment_id.payment_type == 'outbound':
-                                account_id = payment_id.line_ids.filtered(lambda l: l.credit > 0)
-                                account_id.account_id = center_account.account_id
                                 counterpart_account = payment_id.line_ids.filtered(lambda l: l.credit == 0)
                                 counterpart_account.account_id = center_account.counterpart_account_id
                         payment_id.action_post()
