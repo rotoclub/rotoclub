@@ -88,10 +88,10 @@ class SaleOrder(models.Model):
         invoice_obj.action_post()
         self.tip_move_id = invoice_obj
 
-    @staticmethod
-    def complete_sequence(number):
-        length = 6
-        return str(number).zfill(length)
+    # @staticmethod
+    # def complete_sequence(number):
+    #     length = 6
+    #     return str(number).zfill(length)
 
     def update_custom_mapping_accounts(self, invoice):
         """"
@@ -101,30 +101,30 @@ class SaleOrder(models.Model):
         """
         center_account = self.env['sale.center.account'].search([('sale_center_id', '=', invoice.sale_center_id.id)], limit=1)
         if center_account:
-            counterpart = invoice.line_ids.filtered(lambda l: l.debit > 0)
-            invoice_lines = invoice.line_ids.filtered(lambda l: l.credit > 0)
+            counterpart = invoice.line_ids.filtered(lambda l: l.account_id.user_type_id.internal_group == 'asset')
+            invoice_lines = invoice.line_ids.filtered(lambda l: l.account_id.user_type_id.internal_group == 'income')
             invoice_lines.account_id = center_account.account_id
             counterpart.account_id = center_account.counterpart_account_id
         else:
             raise ValidationError(_("Please verify the Sale Centers list it's updated"))
 
-    def _create_invoices(self, grouped=False, final=False, date=None, journal=False):
+    def _create_invoices(self, grouped=False, final=False, date=None):
         res = super(SaleOrder, self)._create_invoices(grouped=False, final=False, date=None)
         for rec in self:
-            name = '{}/{}'.format(rec.serie, self.complete_sequence(rec.number))
+            # TODO almacenar en la sale.order el tipo de factura para poder buscar el diario desde aquí y actualizarlo
+            # TODO de esta forma se podría quitar el código que actualiza estos campos en la función generate_invoice
+            # TODO por eso he comentado el update del campo 'name'
+            # name = '{}/{}'.format(rec.serie, self.complete_sequence(rec.number))
             res.sale_center_id = rec.sale_center_id
             res.invoice_line_ids.analytic_account_id = rec.sale_center_id.analytic_id.id
             res.invoice_date = rec.date_order.date()
-            res.update({
-                'journal_id': journal
-            })
             self.update_custom_mapping_accounts(res)
             res.update({
                 'invoice_date_due': res.invoice_date,
                 'date': res.invoice_date,
                 'number': rec.number,
                 'serie': rec.serie,
-                'name': name,
+                # 'name': name,
                 'business_date': rec.business_date,
                 'work_place_id': rec.work_place_id.id
             })
