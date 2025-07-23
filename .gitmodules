@@ -34,3 +34,7 @@
 	path = OCA/mis-builder
 	url = https://github.com/OCA/mis-builder.git
 	branch = 15.0
+[submodule "OCA/sale-workflow"]
+	path = OCA/sale-workflow
+	url = https://github.com/OCA/sale-workflow.git
+	branch = 16.0
