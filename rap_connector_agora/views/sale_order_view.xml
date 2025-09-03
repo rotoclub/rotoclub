@@ -76,6 +76,9 @@
                 <xpath expr="//field[@name='name']" position="before">
                     <field name="number"/>
                 </xpath>
+                <xpath expr="//filter[@name='customer']" position="after">
+                    <filter name="business_date" string="Business date" domain="[]" context="{'group_by': 'business_date'}"/>
+                </xpath>
             </field>
     </record>
 
